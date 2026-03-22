@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Fiche Professeur — TP MIRAGE v8</title>
+<title>Fiche Professeur — TP MIRAGE v10</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700;900&display=swap');
 :root{
@@ -12,63 +12,61 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;font-weight:300;line-height:1.6;padding-bottom:80px;}
-header{background:var(--surface);border-bottom:2px solid var(--acc);padding:34px 52px 26px;position:relative;overflow:hidden;}
+header{background:var(--surface);border-bottom:2px solid var(--acc);padding:32px 50px 24px;position:relative;overflow:hidden;}
 header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(0,255,136,.03) 80px,rgba(0,255,136,.03) 81px);}
 .htag{font-family:'Share Tech Mono',monospace;font-size:.67rem;color:var(--acc);letter-spacing:3px;text-transform:uppercase;margin-bottom:9px;}
 .htag a{color:var(--acc);opacity:.7;text-decoration:none;}
-header h1{font-size:2.1rem;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1.1;}
+header h1{font-size:2rem;font-weight:900;color:#fff;letter-spacing:-1px;}
 header h1 span{color:var(--acc);}
-.sub{font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--dim);margin-top:7px;}
-.badge{display:inline-block;color:#fff;font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border-radius:2px;margin-left:9px;vertical-align:middle;}
+.sub{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--dim);margin-top:6px;}
+.badge{display:inline-block;color:#fff;font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border-radius:2px;margin-left:8px;vertical-align:middle;}
 .bp{background:var(--red);}.bv{background:var(--pur);}
-main{max-width:1020px;margin:0 auto;padding:34px 34px 0;}
-section{margin-bottom:42px;}
-.st{font-family:'Share Tech Mono',monospace;font-size:.67rem;color:var(--acc);letter-spacing:4px;text-transform:uppercase;margin-bottom:15px;display:flex;align-items:center;gap:10px;}
+main{max-width:1020px;margin:0 auto;padding:32px 32px 0;}
+section{margin-bottom:40px;}
+.st{font-family:'Share Tech Mono',monospace;font-size:.66rem;color:var(--acc);letter-spacing:4px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
 .st::after{content:'';flex:1;height:1px;background:var(--brd);}
-.card{background:var(--surface);border:1px solid var(--brd);border-radius:8px;padding:19px 22px;margin-bottom:13px;}
-.card p,.card li{font-size:.85rem;margin-bottom:5px;}
+.card{background:var(--surface);border:1px solid var(--brd);border-radius:8px;padding:18px 22px;margin-bottom:12px;}
+.card p,.card li{font-size:.84rem;margin-bottom:5px;}
 .ca{border-left:3px solid var(--acc);}
 .cw{border-left:3px solid var(--amb);background:rgba(245,166,35,.04);}
 .cp{border-left:3px solid var(--pur);background:rgba(176,110,247,.05);}
 pre,code{font-family:'Share Tech Mono',monospace;}
-pre{background:var(--code);border:1px solid var(--brd);border-radius:6px;padding:13px 17px;font-size:.77rem;color:var(--acc);overflow-x:auto;line-height:1.9;margin:9px 0;}
-code{background:var(--code);color:var(--acc);padding:1px 5px;border-radius:3px;font-size:.79rem;}
-.cd{color:var(--dim);}.cw2{color:var(--amb);}
-table{width:100%;border-collapse:collapse;font-size:.82rem;margin:9px 0;}
-th{background:var(--s2);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.64rem;letter-spacing:2px;text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid var(--brd);}
+pre{background:var(--code);border:1px solid var(--brd);border-radius:6px;padding:12px 16px;font-size:.76rem;color:var(--acc);overflow-x:auto;line-height:1.9;margin:8px 0;}
+code{background:var(--code);color:var(--acc);padding:1px 5px;border-radius:3px;font-size:.78rem;}
+.cd{color:var(--dim);}
+table{width:100%;border-collapse:collapse;font-size:.81rem;margin:8px 0;}
+th{background:var(--s2);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid var(--brd);}
 td{padding:8px 12px;border-bottom:1px solid var(--brd);vertical-align:top;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:rgba(255,255,255,.012);}
-.qg{display:grid;gap:12px;}
-.qc{background:var(--surface);border:1px solid var(--brd);border-radius:8px;padding:16px 20px;display:grid;grid-template-columns:50px 1fr;gap:13px;align-items:start;}
-.qc.hi{border-color:rgba(0,255,136,.3);background:rgba(0,255,136,.025);}
+.qg{display:grid;gap:11px;}
+.qc{background:var(--surface);border:1px solid var(--brd);border-radius:8px;padding:14px 18px;display:grid;grid-template-columns:46px 1fr;gap:12px;align-items:start;}
 .qc.au{border-color:rgba(245,166,35,.25);background:rgba(245,166,35,.02);}
-.qn{font-family:'Share Tech Mono',monospace;font-size:.95rem;font-weight:700;color:var(--acc);background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:6px;width:50px;height:50px;display:flex;align-items:center;justify-content:center;}
+.qc.qq{border-color:rgba(176,110,247,.25);background:rgba(176,110,247,.02);}
+.qn{font-family:'Share Tech Mono',monospace;font-size:.9rem;font-weight:700;color:var(--acc);background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:6px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;}
 .qn.au{color:var(--amb);background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.25);}
-.qn.pi{color:var(--amb);background:rgba(245,166,35,.1);border-color:rgba(245,166,35,.3);}
-.qb h3{font-size:.93rem;font-weight:700;color:#fff;margin-bottom:4px;}
-.meta{display:flex;gap:6px;margin-bottom:7px;flex-wrap:wrap;}
-.tag{font-family:'Share Tech Mono',monospace;font-size:.59rem;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:2px;border:1px solid;}
-.tn{color:#7eb8f7;border-color:#7eb8f7;background:rgba(126,184,247,.08);}
-.tf{color:var(--pur);border-color:var(--pur);background:rgba(180,126,247,.08);}
-.tp{color:var(--amb);border-color:var(--amb);background:rgba(245,166,35,.08);}
-.tr2{color:var(--red);border-color:var(--red);background:rgba(255,62,62,.08);}
-.tpi{color:var(--amb);border-color:var(--amb);background:rgba(245,166,35,.15);font-weight:700;}
+.qn.qq{color:var(--pur);background:rgba(176,110,247,.08);border-color:rgba(176,110,247,.25);}
+.qb h3{font-size:.9rem;font-weight:700;color:#fff;margin-bottom:4px;}
+.meta{display:flex;gap:5px;margin-bottom:6px;flex-wrap:wrap;}
+.tag{font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:2px;border:1px solid;}
+.th{color:#7eb8f7;border-color:#7eb8f7;background:rgba(126,184,247,.08);}
+.tq{color:var(--pur);border-color:var(--pur);background:rgba(180,126,247,.08);}
 .tau{color:var(--amb);border-color:var(--amb);background:rgba(245,166,35,.12);}
-.qb p{font-size:.83rem;color:var(--text);margin-bottom:6px;}
-.note{font-size:.75rem;color:var(--dim);margin-top:5px;}
+.tp{color:var(--amb);border-color:var(--amb);background:rgba(245,166,35,.08);}
+.tr{color:var(--red);border-color:var(--red);background:rgba(255,62,62,.08);}
+.qb p{font-size:.82rem;color:var(--text);margin-bottom:5px;}
+.note{font-size:.74rem;color:var(--dim);margin-top:4px;}
 ul.cl{list-style:none;}
-ul.cl li{padding:4px 0;font-size:.84rem;display:flex;gap:8px;align-items:flex-start;}
+ul.cl li{padding:4px 0;font-size:.83rem;display:flex;gap:8px;align-items:flex-start;}
 ul.cl li::before{content:'▸';color:var(--acc);flex-shrink:0;margin-top:2px;}
-.inst{background:var(--code);border:1px solid var(--acc);border-radius:8px;padding:14px 18px;margin:11px 0;font-family:'Share Tech Mono',monospace;font-size:.79rem;line-height:2;}
-.inst .pr{color:var(--red);}
+.phase-h{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--acc);letter-spacing:3px;text-transform:uppercase;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--brd);}
 </style>
 </head>
 <body>
 <header>
   <div class="htag">// NSI — Terminale — TP Linux &nbsp;·&nbsp; <a href="https://github.com/babash/TP-commandes-hacker">github.com/babash/TP-commandes-hacker</a></div>
-  <h1>Opération <span>MIRAGE</span> <span class="badge bp">PROF</span> <span class="badge bv">v8.0</span></h1>
-  <div class="sub">15 missions · Daemon indépendant · Indices progressifs dans Qn · JSLinux Alpine</div>
+  <h1>Opération <span>MIRAGE</span> <span class="badge bp">PROF</span> <span class="badge bv">v10.0</span></h1>
+  <div class="sub">15 missions · 5 phases · Daemon auto · Indices progressifs · JSLinux Alpine</div>
 </header>
 
 <main>
@@ -77,9 +75,7 @@ ul.cl li::before{content:'▸';color:var(--acc);flex-shrink:0;margin-top:2px;}
 <section>
   <div class="st">00 — Présentation</div>
   <div class="card ca">
-    <p>TP de terminal Linux pour Terminale NSI sur <strong>JSLinux Alpine</strong> (Linux dans le navigateur). Scénario fictif d'infiltration. 15 missions indépendantes réalisables dans n'importe quel ordre.</p>
-    <p style="margin-top:7px;"><strong>Nouveautés v8.0 :</strong> daemon entièrement indépendant (script sur disque, plus de fonctions shell), indices progressifs intégrés directement dans <code>Qn</code> (3 niveaux, 1 par appel), interface réduite à 3 commandes seulement.</p>
-    <p style="margin-top:7px;color:var(--amb);">⚠ Rappel légal intégré au script. 100 % local, aucun réseau externe requis.</p>
+    <p>TP de terminal Linux pour Terminale NSI sur <strong>JSLinux Alpine</strong>. 15 missions indépendantes en 5 phases progressives. Les notions avancées (options, pipe) sont placées en fin de parcours — l'élève est d'abord à l'aise avec la navigation et la manipulation de fichiers avant de les aborder.</p>
   </div>
   <div class="card">
     <table>
@@ -87,282 +83,253 @@ ul.cl li::before{content:'▸';color:var(--acc);flex-shrink:0;margin-top:2px;}
       <tr><td>Niveau</td><td>Terminale NSI</td></tr>
       <tr><td>Durée</td><td>1h30 – 2h</td></tr>
       <tr><td>Environnement</td><td>JSLinux Alpine x86 — <code>bellard.org/jslinux</code></td></tr>
-      <tr><td>Shell</td><td>POSIX sh / ash — compatible <code>dash</code>, <code>bash</code></td></tr>
       <tr><td>Commandes élève</td><td><code>MISSION</code> · <code>Q1..Q15</code> · <code>STATUT</code></td></tr>
-      <tr><td>Validation</td><td>Daemon auto (Q9,Q11,Q12,Q13,Q15) + history strict (autres)</td></tr>
-      <tr><td>Aide</td><td>Indices progressifs dans Qn — 3 niveaux, 1 par appel</td></tr>
+      <tr><td>Validation auto</td><td>Q5–Q10 via daemon filesystem (toutes les 3s)</td></tr>
+      <tr><td>Validation question</td><td>Q2, Q3, Q4, Q11–Q15 via input interactif</td></tr>
+      <tr><td>Persistance</td><td>Progression sauvegardée dans <code>~/.mirage_save/</code></td></tr>
     </table>
   </div>
 </section>
 
 <!-- 01 INSTALLATION -->
 <section>
-  <div class="st">01 — Installation dans JSLinux</div>
+  <div class="st">01 — Installation</div>
   <div class="card ca">
-    <p style="margin-bottom:9px;">Procédure à distribuer via la fiche élève :</p>
     <p><strong>1.</strong> Ouvrir <code>bellard.org/jslinux/vm.html?url=alpine-x86.cfg&mem=192</code></p>
     <p><strong>2.</strong> Télécharger <code>tp_infiltration.sh</code> depuis GitHub sur la machine locale</p>
-    <p><strong>3.</strong> Cliquer sur la <strong>flèche ↑</strong> sous le terminal JSLinux pour importer</p>
-    <p><strong>4.</strong> Lancer avec le point (pas <code>source</code>) :</p>
-    <div class="inst"><span class="pr">~#</span> . ~/tp_infiltration.sh</div>
-    <p class="note">⚠ <code>Ctrl+V</code> inopérant dans JSLinux — coller via clic droit → Paste.</p>
-  </div>
-  <div class="card">
-    <p style="margin-bottom:9px;"><strong>Les 3 commandes disponibles :</strong></p>
-    <table>
-      <tr><th>Commande</th><th>Rôle exact</th></tr>
-      <tr><td><code>MISSION</code></td><td>Affiche les 15 missions par phase avec statut <code>[OK]</code>/<code>[ ]</code>, contexte narratif et tâche à accomplir. Lit aussi les notifications du daemon.</td></tr>
-      <tr><td><code>Q1 … Q15</code></td><td>Vérifie la mission. Succès → badge + score. Échec → indice niveau 1. Retaper → niveau 2. Retaper → niveau 3 (solution). Les niveaux sont mémorisés dans <code>.hints</code>.</td></tr>
-      <tr><td><code>STATUT</code></td><td>Score rapide : liste compacte avec <code>OK</code>/<code>--</code> et total.</td></tr>
-    </table>
+    <p><strong>3.</strong> Cliquer sur <strong>↑</strong> sous le terminal JSLinux pour importer</p>
+    <p><strong>4.</strong> Lancer : <code>. ~/tp_infiltration.sh</code> (point, pas <code>source</code>)</p>
+    <p class="note">⚠ Ctrl+V inopérant dans JSLinux — coller via clic droit → Paste.</p>
   </div>
   <div class="card cw">
     <strong style="color:var(--amb);">⚙ Avant la séance</strong>
-    <ul class="cl" style="margin-top:7px;">
-      <li>Tester le lancement complet sur un poste élève (JSLinux + import + <code>. ~/tp_infiltration.sh</code>)</li>
-      <li>Vérifier que le daemon démarre : le setup affiche <em>"Daemon actif (PID: …)"</em></li>
-      <li>Vérifier que <code>stat</code>, <code>ps</code>, <code>find</code>, <code>awk</code>, <code>sh</code> sont disponibles (présents par défaut sur Alpine)</li>
-      <li>Aucun réseau requis — le TP est 100 % local</li>
+    <ul class="cl" style="margin-top:6px;">
+      <li>Tester le lancement complet sur un poste élève</li>
+      <li>Le setup affiche <em>"Daemon actif (PID: …)"</em> — vérifier que ce PID est non vide</li>
+      <li>La progression est conservée entre les relances dans <code>~/.mirage_save/</code></li>
     </ul>
   </div>
 </section>
 
-<!-- 02 DAEMON -->
+<!-- 02 ARCHITECTURE DE VALIDATION -->
 <section>
-  <div class="st">02 — Daemon de surveillance</div>
+  <div class="st">02 — Architecture de validation</div>
   <div class="card cp">
-    <strong style="color:var(--pur);">Architecture</strong>
-    <p style="margin-top:7px;">Le daemon est un <strong>script indépendant</strong> écrit sur disque (<code>/tmp/mirage_daemon.sh</code>) au moment du setup. Il est lancé avec <code>sh /tmp/mirage_daemon.sh &</code>. Il ne dépend d'aucune fonction du shell parent — c'est la solution au problème classique des sous-shells ash qui n'héritent pas des fonctions sourcées.</p>
-    <p style="margin-top:6px;">Le daemon surveille toutes les 3 secondes et écrit les badges dans <code>~/.infiltration_mirage/.notifs</code>. La fonction <code>_flush()</code> lit et vide ce fichier au début de chaque commande interactive (<code>Qn</code>, <code>MISSION</code>, <code>STATUT</code>).</p>
+    <strong style="color:var(--pur);">Trois mécanismes</strong>
+    <ul class="cl" style="margin-top:7px;">
+      <li><strong>History</strong> (Q1) — pattern grep sur les 60 dernières commandes. Utilisé uniquement quand la détection est fiable et non ambiguë.</li>
+      <li><strong>Question interactive</strong> (Q2–Q4, Q11–Q15) — <code>read</code> demande à l'élève de saisir le résultat observé. Valide que la commande a réellement été exécutée et lue.</li>
+      <li><strong>Daemon filesystem</strong> (Q5–Q10) — script <code>/tmp/mirage_daemon.sh</code> indépendant, surveille toutes les 3s. Écrit dans <code>.notifs</code>, affiché à la prochaine commande.</li>
+    </ul>
   </div>
   <div class="card">
-    <strong>Missions surveillées par le daemon</strong>
-    <table style="margin-top:8px;">
-      <tr><th>Mission</th><th>Condition</th></tr>
-      <tr><td><code>Q9</code> touch</td><td><code>serveur/agent.log</code> existe</td></tr>
-      <tr><td><code>Q11</code> mkdir</td><td><code>serveur/archive/</code> existe</td></tr>
-      <tr><td><code>Q12</code> chmod 600</td><td><code>stat</code> retourne <code>600</code> sur <code>exfiltration/rapport.txt</code></td></tr>
-      <tr><td><code>Q13</code> chmod u+x</td><td><code>[ -x effacer_traces.sh ]</code></td></tr>
-      <tr><td><code>Q15</code> kill+mv</td><td>espion absent ET <code>notes_vacances.txt</code> présent</td></tr>
-    </table>
+    <strong>Daemon — pourquoi ça fonctionne maintenant</strong>
+    <p style="margin-top:7px;font-size:.83rem;">Problème historique : les sous-shells lancés avec <code>&</code> depuis un script sourcé reçoivent SIGHUP à la fin du sourcing. Solutions appliquées :</p>
+    <ul class="cl" style="margin-top:6px;">
+      <li><code>trap '' HUP</code> dans le daemon — ignore SIGHUP</li>
+      <li><code>(sh "$DAEMON_SH" &lt;/dev/null &gt;&gt;"$NOTIFS" 2&gt;&amp;1 &amp;)</code> — sous-shell + redirections créent un nouveau groupe de processus</li>
+      <li>Le daemon écrit lui-même son PID via <code>echo $$</code> — évite la race condition avec <code>$!</code></li>
+      <li>Heredoc <code>&lt;&lt; 'DAEMONEOF'</code> avec quotes — empêche l'interpolation qui corrompait les fonctions <code>awk</code></li>
+    </ul>
+  </div>
+  <div class="card">
+    <strong>Persistance de la progression</strong>
+    <p style="margin-top:7px;font-size:.83rem;"><code>~/.mirage_save/.prog</code> est mis à jour à chaque validation (manuelle ou daemon). Avant chaque <code>rm -rf $TP_DIR</code>, la progression est sauvegardée ; après le <code>mkdir</code>, elle est restaurée. L'élève peut relancer le TP sans perdre son score.</p>
+    <pre>rm -rf ~/.mirage_save &amp;&amp; . ~/tp_infiltration.sh   <span class="cd"># repartir de zéro</span></pre>
   </div>
 </section>
 
-<!-- 03 INDICES PROGRESSIFS -->
+<!-- 03 CORRIGÉ PAR PHASE -->
 <section>
-  <div class="st">03 — Indices progressifs dans Qn</div>
-  <div class="card ca">
-    <p>Quand une mission échoue, <code>Qn</code> affiche l'indice du niveau courant et incrémente le compteur dans <code>.hints</code>. Au prochain appel de <code>Qn</code>, le niveau suivant s'affiche.</p>
-    <table style="margin-top:9px;">
-      <tr><th>Appel</th><th>Contenu de l'indice</th></tr>
-      <tr><td>1er échec</td><td>Rappel de l'objectif + nom et rôle de la commande concernée</td></tr>
-      <tr><td>2e échec</td><td>Structure de la commande avec des <code>???</code> à compléter</td></tr>
-      <tr><td>3e échec</td><td>Solution complète (avec PID réel pour Q14/Q15)</td></tr>
-      <tr><td>Appels suivants</td><td>Niveau 3 ré-affiché (solution toujours disponible)</td></tr>
-    </table>
-    <p class="note">Les niveaux sont mémorisés par mission dans <code>.hints</code>. Une réinitialisation (re-source du script) remet tout à zéro.</p>
-  </div>
-</section>
+  <div class="st">03 — Corrigé des 15 missions</div>
 
-<!-- 04 CORRIGÉ -->
-<section>
-  <div class="st">04 — Corrigé des 15 missions</div>
+  <div class="phase-h">Phase 1 — Reconnaissance (Q1–Q4)</div>
   <div class="qg">
-
     <div class="qc"><div class="qn">Q1</div><div class="qb">
-      <h3>pwd — Orientation</h3>
-      <div class="meta"><span class="tag tn">navigation</span><span class="tag tn">history</span></div>
-      <p>Afficher le répertoire courant.</p>
+      <h3>pwd</h3>
+      <div class="meta"><span class="tag th">history</span></div>
+      <p>Afficher le répertoire courant. Validation : pattern <code>pwd</code> dans les 60 dernières lignes d'historique.</p>
       <pre>pwd</pre>
-      <p class="note">Pattern history : <code>^[0-9 ]*pwd\s*$</code> — pwd seul sur sa ligne.</p>
     </div></div>
 
-    <div class="qc"><div class="qn">Q2</div><div class="qb">
-      <h3>ls — Exploration</h3>
-      <div class="meta"><span class="tag tn">navigation</span><span class="tag tn">history strict</span></div>
-      <p>Lister <code>~/infiltration_mirage/serveur/</code>.</p>
-      <pre>ls ~/infiltration_mirage/serveur/</pre>
-      <p class="note">Pattern strict : chemin exact requis. <code>ls -la</code> (Q4) ne valide pas Q2.</p>
+    <div class="qc qq"><div class="qn qq">Q2</div><div class="qb">
+      <h3>ls — question : quel fichier .txt ?</h3>
+      <div class="meta"><span class="tag tq">question interactive</span></div>
+      <p>Lister <code>serveur/</code>. L'élève répond le nom du fichier visible. Réponse attendue : <code>acces.txt</code> ou <code>acces</code>.</p>
+      <pre>ls ~/infiltration_mirage/serveur/   <span class="cd"># ou ls depuis serveur/</span></pre>
+      <p class="note">ls accepte trop de formes pour être détecté dans l'history → question sur le résultat.</p>
     </div></div>
 
-    <div class="qc"><div class="qn">Q3</div><div class="qb">
-      <h3>ls --help — Documentation</h3>
-      <div class="meta"><span class="tag tn">history</span></div>
-      <p>Trouver l'option pour les fichiers cachés. Sur JSLinux : <code>man</code> n'est pas installé, utiliser <code>--help</code>.</p>
-      <pre>ls --help   <span class="cd"># L'option cherchee est -a (--all)</span></pre>
-      <p class="note">Pattern : <code>ls\s+--help</code>. L'indice niveau 3 révèle explicitement l'option <code>-a</code>.</p>
+    <div class="qc qq"><div class="qn qq">Q3</div><div class="qb">
+      <h3>cd — validation par $PWD</h3>
+      <div class="meta"><span class="tag tq">$PWD</span></div>
+      <p>Se déplacer dans <code>serveur/</code>. Validation : <code>$PWD = $TP_DIR/serveur</code>.</p>
+      <pre>cd ~/infiltration_mirage/serveur/   <span class="cd"># puis Q3</span></pre>
     </div></div>
 
-    <div class="qc"><div class="qn">Q4</div><div class="qb">
-      <h3>ls -la — Fichiers cachés</h3>
-      <div class="meta"><span class="tag tn">navigation</span><span class="tag tn">history strict</span></div>
-      <pre>ls -la ~/infiltration_mirage/serveur/</pre>
-      <p class="note">Pattern : <code>ls -la</code> ou <code>ls -al</code> uniquement. <code>ls -l -a</code> non accepté.</p>
-    </div></div>
-
-    <div class="qc"><div class="qn">Q5</div><div class="qb">
-      <h3>cd — Navigation</h3>
-      <div class="meta"><span class="tag tn">$PWD + history</span></div>
-      <pre>cd ~/infiltration_mirage/serveur/
-<span class="cd"># puis retaper Q5</span></pre>
-      <p class="note">Double contrôle : <code>$PWD</code> correct OU pattern history. Si l'élève a bougé depuis, la validation history reste acquise.</p>
-    </div></div>
-
-    <div class="qc"><div class="qn">Q6</div><div class="qb">
-      <h3>cat — Lecture</h3>
-      <div class="meta"><span class="tag tn">history</span></div>
+    <div class="qc qq"><div class="qn qq">Q4</div><div class="qb">
+      <h3>cat — question : mot de passe</h3>
+      <div class="meta"><span class="tag tq">question interactive</span></div>
+      <p>Lire <code>message_secret.txt</code>. Réponse attendue : <code>M1r4g3_2024</code>.</p>
       <pre>cat ~/infiltration_mirage/message_secret.txt</pre>
-      <p class="note">Pattern : <code>cat\s+.*/message_secret\.txt</code>.</p>
     </div></div>
+  </div>
 
-    <div class="qc hi"><div class="qn pi">Q7</div><div class="qb">
-      <h3>cat | grep — Introduction du pipe</h3>
-      <div class="meta"><span class="tag tpi">★ pipe |</span><span class="tag tn">history strict</span></div>
-      <pre>cat ~/infiltration_mirage/serveur/logs/access.log | grep Transfert</pre>
-      <p class="note">Pattern : <code>cat.*access\.log.*\|.*grep.*Transfert</code> — pipe ET mot Transfert obligatoires. Point pédagogique central du TP.</p>
-    </div></div>
-
-    <div class="qc"><div class="qn pi">Q8</div><div class="qb">
-      <h3>history | grep — Pipe sur l'historique</h3>
-      <div class="meta"><span class="tag tpi">pipe |</span><span class="tag tn">history strict</span></div>
-      <pre>history | grep passwd</pre>
-      <p class="note">Pattern : <code>history\s*\|\s*grep</code> — le pipe est obligatoire, <code>history</code> seul ne valide pas.</p>
-    </div></div>
-
-    <div class="qc au"><div class="qn au">Q9</div><div class="qb">
-      <h3>touch — Créer un fichier vide</h3>
-      <div class="meta"><span class="tag tf">fichiers</span><span class="tag tau">daemon auto</span></div>
+  <div class="phase-h">Phase 2 — Manipulation de fichiers (Q5–Q8) — [auto]</div>
+  <div class="qg">
+    <div class="qc au"><div class="qn au">Q5</div><div class="qb">
+      <h3>touch — créer un fichier vide</h3>
+      <div class="meta"><span class="tag tau">daemon auto</span></div>
       <pre>touch ~/infiltration_mirage/serveur/agent.log</pre>
-      <p class="note">Daemon valide dès que <code>agent.log</code> existe. <code>Q9</code> peut aussi être tapé manuellement.</p>
+      <p class="note">Daemon valide dès que <code>serveur/agent.log</code> existe.</p>
     </div></div>
 
-    <div class="qc"><div class="qn">Q10</div><div class="qb">
-      <h3>find — Recherche récursive</h3>
-      <div class="meta"><span class="tag tn">history strict</span></div>
-      <pre>find ~/infiltration_mirage/ -name "rapport.txt"</pre>
-      <p class="note">Pattern : <code>find.*-name.*rapport</code> — l'option <code>-name</code> est obligatoire.</p>
+    <div class="qc au"><div class="qn au">Q6</div><div class="qb">
+      <h3>cp — copier un fichier</h3>
+      <div class="meta"><span class="tag tau">daemon auto</span></div>
+      <p>Il faut d'abord créer <code>exfiltration/</code> avec <code>mkdir</code>.</p>
+      <pre>mkdir ~/infiltration_mirage/serveur/exfiltration
+cp ~/infiltration_mirage/serveur/confidentiel/rapport.txt \
+   ~/infiltration_mirage/serveur/exfiltration/</pre>
+      <p class="note">Daemon valide dès que <code>exfiltration/rapport.txt</code> existe.</p>
     </div></div>
 
-    <div class="qc au"><div class="qn au">Q11</div><div class="qb">
-      <h3>mkdir — Créer un dossier</h3>
-      <div class="meta"><span class="tag tf">fichiers</span><span class="tag tau">daemon auto</span></div>
+    <div class="qc au"><div class="qn au">Q7</div><div class="qb">
+      <h3>mv — renommer un fichier</h3>
+      <div class="meta"><span class="tag tau">daemon auto</span></div>
+      <pre>mv ~/infiltration_mirage/serveur/exfiltration/rapport.txt \
+   ~/infiltration_mirage/serveur/exfiltration/rapport_cache.txt</pre>
+      <p class="note">Daemon valide dès que <code>rapport_cache.txt</code> existe dans <code>exfiltration/</code>.</p>
+    </div></div>
+
+    <div class="qc au"><div class="qn au">Q8</div><div class="qb">
+      <h3>mkdir — créer un dossier</h3>
+      <div class="meta"><span class="tag tau">daemon auto</span></div>
       <pre>mkdir ~/infiltration_mirage/serveur/archive</pre>
       <p class="note">Daemon valide dès que <code>serveur/archive/</code> existe.</p>
     </div></div>
+  </div>
 
-    <div class="qc au"><div class="qn au">Q12</div><div class="qb">
-      <h3>chmod 600 — Droits restrictifs</h3>
-      <div class="meta"><span class="tag tp">droits</span><span class="tag tau">daemon auto</span></div>
-      <pre>chmod 600 ~/infiltration_mirage/serveur/exfiltration/rapport.txt
+  <div class="phase-h">Phase 3 — Droits (Q9–Q10) — [auto]</div>
+  <div class="qg">
+    <div class="qc au"><div class="qn au">Q9</div><div class="qb">
+      <h3>chmod 600 — droits restrictifs</h3>
+      <div class="meta"><span class="tag tau">daemon auto</span><span class="tag tp">droits</span></div>
+      <pre>chmod 600 ~/infiltration_mirage/serveur/exfiltration/rapport_cache.txt
 <span class="cd"># 600 = rw------- : User(6=rw) Group(0) Others(0)</span></pre>
-      <p class="note">Daemon vérifie via <code>stat -c "%a"</code>. Le fichier existe dès le setup — mission indépendante de Q11.</p>
+      <p class="note">Daemon vérifie via <code>stat -c "%a"</code>. Nécessite Q7 accomplie.</p>
     </div></div>
 
-    <div class="qc au"><div class="qn au">Q13</div><div class="qb">
-      <h3>chmod u+x — Script exécutable</h3>
-      <div class="meta"><span class="tag tp">droits</span><span class="tag tau">daemon auto</span></div>
+    <div class="qc au"><div class="qn au">Q10</div><div class="qb">
+      <h3>chmod u+x — rendre exécutable</h3>
+      <div class="meta"><span class="tag tau">daemon auto</span><span class="tag tp">droits</span></div>
       <pre>chmod u+x ~/infiltration_mirage/serveur/effacer_traces.sh
 <span class="cd"># u=user  +=ajouter  x=execution</span></pre>
       <p class="note">Daemon vérifie via <code>[ -x fichier ]</code>.</p>
     </div></div>
+  </div>
 
-    <div class="qc"><div class="qn">Q14</div><div class="qb">
-      <h3>ps | grep — Identifier l'espion</h3>
-      <div class="meta"><span class="tag tr2">processus</span><span class="tag tpi">pipe |</span><span class="tag tn">history strict</span></div>
-      <pre>ps | grep espion_mirage   <span class="cd"># la ligne 'grep' visible est normale</span></pre>
-      <p class="note">Pattern : <code>ps\s*\|\s*grep.*(espion|mirage)</code> — pipe obligatoire. L'indice niveau 3 affiche le PID réel en temps réel.</p>
+  <div class="phase-h">Phase 4 — Processus (Q11)</div>
+  <div class="qg">
+    <div class="qc qq"><div class="qn qq">Q11</div><div class="qb">
+      <h3>ps + kill — identifier et neutraliser</h3>
+      <div class="meta"><span class="tag tq">question interactive</span><span class="tag tr">processus</span></div>
+      <p>Q11 demande d'abord le PID affiché par <code>ps</code>. Si correct, invite à lancer <code>kill</code>. Retaper Q11 après le kill pour valider.</p>
+      <pre>ps                         <span class="cd"># repérer espion_mirage et son PID</span>
+kill &lt;PID&gt;                 <span class="cd"># kill -9 si résistance</span>
+Q11                        <span class="cd"># retaper pour valider</span></pre>
+      <p class="note">Le daemon (Q11 auto) valide aussi si l'espion est mort — le badge apparaît à la prochaine commande.</p>
+    </div></div>
+  </div>
+
+  <div class="phase-h">Phase 5 — Options et pipe | (Q12–Q15)</div>
+  <div class="qg">
+    <div class="qc qq"><div class="qn qq">Q12</div><div class="qb">
+      <h3>ls --help — trouver l'option -a</h3>
+      <div class="meta"><span class="tag tq">question interactive</span></div>
+      <p>Q12 demande quelle option affiche les fichiers cachés. Réponse : <code>-a</code> ou <code>a</code> ou <code>--all</code>.</p>
+      <pre>ls --help</pre>
+      <p class="note">Sur JSLinux, <code>man</code> n'est pas installé — <code>--help</code> est l'alternative.</p>
     </div></div>
 
-    <div class="qc au"><div class="qn au">Q15</div><div class="qb">
-      <h3>kill + mv — Neutraliser et camoufler</h3>
-      <div class="meta"><span class="tag tr2">processus</span><span class="tag tf">fichiers</span><span class="tag tau">daemon auto</span></div>
-      <pre>kill &lt;PID&gt;   <span class="cd"># PID obtenu en Q14 — kill -9 si résistance</span>
-mv ~/infiltration_mirage/serveur/exfiltration/rapport_secret.txt \
-   ~/infiltration_mirage/serveur/exfiltration/notes_vacances.txt</pre>
-      <p class="note">Daemon valide quand les DEUX conditions sont remplies : espion absent + <code>notes_vacances.txt</code> présent.</p>
+    <div class="qc qq"><div class="qn qq">Q13</div><div class="qb">
+      <h3>ls -la — voir les fichiers cachés</h3>
+      <div class="meta"><span class="tag tq">question interactive</span></div>
+      <p>Q13 demande quel fichier caché l'élève trouve. Réponse : <code>.fichier_cache</code>.</p>
+      <pre>ls -la ~/infiltration_mirage/serveur/</pre>
     </div></div>
 
+    <div class="qc qq"><div class="qn qq">Q14</div><div class="qb">
+      <h3>cat | grep — filtrer un journal</h3>
+      <div class="meta"><span class="tag tq">question interactive</span><span class="tag tq">pipe |</span></div>
+      <p>Q14 explique le principe du pipe puis demande combien de lignes contenant "Transfert" s'affichent. Réponse : <code>2</code>.</p>
+      <pre>cat ~/infiltration_mirage/serveur/logs/access.log | grep Transfert</pre>
+      <p class="note">Point pédagogique central : le pipe <code>|</code> chaîne deux commandes. L'élève l'a déjà utilisé sans le savoir en Q15 (history | grep).</p>
+    </div></div>
+
+    <div class="qc qq"><div class="qn qq">Q15</div><div class="qb">
+      <h3>history | grep — réutiliser le pipe</h3>
+      <div class="meta"><span class="tag tq">question interactive</span><span class="tag tq">pipe |</span></div>
+      <p>Q15 demande ce qu'on voit dans les résultats de <code>history | grep Q</code>. Réponse : toute chaîne commençant par <code>Q</code> suivi d'un chiffre (<code>Q1</code>, <code>Q14</code>…).</p>
+      <pre>history | grep Q</pre>
+    </div></div>
   </div>
 </section>
 
-<!-- 05 PATTERNS HISTORY -->
+<!-- 04 CONSEILS -->
 <section>
-  <div class="st">05 — Patterns history (stricts)</div>
-  <div class="card cw">
-    <strong style="color:var(--amb);">Principe : mieux vaut ne pas valider que mal valider</strong>
-    <p style="margin-top:7px;">Les patterns sont conçus pour ne déclencher que si la bonne commande a été tapée. En cas de doute, l'élève peut retaper la commande puis <code>Qn</code>.</p>
-    <table style="margin-top:9px;">
-      <tr><th>Mission</th><th>Pattern grep -E</th></tr>
-      <tr><td>Q1 pwd</td><td><code>^[0-9 ]*pwd\s*$</code></td></tr>
-      <tr><td>Q2 ls</td><td><code>^[0-9 ]*ls\s+~/infiltration_mirage/serveur/\s*$</code></td></tr>
-      <tr><td>Q3 ls --help</td><td><code>ls\s+--help</code></td></tr>
-      <tr><td>Q4 ls -la</td><td><code>ls\s+-la|ls\s+-al</code></td></tr>
-      <tr><td>Q5 cd</td><td><code>^[0-9 ]*cd\s+.*/infiltration_mirage/serveur\s*$</code></td></tr>
-      <tr><td>Q6 cat</td><td><code>cat\s+.*/message_secret\.txt</code></td></tr>
-      <tr><td>Q7 cat|grep</td><td><code>cat.*access\.log.*\|.*grep.*Transfert</code></td></tr>
-      <tr><td>Q8 history|grep</td><td><code>history\s*\|\s*grep</code></td></tr>
-      <tr><td>Q10 find</td><td><code>find.*-name.*rapport|find.*rapport\.txt</code></td></tr>
-      <tr><td>Q14 ps|grep</td><td><code>ps\s*\|\s*grep.*(espion|mirage)</code></td></tr>
-    </table>
-  </div>
-</section>
-
-<!-- 06 CONSEILS -->
-<section>
-  <div class="st">06 — Conseils pédagogiques</div>
+  <div class="st">04 — Conseils pédagogiques</div>
   <div class="card ca">
     <strong>Déroulement recommandé</strong>
-    <ul class="cl" style="margin-top:8px;">
-      <li><strong>5 min</strong> — introduction narrative + rappel légal + distribution fiche élève</li>
-      <li><strong>10 min</strong> — import JSLinux + lancement (Q1/Q2 se valident en quelques secondes)</li>
-      <li><strong>65–75 min</strong> — travail autonome. Encourager les élèves à retaper <code>Qn</code> plutôt que de demander de l'aide immédiatement</li>
-      <li><strong>15 min</strong> — correction collective sur le pipe (Q7), les droits octaux (Q12), kill (Q15)</li>
+    <ul class="cl" style="margin-top:7px;">
+      <li><strong>5 min</strong> — introduction + rappel légal + distribution fiche élève</li>
+      <li><strong>10 min</strong> — import JSLinux + lancement (Q1–Q4 se valident en quelques minutes)</li>
+      <li><strong>65–75 min</strong> — travail autonome. Les badges Q5–Q10 s'affichent automatiquement</li>
+      <li><strong>15 min</strong> — correction collective sur chmod (Q9), pipe (Q14), kill (Q11)</li>
     </ul>
   </div>
   <div class="card">
-    <strong>Points d'attention par mission</strong>
-    <ul class="cl" style="margin-top:8px;">
-      <li><strong>Q3 ls --help</strong> : expliquer que <code>man</code> n'existe pas sur Alpine JSLinux — <code>--help</code> est l'alternative universelle.</li>
-      <li><strong>Q4 ls -la</strong> : le pattern n'accepte que <code>-la</code> ou <code>-al</code>. Si un élève tape <code>ls -l -a</code>, lui expliquer la syntaxe condensée.</li>
-      <li><strong>Q5 cd</strong> : erreur classique — taper <code>ls serveur/</code> au lieu de <code>cd serveur/</code>. Insister sur la différence voir / entrer.</li>
-      <li><strong>Q7 pipe</strong> : laisser l'élève lire l'indice niveau 1 avant d'intervenir — il explique le principe du pipe.</li>
-      <li><strong>Q12 chmod</strong> : décomposer 600 au tableau si besoin : r=4 w=2 x=1, User|Group|Others.</li>
-      <li><strong>Q14 ps</strong> : la ligne contenant <code>grep</code> dans les résultats est normale — <code>grep</code> se voit lui-même dans la liste des processus.</li>
-      <li><strong>Q15 kill</strong> : distinguer <code>kill</code> (SIGTERM) et <code>kill -9</code> (SIGKILL). Bonne opportunité pour parler des signaux Unix.</li>
+    <strong>Points d'attention</strong>
+    <ul class="cl" style="margin-top:7px;">
+      <li><strong>Q6 cp</strong> : l'élève doit d'abord créer <code>exfiltration/</code> avec <code>mkdir</code>. L'indice niveau 2 le guide.</li>
+      <li><strong>Q7 mv</strong> : erreur classique — utiliser <code>cp</code> au lieu de <code>mv</code>. Le daemon attend <code>rapport_cache.txt</code>.</li>
+      <li><strong>Q9 chmod</strong> : décomposer 600 = r(4)+w(2) | 0 | 0 si nécessaire.</li>
+      <li><strong>Q11 ps</strong> : la colonne PID est la première. Rappeler de lire la ligne <code>espion_mirage</code>.</li>
+      <li><strong>Q12 ls --help</strong> : man n'existe pas sur Alpine. --help est universel.</li>
+      <li><strong>Q14 pipe</strong> : expliquer la métaphore du tuyau — la sortie de gauche entre dans la droite.</li>
     </ul>
   </div>
   <div class="card cw">
-    <strong style="color:var(--amb);">Réinitialiser le TP</strong>
+    <strong style="color:var(--amb);">Réinitialiser sans perdre la progression</strong>
     <pre>. ~/tp_infiltration.sh</pre>
-    <p class="note">Arborescence recréée, espion relancé, daemon redémarré, progression et niveaux d'indices réinitialisés.</p>
+    <strong style="color:var(--amb);">Repartir de zéro</strong>
+    <pre>rm -rf ~/.mirage_save &amp;&amp; . ~/tp_infiltration.sh</pre>
   </div>
 </section>
 
-<!-- 07 STRUCTURE -->
+<!-- 05 STRUCTURE -->
 <section>
-  <div class="st">07 — Structure générée</div>
+  <div class="st">05 — Structure générée</div>
   <div class="card">
     <pre>~/infiltration_mirage/
-├── message_secret.txt          <span class="cd"># Q6 — cat</span>
-├── .prog                       <span class="cd"># progression (caché)</span>
-├── .hints                      <span class="cd"># niveaux d'indices (caché)</span>
-├── .notifs                     <span class="cd"># notifications daemon (caché)</span>
-├── .daemon_pid                 <span class="cd"># PID daemon (caché)</span>
+├── message_secret.txt       <span class="cd"># Q4 · cat  (mot de passe : M1r4g3_2024)</span>
+├── .prog / .hints / .notifs <span class="cd"># état interne (cachés)</span>
 └── serveur/
-    ├── acces.txt
-    ├── effacer_traces.sh       <span class="cd"># Q13 — chmod u+x (644 au départ)</span>
-    ├── .fichier_cache          <span class="cd"># Q4 — visible avec ls -la</span>
+    ├── acces.txt            <span class="cd"># Q2 · ls  (réponse : acces.txt)</span>
+    ├── effacer_traces.sh    <span class="cd"># Q10 · chmod u+x</span>
+    ├── .fichier_cache       <span class="cd"># Q13 · ls -la  (réponse : .fichier_cache)</span>
     ├── confidentiel/
-    │   └── rapport.txt         <span class="cd"># Q10 — find</span>
+    │   └── rapport.txt      <span class="cd"># Q6 · cp (source)</span>
     ├── public/index.html
-    ├── logs/access.log         <span class="cd"># Q7 — cat | grep Transfert</span>
-    ├── archive/                <span class="cd"># Q11 — créé par l'élève</span>
-    └── exfiltration/
-        ├── rapport.txt         <span class="cd"># Q12 — chmod 600 (644 au départ)</span>
-        └── rapport_secret.txt  <span class="cd"># Q15 — mv → notes_vacances.txt</span>
+    ├── logs/access.log      <span class="cd"># Q14 · cat | grep Transfert (2 lignes)</span>
+    ├── exfiltration/        <span class="cd"># créé par l'élève (Q6)</span>
+    │   ├── rapport.txt      <span class="cd"># Q6 · cp</span>
+    │   └── rapport_cache.txt <span class="cd"># Q7 · mv · Q9 · chmod 600</span>
+    └── archive/             <span class="cd"># Q8 · mkdir</span>
 
-/tmp/espion_mirage.sh           <span class="cd"># Q14/Q15 — ps | grep, kill</span>
-/tmp/mirage_daemon.sh           <span class="cd"># daemon auto indépendant</span></pre>
+~/.mirage_save/              <span class="cd"># progression persistante</span>
+/tmp/espion_mirage.sh        <span class="cd"># Q11 · ps + kill</span>
+/tmp/mirage_daemon.sh        <span class="cd"># daemon auto</span></pre>
   </div>
 </section>
 
