@@ -131,8 +131,8 @@ Ce TP est une **simulation entièrement fictive et locale**. Aucune connexion r�
 
 | Document | Description |
 |---|---|
-| [`fiche_prof_mirage.html`](https://github.com/babash/TP-commandes-hacker/blob/main/fiche_prof_mirage.html) | Corrigé complet des 15 questions, conseils pédagogiques, points d'attention, rôle de l'agent ECHO |
-| [`fiche_eleve_mirage.html`](https://github.com/babash/TP-commandes-hacker/blob/main/fiche_eleve_mirage.html) | Fiche A4 à imprimer — démarrage du TP, commandes disponibles, utilisation d'ECHO |
+| [`fiche_prof_mirage.html`](https://babash.github.io/TP-commandes-hacker/fiche_prof_mirage.html) | Corrigé complet des 15 questions, conseils pédagogiques, points d'attention, rôle de l'agent ECHO |
+| [`fiche_eleve_mirage.html`](https://babash.github.io/TP-commandes-hacker/fiche_eleve_mirage.html) | Fiche A4 à imprimer — démarrage du TP, commandes disponibles, utilisation d'ECHO |
 
 **Durée estimée :** 1 h 30 à 2 h · **Niveau :** Terminale NSI · **Prérequis :** notion de répertoire, accès terminal
 
