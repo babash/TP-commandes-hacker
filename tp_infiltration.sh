@@ -1,29 +1,225 @@
 #!/bin/sh
 # ============================================================
-#   TP NSI - INFILTRATION : Operation Mirage  v5.1
-#   Terminale NSI - Terminal Linux
-#   POSIX sh / ash — compatible JSLinux Alpine
+#   TP NSI — Operation Mirage  v8.0
+#   Terminale NSI — Terminal Linux
+#   POSIX sh / ash — JSLinux Alpine
 #   https://github.com/babash/TP-commandes-hacker
 # ============================================================
-# PRINCIPES v5 :
-#   - 15 missions strictement independantes (setup garantit l'etat initial)
-#   - Validation automatique par watcher en arriere-plan (toutes les 3s)
-#   - AGENT hors-ligne : analyse l'etat reel + indices progressifs (3 niveaux)
-#   - Aucune mission ne pre-suppose qu'une autre soit faite
-# ============================================================
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-DIM='\033[2m'
-NC='\033[0m'
+RED='\033[0;31m'; GRN='\033[0;32m'; YEL='\033[1;33m'
+CYN='\033[0;36m'; MAG='\033[0;35m'; BLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
 
 TP_DIR="$HOME/infiltration_mirage"
 NB_Q=15
+NOTIFS="$TP_DIR/.notifs"
+DAEMON_SH="/tmp/mirage_daemon.sh"
 
 p() { printf "%b\n" "$*"; }
+
+# ============================================================
+# LECTURE DES NOTIFICATIONS DU DAEMON
+# Appelee au debut de chaque commande interactive
+# ============================================================
+_flush() {
+    [ -s "$NOTIFS" ] || return
+    while IFS= read -r _line; do printf "%b\n" "$_line"; done < "$NOTIFS"
+    : > "$NOTIFS"
+}
+
+# ============================================================
+# HELPERS
+# ============================================================
+_field()   { echo "$1" | awk "{print \$$2}"; }
+_perms()   { stat -c "%a" "$1" 2>/dev/null || stat -f "%OLp" "$1" 2>/dev/null; }
+_espion_pid()   { ps 2>/dev/null | grep "[e]spion_mirage" | awk '{print $1}' | head -1; }
+_espion_alive() { [ -n "$(_espion_pid)" ]; }
+_prog()    { [ -f "$TP_DIR/.prog" ] && cat "$TP_DIR/.prog" \
+             || echo "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"; }
+_done()    { [ "$(_field "$(_prog)" "$1")" = "1" ]; }
+_inhist()  { history 2>/dev/null | tail -60 | grep -qE "$1"; }
+
+# Niveau d'indice pour chaque mission (incremente a chaque echec)
+_hint_get() {
+    [ -f "$TP_DIR/.hints" ] || echo "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" > "$TP_DIR/.hints"
+    _field "$(cat "$TP_DIR/.hints")" "$1"
+}
+_hint_inc() {
+    _n="$1"
+    [ -f "$TP_DIR/.hints" ] || echo "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" > "$TP_DIR/.hints"
+    _c=$(_hint_get "$_n"); [ "$_c" -lt 3 ] && _c=$((_c+1))
+    echo "$(cat "$TP_DIR/.hints")" | awk -v n="$_n" -v v="$_c" '{$n=v;print}' > "$TP_DIR/.hints"
+    echo "$_c"
+}
+
+# ============================================================
+# MARQUER UNE MISSION (utilisé par daemon ET par Qn)
+# ============================================================
+_marquer() {
+    _done "$1" && return 0
+    echo "$(_prog)" | awk -v n="$1" '{$n=1;print}' > "$TP_DIR/.prog"
+}
+
+# ============================================================
+# BADGE — ecrit dans .notifs par le daemon, lu par _flush
+# ============================================================
+_badge_text() {
+    printf "%b\n" "$GRN"
+    printf "  +--------------------------------------------------+\n"
+    case "$1" in
+    1)  printf "  | Q1  ACCOMPLIE - Bonne orientation, agent.       |\n"
+        printf "  | Tout commence par connaitre sa position.        |\n" ;;
+    2)  printf "  | Q2  ACCOMPLIE - Premiere reconnaissance reussie.|\n"
+        printf "  | Le serveur commence a livrer ses secrets.       |\n" ;;
+    3)  printf "  | Q3  ACCOMPLIE - Vous lisez la doc avant d'agir. |\n"
+        printf "  | Un vrai professionnel. Q4 va etre facile.       |\n" ;;
+    4)  printf "  | Q4  ACCOMPLIE - Les fichiers caches sont vus.   |\n"
+        printf "  | Excellent travail d'infiltration.               |\n" ;;
+    5)  printf "  | Q5  ACCOMPLIE - Vous etes dans la place.        |\n"
+        printf "  | Navigation maitrisee.                           |\n" ;;
+    6)  printf "  | Q6  ACCOMPLIE - Message dechiffre.              |\n"
+        printf "  | Les donnees sont a portee de main.              |\n" ;;
+    7)  printf "  | Q7  ACCOMPLIE - LE PIPE EST DEBLOQUE !          |\n"
+        printf "  | Outil fondamental du terminal. Bien joue.       |\n" ;;
+    8)  printf "  | Q8  ACCOMPLIE - L'historique ne ment pas.       |\n"
+        printf "  | Un operateur imprudent a laisse des traces.     |\n" ;;
+    9)  printf "  | Q9  ACCOMPLIE [daemon] - Empreinte enregistree. |\n"
+        printf "  | Discret, mais visible pour qui sait chercher.   |\n" ;;
+    10) printf "  | Q10 ACCOMPLIE - Rapport localise.               |\n"
+        printf "  | find est votre allie dans les profondeurs.      |\n" ;;
+    11) printf "  | Q11 ACCOMPLIE [daemon] - Zone de transit prete. |\n"
+        printf "  | La phase d'exfiltration peut commencer.         |\n" ;;
+    12) printf "  | Q12 ACCOMPLIE [daemon] - Fichier protege.       |\n"
+        printf "  | rw------- : vous seul pouvez y acceder.         |\n" ;;
+    13) printf "  | Q13 ACCOMPLIE [daemon] - Script arme.           |\n"
+        printf "  | Permissions maitrisees.                         |\n" ;;
+    14) printf "  | Q14 ACCOMPLIE - Espion identifie.               |\n"
+        printf "  | Vous avez son PID. Il ne sait pas ce qui vient. |\n" ;;
+    15) printf "  | Q15 ACCOMPLIE [daemon]                          |\n"
+        printf "  |   *** OPERATION MIRAGE TERMINEE ***             |\n"
+        printf "  | Espion neutralise. Traces brouillees.           |\n"
+        printf "  | Mission reussie. Deconnexion en cours...        |\n" ;;
+    esac
+    _tot=0; _i=1
+    while [ "$_i" -le 15 ]; do
+        _f="$TP_DIR/.prog"
+        [ -f "$_f" ] && _v=$(awk "{print \$$_i}" "$_f") || _v=0
+        [ "$_v" = "1" ] && _tot=$((_tot+1)); _i=$((_i+1))
+    done
+    printf "  | Score : %s/%s                                    |\n" "$_tot" "$NB_Q"
+    printf "  +--------------------------------------------------+\n"
+    printf "%b\n" "$NC"
+}
+
+# ============================================================
+# DAEMON — script independant ecrit sur disque
+# Il ne depend d'aucune fonction du shell parent
+# ============================================================
+_write_daemon() {
+    cat > "$DAEMON_SH" << DAEMONEOF
+#!/bin/sh
+TP_DIR="$TP_DIR"
+NOTIFS="$NOTIFS"
+NB_Q=$NB_Q
+RED='\\033[0;31m'; GRN='\\033[0;32m'; YEL='\\033[1;33m'; NC='\\033[0m'; DIM='\\033[2m'
+
+_prog()  { [ -f "\$TP_DIR/.prog" ] && cat "\$TP_DIR/.prog" || echo "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"; }
+_field() { echo "\$1" | awk "{print \\$\$2}"; }
+_done()  { [ "\$(_field "\$(_prog)" "\$1")" = "1" ]; }
+_perms() { stat -c "%a" "\$1" 2>/dev/null || stat -f "%OLp" "\$1" 2>/dev/null; }
+_espion_alive() { ps 2>/dev/null | grep "[e]spion_mirage" | grep -qv grep; }
+
+_mark() {
+    _qn="\$1"
+    _done "\$_qn" && return 0
+    echo "\$(_prog)" | awk -v n="\$_qn" '{\\$n=1;print}' > "\$TP_DIR/.prog"
+    _badge "\$_qn"
+}
+
+_badge() {
+    _n="\$1"; _tot=0; _i=1
+    {
+    printf "%b\\n" "\$GRN"
+    printf "  +--------------------------------------------------+\\n"
+    case "\$_n" in
+    1)  printf "  | Q1  ACCOMPLIE - Bonne orientation, agent.       |\\n"
+        printf "  | Tout commence par connaitre sa position.        |\\n" ;;
+    2)  printf "  | Q2  ACCOMPLIE - Premiere reconnaissance reussie.|\\n"
+        printf "  | Le serveur commence a livrer ses secrets.       |\\n" ;;
+    3)  printf "  | Q3  ACCOMPLIE - Vous lisez la doc avant d'agir. |\\n"
+        printf "  | Un vrai professionnel. Q4 va etre facile.       |\\n" ;;
+    4)  printf "  | Q4  ACCOMPLIE - Les fichiers caches sont vus.   |\\n"
+        printf "  | Excellent travail d'infiltration.               |\\n" ;;
+    5)  printf "  | Q5  ACCOMPLIE - Vous etes dans la place.        |\\n"
+        printf "  | Navigation maitrisee.                           |\\n" ;;
+    6)  printf "  | Q6  ACCOMPLIE - Message dechiffre.              |\\n"
+        printf "  | Les donnees sont a portee de main.              |\\n" ;;
+    7)  printf "  | Q7  ACCOMPLIE - LE PIPE EST DEBLOQUE !          |\\n"
+        printf "  | Outil fondamental du terminal. Bien joue.       |\\n" ;;
+    8)  printf "  | Q8  ACCOMPLIE - L historique ne ment pas.       |\\n"
+        printf "  | Un operateur imprudent a laisse des traces.     |\\n" ;;
+    9)  printf "  | Q9  ACCOMPLIE [daemon] - Empreinte enregistree. |\\n"
+        printf "  | Discret, mais visible pour qui sait chercher.   |\\n" ;;
+    10) printf "  | Q10 ACCOMPLIE - Rapport localise.               |\\n"
+        printf "  | find est votre allie dans les profondeurs.      |\\n" ;;
+    11) printf "  | Q11 ACCOMPLIE [daemon] - Zone de transit prete. |\\n"
+        printf "  | La phase d exfiltration peut commencer.         |\\n" ;;
+    12) printf "  | Q12 ACCOMPLIE [daemon] - Fichier protege.       |\\n"
+        printf "  | rw------- : vous seul pouvez y acceder.         |\\n" ;;
+    13) printf "  | Q13 ACCOMPLIE [daemon] - Script arme.           |\\n"
+        printf "  | Permissions maitrisees.                         |\\n" ;;
+    14) printf "  | Q14 ACCOMPLIE - Espion identifie.               |\\n"
+        printf "  | Vous avez son PID. Il ne sait pas ce qui vient. |\\n" ;;
+    15) printf "  | Q15 ACCOMPLIE [daemon]                          |\\n"
+        printf "  |   *** OPERATION MIRAGE TERMINEE ***             |\\n"
+        printf "  | Espion neutralise. Traces brouillees.           |\\n"
+        printf "  | Mission reussie. Deconnexion en cours...        |\\n" ;;
+    esac
+    while [ "\$_i" -le 15 ]; do
+        _f="\$TP_DIR/.prog"
+        [ -f "\$_f" ] && _v=\$(awk "{print \\$\$_i}" "\$_f") || _v=0
+        [ "\$_v" = "1" ] && _tot=\$((_tot+1)); _i=\$((_i+1))
+    done
+    printf "  | Score : %s/%s                                     |\\n" "\$_tot" "\$NB_Q"
+    printf "  +--------------------------------------------------+\\n"
+    printf "%b\\n" "\$NC"
+    } >> "\$NOTIFS"
+}
+
+while true; do
+    sleep 3
+    [ ! -d "\$TP_DIR" ] && exit 0
+    # Q9 : touch agent.log
+    if ! _done 9 && [ -f "\$TP_DIR/serveur/agent.log" ]; then _mark 9; fi
+    # Q11 : mkdir archive/
+    if ! _done 11 && [ -d "\$TP_DIR/serveur/archive" ]; then _mark 11; fi
+    # Q12 : chmod 600
+    if ! _done 12 && [ -f "\$TP_DIR/serveur/exfiltration/rapport.txt" ]; then
+        _pp=\$(_perms "\$TP_DIR/serveur/exfiltration/rapport.txt")
+        [ "\$_pp" = "600" ] && _mark 12
+    fi
+    # Q13 : chmod u+x
+    if ! _done 13 && [ -x "\$TP_DIR/serveur/effacer_traces.sh" ]; then _mark 13; fi
+    # Q15 : kill + mv
+    if ! _done 15 && ! _espion_alive \
+       && [ -f "\$TP_DIR/serveur/exfiltration/notes_vacances.txt" ]; then
+        _mark 15
+    fi
+done
+DAEMONEOF
+    chmod +x "$DAEMON_SH"
+}
+
+_start_daemon() {
+    # Tuer ancien daemon si present
+    if [ -f "$TP_DIR/.daemon_pid" ]; then
+        kill "$(cat "$TP_DIR/.daemon_pid")" 2>/dev/null
+        rm -f "$TP_DIR/.daemon_pid"
+    fi
+    _write_daemon
+    sh "$DAEMON_SH" &
+    echo $! > "$TP_DIR/.daemon_pid"
+    : > "$NOTIFS"
+}
 
 # ============================================================
 # BANNIERE
@@ -36,9 +232,8 @@ banner() {
  / _ \(  _ \( ___)(  _ \ / _\(_  _)(  )(  _ \(  ( \
 ( (_) )) __/ ) _)  )   //    \ )(   )(  )   //    /
  \___/(__)  (____)(_)\_)\_/\_/(__) (__)(____)(\___)
-
 EOF
-    printf "%b\n" "${YELLOW}          ~~~ Operation MIRAGE  v5.0 ~~~${NC}"
+    printf "%b\n" "${YEL}          ~~~ Operation MIRAGE  v8.0 ~~~${NC}"
     printf "%b\n" "${DIM}    Terminale NSI - Travaux Pratiques Linux${NC}"
     printf "\n"
 }
@@ -48,225 +243,106 @@ EOF
 # ============================================================
 intro() {
     banner
-    p "${CYAN}${BOLD}[ TRANSMISSION CHIFFREE RECUE ]${NC}"
+    p "${CYN}${BLD}[ TRANSMISSION CHIFFREE RECUE ]${NC}"
     p ""
-    p "  Agent, vous avez penetrer le serveur du projet ${RED}${BOLD}MIRAGE${NC}."
-    p "  15 objectifs vous attendent — dans l'ordre que vous souhaitez."
+    p "  Agent, vous avez penetrer le serveur ${RED}${BLD}MIRAGE${NC}."
+    p "  15 missions vous attendent, dans l'ordre que vous voulez."
     p ""
-    p "  ${YELLOW}Rappel legal :${NC} operation ${BOLD}fictive et locale${NC}."
-    p "  Art. 323-1 Code Penal : l'acces non autorise est un delit."
+    p "  ${YEL}Rappel legal :${NC} simulation fictive et 100%% locale."
+    p "  Art. 323-1 Code Penal : acces non autorise = delit."
     p ""
-    p "${DIM}  ----------------------------------------------------------${NC}"
-    p "  Dossier de mission : ${CYAN}${BOLD}~/infiltration_mirage/${NC}"
+    p "${DIM}  ──────────────────────────────────────────────────────${NC}"
     p ""
-    p "  ${BOLD}Commandes :${NC}"
-    printf "  ${GREEN}%-14s${NC} -> Afficher toutes les missions + progression\n" "MISSION"
-    printf "  ${GREEN}%-14s${NC} -> Verifier/valider une mission\n"               "Q1 .. Q15"
-    printf "  ${GREEN}%-14s${NC} -> Score et progression\n"                       "STATUT"
-    printf "  ${YELLOW}%-14s${NC} -> Aide hors-ligne  ex: AGENT 7\n"             "AGENT <n>"
+    p "  ${BLD}Trois commandes seulement :${NC}"
     p ""
-    p "  ${DIM}Certaines missions se valident ${BOLD}automatiquement${DIM}.${NC}"
+    printf "  ${GRN}%-10s${NC}  Affiche chaque mission avec son contexte,\n"   "MISSION"
+    printf "  %-10s  son statut [OK]/[ ] et ce qu'il faut faire.\n"            ""
+    p ""
+    printf "  ${GRN}%-10s${NC}  Verifie si la mission N est reussie.\n"        "Q1..Q15"
+    printf "  %-10s  ${GRN}Succes${NC} : badge de felicitations + score.\n"   ""
+    printf "  %-10s  ${RED}Echec${NC}  : indice progressif (3 niveaux).\n"    ""
+    printf "  %-10s  Retapez Qn pour obtenir l'indice suivant.\n"             ""
+    p ""
+    printf "  ${GRN}%-10s${NC}  Affiche votre score et la liste des missions.\n" "STATUT"
+    p ""
+    p "${DIM}  ──────────────────────────────────────────────────────${NC}"
+    p ""
+    p "  ${DIM}Un daemon surveille le systeme en arriere-plan.${NC}"
+    p "  ${DIM}Les missions [auto] se valident seules ; le badge${NC}"
+    p "  ${DIM}s'affiche a votre prochaine commande (Q, MISSION...).${NC}"
     p ""
 }
 
 # ============================================================
-# HELPERS POSIX
-# ============================================================
-_get_field() { echo "$1" | awk "{print \$$2}"; }
-
-_get_perms() {
-    stat -c "%a" "$1" 2>/dev/null || stat -f "%OLp" "$1" 2>/dev/null
-}
-
-# PID de espion_mirage — syntaxe ps POSIX (sans 'aux' pour ash/busybox)
-_espion_pid() {
-    ps 2>/dev/null | grep "[e]spion_mirage" | awk '{print $1}' | head -1
-}
-_espion_alive() { [ -n "$(_espion_pid)" ]; }
-
-_marquer() {
-    _q="$1"
-    _f="$TP_DIR/.progression"
-    [ ! -f "$_f" ] && printf "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n" > "$_f"
-    _new=$(awk -v n="$_q" '{$n=1; print}' "$_f")
-    echo "$_new" > "$_f"
-}
-
-_est_valide() {
-    _q="$1"
-    _f="$TP_DIR/.progression"
-    [ ! -f "$_f" ] && return 1
-    [ "$(_get_field "$(cat "$_f")" "$_q")" = "1" ]
-}
-
-verif_ok() {
-    p "  ${GREEN}[OK]${NC} $1"
-    _est_valide "$2" || _marquer "$2"
-}
-verif_err() {
-    p "  ${RED}[--]${NC} $1"
-    p "  ${YELLOW}    ${NC} $2"
-}
-
-# Cherche un pattern dans les 50 dernieres commandes de l'historique.
-# Retourne 0 (vrai) si trouve. Usage : _verif_history "pattern"
-_verif_history() {
-    history 2>/dev/null | tail -50 | grep -qE "$1"
-}
-
-# ============================================================
-# WATCHER — validation automatique en arriere-plan
-# Surveille toutes les missions detectables par etat du FS/processus
-# ============================================================
-_watcher_loop() {
-    while true; do
-        sleep 3
-
-        # Q9 — touch agent.log
-        if ! _est_valide 9 && [ -f "$TP_DIR/serveur/agent.log" ]; then
-            _marquer 9
-            printf "\n%b[AUTO]%b Q9 validee automatiquement : agent.log cree !\n" \
-                "$GREEN" "$NC"
-        fi
-
-        # Q11 — mkdir archive/
-        if ! _est_valide 11 && [ -d "$TP_DIR/serveur/archive" ]; then
-            _marquer 11
-            printf "\n%b[AUTO]%b Q11 validee automatiquement : dossier archive/ cree !\n" \
-                "$GREEN" "$NC"
-        fi
-
-        # Q12 — chmod 600 sur exfiltration/rapport.txt
-        if ! _est_valide 12; then
-            _t="$TP_DIR/serveur/exfiltration/rapport.txt"
-            if [ -f "$_t" ]; then
-                _p=$(_get_perms "$_t")
-                if [ "$_p" = "600" ]; then
-                    _marquer 12
-                    printf "\n%b[AUTO]%b Q12 validee automatiquement : droits 600 appliques !\n" \
-                        "$GREEN" "$NC"
-                fi
-            fi
-        fi
-
-        # Q13 — chmod u+x sur effacer_traces.sh
-        if ! _est_valide 13 && [ -x "$TP_DIR/serveur/effacer_traces.sh" ]; then
-            _marquer 13
-            printf "\n%b[AUTO]%b Q13 validee automatiquement : effacer_traces.sh executable !\n" \
-                "$GREEN" "$NC"
-        fi
-
-        # Q15 — kill espion + mv rapport_secret.txt en notes_vacances.txt
-        if ! _est_valide 15; then
-            _killed=0; _renamed=0
-            _espion_alive || _killed=1
-            [ -f "$TP_DIR/serveur/exfiltration/notes_vacances.txt" ] && _renamed=1
-            if [ "$_killed" = "1" ] && [ "$_renamed" = "1" ]; then
-                _marquer 15
-                printf "\n%b[AUTO]%b Q15 validee automatiquement : mission accomplie !\n" \
-                    "$GREEN" "$NC"
-            fi
-        fi
-
-    done
-}
-
-_start_watcher() {
-    # Tuer l'ancien watcher
-    _wf="$TP_DIR/.watcher_pid"
-    if [ -f "$_wf" ]; then
-        kill "$(cat "$_wf")" 2>/dev/null
-        rm -f "$_wf"
-    fi
-    _watcher_loop &
-    echo $! > "$_wf"
-}
-
-# ============================================================
-# SETUP — garantit l'etat initial de chaque mission
-# Chaque Q a ce dont elle a besoin sans depend. sur les autres
+# SETUP
 # ============================================================
 setup_tp() {
-    p "${YELLOW}[SETUP] Initialisation du serveur infiltre...${NC}"
-
-    # Tuer watcher et espion precedents
-    _wf="$TP_DIR/.watcher_pid"
-    [ -f "$_wf" ] && kill "$(cat "$_wf")" 2>/dev/null && rm -f "$_wf"
-    ps 2>/dev/null | grep "[e]spion_mirage" | awk '{print $1}' | while read _pid; do
-        kill "$_pid" 2>/dev/null
-    done
+    p "${YEL}[SETUP] Initialisation...${NC}"
+    [ -f "$TP_DIR/.daemon_pid" ] && kill "$(cat "$TP_DIR/.daemon_pid")" 2>/dev/null
+    ps 2>/dev/null | grep "[e]spion_mirage" | awk '{print $1}' | \
+        while read _p; do kill "$_p" 2>/dev/null; done
 
     rm -rf "$TP_DIR"
-    mkdir -p "$TP_DIR/serveur/confidentiel"
-    mkdir -p "$TP_DIR/serveur/public"
-    mkdir -p "$TP_DIR/serveur/logs"
-    # Q12 : exfiltration/ existe deja au depart avec rapport.txt en 644
-    mkdir -p "$TP_DIR/serveur/exfiltration"
+    mkdir -p "$TP_DIR/serveur/confidentiel" "$TP_DIR/serveur/public" \
+             "$TP_DIR/serveur/logs" "$TP_DIR/serveur/exfiltration"
 
-    # Fichiers de base
-    echo "Acces refuse. Identifiez-vous." > "$TP_DIR/serveur/acces.txt"
+    echo "ACCES REFUSE." > "$TP_DIR/serveur/acces.txt"
 
-    # rapport.txt — source pour Q10 (find) et Q12 (chmod)
     cat > "$TP_DIR/serveur/confidentiel/rapport.txt" << 'EOF'
 RAPPORT CONFIDENTIEL -- Operation Mirage
-Niveau : SECRET DEFENSE
-Auteur : Agent X
+Classification : SECRET DEFENSE  |  Date : 2024-01-15
+---
 Coordonnees : 48.8566 N, 2.3522 E
-Cle de chiffrement : MIRAGE-2024-ALPHA
-Ce fichier ne doit pas quitter le serveur.
+Cle : MIRAGE-2024-ALPHA  |  Transfert : 03:00 UTC
+---
+Ce fichier ne doit pas quitter le perimetre securise.
 EOF
 
-    # rapport.txt dans exfiltration/ — cible de Q12 (chmod 600)
     cp "$TP_DIR/serveur/confidentiel/rapport.txt" \
        "$TP_DIR/serveur/exfiltration/rapport.txt"
     chmod 644 "$TP_DIR/serveur/exfiltration/rapport.txt"
 
-    # rapport_secret.txt dans exfiltration/ — cible de Q15 (mv -> notes_vacances.txt)
-    # fichier different de rapport.txt pour que Q15 soit independante
     cat > "$TP_DIR/serveur/exfiltration/rapport_secret.txt" << 'EOF'
-DOCUMENT ULTRA-SECRET -- A effacer apres lecture
-Cible operationnelle : serveur backup 10.0.0.99
-Prochain transfert : 03:00 UTC
-Renommez ce fichier pour masquer son existence.
+ULTRA-SECRET -- Phase 2
+Cible : serveur backup 10.0.0.99  |  Heure : 03:00 UTC
+INSTRUCTION : renommez ce fichier (trop visible dans les logs).
 EOF
 
-    echo "Serveur public MIRAGE." > "$TP_DIR/serveur/public/index.html"
+    echo "Index public MIRAGE." > "$TP_DIR/serveur/public/index.html"
 
-    # access.log — cible de Q7 (cat | grep Transfert)
     cat > "$TP_DIR/serveur/logs/access.log" << 'EOF'
-2024-01-15 08:23:11 - Connexion root depuis 192.168.1.1
-2024-01-15 09:11:42 - Tentative acces refusee depuis 10.0.0.42
-2024-01-15 09:45:00 - Lecture fichier config.sys
-2024-01-15 10:00:01 - Transfert fichier rapport.txt vers 10.0.0.99
-2024-01-15 10:00:03 - Deconnexion
-2024-01-15 11:30:17 - Connexion admin depuis 192.168.1.1
+2024-01-15 08:23:11 - Connexion root         depuis 192.168.1.1  [OK]
+2024-01-15 09:11:42 - Connexion inconnue     depuis 10.0.0.42    [REFUSE]
+2024-01-15 09:45:00 - Lecture config.sys     depuis 192.168.1.1  [OK]
+2024-01-15 10:00:01 - Transfert rapport.txt  vers   10.0.0.99    [OK]
+2024-01-15 10:00:03 - Deconnexion root                           [OK]
+2024-01-15 11:30:17 - Connexion admin        depuis 192.168.1.1  [OK]
+2024-01-15 14:12:55 - Lecture access.log     depuis 10.0.0.42    [REFUSE]
 EOF
 
-    # effacer_traces.sh — cible de Q13 (chmod u+x)
     cat > "$TP_DIR/serveur/effacer_traces.sh" << 'EOF'
 #!/bin/sh
-echo "Traces effacees."
+echo "Nettoyage en cours... Traces effacees."
 EOF
     chmod 644 "$TP_DIR/serveur/effacer_traces.sh"
 
-    # .fichier_cache — cible de Q4 (ls -la)
     cat > "$TP_DIR/serveur/.fichier_cache" << 'EOF'
-ECHO : Bien. Vous savez voir ce que les autres ignorent.
-Indice : le rapport se trouve dans confidentiel/
+[ECHO] Bien joue. Les fichiers en point sont caches par defaut.
+Indice : le rapport est dans confidentiel/
 EOF
 
-    # message_secret.txt — cible de Q6 (cat)
     cat > "$TP_DIR/message_secret.txt" << 'EOF'
-[TRANSMISSION DECHIFFREE -- AGENT ECHO]
-Serveur MIRAGE operationnel depuis 72h.
-Cible principale : dossier confidentiel/
-Traces suspectes dans serveur/logs/access.log
+[ECHO] Operation MIRAGE | Priorite HAUTE
+Serveur actif 72h. Cible : confidentiel/
+Transfert suspect dans serveur/logs/access.log
+Processus de surveillance actif en arriere-plan.
+Mot de passe secours : M1r4g3_2024
 EOF
 
-    # Progression vierge
-    printf "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n" > "$TP_DIR/.progression"
+    printf "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n" > "$TP_DIR/.prog"
+    printf "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n" > "$TP_DIR/.hints"
+    : > "$NOTIFS"
 
-    # Processus espion — cible de Q14 (ps|grep) et Q15 (kill)
     cat > /tmp/espion_mirage.sh << 'EOF'
 #!/bin/sh
 # espion_mirage - surveillance fictive NSI
@@ -276,682 +352,381 @@ EOF
     sh /tmp/espion_mirage.sh &
     echo $! > "$TP_DIR/.espion_pid"
 
-    p "${GREEN}[OK] Serveur initialise dans ~/infiltration_mirage/${NC}"
-
-    # Demarrer le watcher
-    _start_watcher
-    p "${GREEN}[OK] Validation automatique active (intervalle : 3s)${NC}"
-    p ""
+    _start_daemon
+    p "${GRN}[OK] Serveur pret. Daemon actif (PID: $(cat $TP_DIR/.daemon_pid)).${NC}"
 }
 
 # ============================================================
-# MISSION — liste toutes les questions avec leur statut
+# MISSION — une mission par ecran
 # ============================================================
 MISSION() {
+    _flush
     banner
-    p "${YELLOW}+============================================================+${NC}"
-    p "${YELLOW}|       DOSSIER DE MISSION : OPERATION MIRAGE                |${NC}"
-    p "${YELLOW}+============================================================+${NC}"
-    p ""
-    p "  ${DIM}Aide pour une mission : ${YELLOW}AGENT <numero>${DIM}  ex: AGENT 7${NC}"
+    _p=$(_prog)
+    _total=0; _i=1
+    while [ "$_i" -le 15 ]; do
+        [ "$(_field "$_p" "$_i")" = "1" ] && _total=$((_total+1))
+        _i=$((_i+1))
+    done
+
+    p "${YEL}  OPERATION MIRAGE — ${_total}/${NB_Q} missions accomplies${NC}"
+    p "${DIM}  ──────────────────────────────────────────────────────${NC}"
     p ""
 
-    _f="$TP_DIR/.progression"
-    [ -f "$_f" ] && _prog=$(cat "$_f") || _prog="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
-
-    _pq() {
-        _n="$1"; _titre="$2"; _desc="$3"
-        _v=$(_get_field "$_prog" "$_n")
-        if [ "$_v" = "1" ]; then _m="${GREEN}[OK]${NC}"
-        else                      _m="${DIM}[  ]${NC}"; fi
-        printf "  %b ${CYAN}${BOLD}Q%-2s${NC} ${BOLD}%-22s${NC} %s\n" \
-            "$_m" "$_n" "$_titre" "$_desc"
+    _show() {
+        _n="$1"; _cmd="$2"; _auto="$3"; _ctx="$4"; _tache="$5"
+        _v=$(_field "$_p" "$_n")
+        [ "$_v" = "1" ] && _m="${GRN}[OK]${NC}" || _m="${DIM}[ ]${NC}"
+        [ "$_auto" = "1" ] && _tag=" ${DIM}[auto]${NC}" || _tag=""
+        p "  $_m ${CYN}${BLD}Q${_n}${NC}${_tag}  ${YEL}${_cmd}${NC}"
+        p "     ${DIM}${_ctx}${NC}"
+        p "     ${BLD}>> ${_tache}${NC}"
+        p ""
     }
 
-    p "  ${DIM}--- Navigation & Lecture -----------------------------------------------${NC}"
-    _pq  1 "pwd"          "Affichez votre repertoire courant."
-    _pq  2 "ls"           "Listez le contenu de serveur/."
-    _pq  3 "man ls"       "Trouvez l'option pour les fichiers caches."
-    _pq  4 "ls -la"       "Listez serveur/ avec les details et fichiers caches."
-    _pq  5 "cd"           "Deplacez-vous dans serveur/."
-    _pq  6 "cat"          "Lisez message_secret.txt."
-    p ""
-    p "  ${DIM}--- Le pipe | ----------------------------------------------------------${NC}"
-    _pq  7 "cat | grep"   "Filtrez access.log sur le mot 'Transfert'."
-    _pq  8 "history|grep" "Cherchez 'passwd' dans l'historique."
-    p ""
-    p "  ${DIM}--- Fichiers -----------------------------------------------------------${NC}"
-    _pq  9 "touch"        "Creez un fichier vide agent.log dans serveur/."
-    _pq 10 "find"         "Trouvez rapport.txt dans toute l'arborescence."
-    _pq 11 "mkdir"        "Creez un dossier archive/ dans serveur/."
-    p ""
-    p "  ${DIM}--- Droits -------------------------------------------------------------${NC}"
-    _pq 12 "chmod 600"    "Appliquez les droits 600 sur exfiltration/rapport.txt."
-    _pq 13 "chmod u+x"    "Rendez effacer_traces.sh executable."
-    p ""
-    p "  ${DIM}--- Processus ----------------------------------------------------------${NC}"
-    _pq 14 "ps | grep"    "Trouvez le PID de espion_mirage."
-    _pq 15 "kill + mv"    "Tuez espion_mirage. Renommez rapport_secret.txt."
-    p ""
+    p "  ${DIM}── Phase 1 : Reconnaissance ────────────────────────────${NC}"; p ""
+    _show  1 "pwd"         0 "Ou etes-vous sur ce serveur ?" \
+             "Affichez le chemin complet de votre repertoire actuel."
+    _show  2 "ls"          0 "Le serveur contient des dossiers a explorer." \
+             "Listez le contenu de ~/infiltration_mirage/serveur/"
+    _show  3 "ls --help"   0 "Certains fichiers sont caches — il faut la bonne option." \
+             "Consultez ls --help et trouvez l'option qui affiche les fichiers caches."
+    _show  4 "ls -la"      0 "Vous connaissez l'option (Q3). Utilisez-la." \
+             "Listez serveur/ avec TOUS les details et les fichiers caches."
+    _show  5 "cd"          0 "Lister c'est bien. Entrer dans la zone, c'est mieux." \
+             "Allez dans ~/infiltration_mirage/serveur/ puis tapez Q5."
+    _show  6 "cat"         0 "Un message chiffre vous attend." \
+             "Lisez ~/infiltration_mirage/message_secret.txt"
+
+    p "  ${DIM}── Phase 2 : Le pipe | ─────────────────────────────────${NC}"; p ""
+    _show  7 "cat | grep"  0 "Le journal access.log est long. Cherchez les transferts." \
+             "Filtrez access.log pour voir uniquement les lignes 'Transfert'."
+    _show  8 "history|grep" 0 "Un operateur a peut-etre tape un mot de passe." \
+             "Cherchez 'passwd' dans votre historique avec history et grep."
+
+    p "  ${DIM}── Phase 3 : Fichiers ──────────────────────────────────${NC}"; p ""
+    _show  9 "touch"       1 "Laissez une empreinte sur ce serveur." \
+             "Creez le fichier vide agent.log dans serveur/"
+    _show 10 "find"        0 "Le rapport est cache quelque part." \
+             "Trouvez tous les rapport.txt dans ~/infiltration_mirage/"
+    _show 11 "mkdir"       1 "Il faut une zone de transit pour exfiltrer." \
+             "Creez le dossier archive/ dans serveur/"
+
+    p "  ${DIM}── Phase 4 : Droits ────────────────────────────────────${NC}"; p ""
+    _show 12 "chmod 600"   1 "Le rapport exfiltre doit etre inaccessible aux autres." \
+             "Appliquez les droits 600 sur serveur/exfiltration/rapport.txt"
+    _show 13 "chmod u+x"   1 "Le script d'effacement est bloque. Armez-le." \
+             "Rendez serveur/effacer_traces.sh executable."
+
+    p "  ${DIM}── Phase 5 : Processus ─────────────────────────────────${NC}"; p ""
+    _show 14 "ps | grep"   0 "Un processus inconnu surveille le serveur. Identifiez-le." \
+             "Trouvez le PID de espion_mirage avec ps | grep. Puis tapez Q14."
+    _show 15 "kill + mv"   1 "Derniere etape : neutraliser et camoufler." \
+             "Tuez espion_mirage (kill), renommez rapport_secret.txt en notes_vacances.txt"
 }
 
 # ============================================================
-# VERIFICATEURS — validation manuelle Q1-Q15
-# Appellent _marquer si OK (idempotent avec _est_valide)
-# ============================================================
-
-Q1() {
-    p "${BOLD}[Q1] pwd — Repertoire courant${NC}"
-    p "  Vous etes dans : ${CYAN}${BOLD}$PWD${NC}"
-    p "  ${DIM}pwd = print working directory — affiche le chemin absolu.${NC}"
-    # Validation : tapé Q1 OU pwd trouve dans l'historique
-    if _verif_history "^[0-9 ]*pwd[[:space:]]*$"; then
-        p "  ${DIM}(pwd detecte dans l'historique)${NC}"
-    fi
-    verif_ok "Q1 validee." 1
-}
-
-Q2() {
-    p "${BOLD}[Q2] ls — Lister serveur/${NC}"
-    if [ -d "$TP_DIR/serveur" ]; then
-        p "  ${DIM}Commande : ls ~/infiltration_mirage/serveur/${NC}"
-        p "  Contenu visible :"
-        ls "$TP_DIR/serveur/" | sed 's/^/    /'
-        p "  ${DIM}(les fichiers caches ne sont pas montres ici — Q4 les revelera)${NC}"
-        # Validation : tapé Q2 OU ls sur serveur/ detecte dans l'historique
-        if _verif_history "^[0-9 ]*ls[[:space:]]+~/infiltration_mirage/serveur/[[:space:]]*$"; then
-            p "  ${DIM}(ls serveur/ detecte dans l'historique)${NC}"
-        fi
-        verif_ok "Q2 validee." 2
-    else
-        verif_err "serveur/ inaccessible." "Relancez : . ~/tp_infiltration.sh"
-    fi
-}
-
-Q3() {
-    p "${BOLD}[Q3] man ls — Documentation${NC}"
-    p "  ${DIM}Commande a taper : man ls${NC}"
-    p "  ${DIM}Navigation : Espace=avancer  /mot=chercher  n=suivant  q=quitter${NC}"
-    p ""
-    p "  Reponse : l'option ${YELLOW}-a${NC} (ou --all) affiche tous les fichiers,"
-    p "  y compris ceux dont le nom commence par un point (fichiers caches)."
-    # Validation : tapé Q3 OU man ls detecte dans l'historique
-    if _verif_history "man[[:space:]]+ls"; then
-        p "  ${DIM}(man ls detecte dans l'historique — bien joue !)${NC}"
-    fi
-    verif_ok "Q3 validee." 3
-}
-
-Q4() {
-    p "${BOLD}[Q4] ls -la — Fichiers caches${NC}"
-    if [ -f "$TP_DIR/serveur/.fichier_cache" ]; then
-        p "  ${DIM}Commande : ls -la ~/infiltration_mirage/serveur/${NC}"
-        p ""
-        p "  ${CYAN}Contenu de .fichier_cache :${NC}"
-        cat "$TP_DIR/serveur/.fichier_cache" | sed 's/^/    /'
-        # Validation : tapé Q4 OU ls -la / ls -al detecte dans l'historique
-        if _verif_history "ls[[:space:]]+-la|ls[[:space:]]+-al"; then
-            p "  ${DIM}(ls -la detecte dans l'historique)${NC}"
-        fi
-        verif_ok "Q4 validee." 4
-    else
-        verif_err "Fichier cache absent." "Relancez le TP."
-    fi
-}
-
-Q5() {
-    p "${BOLD}[Q5] cd — Navigation${NC}"
-    if [ "$PWD" = "$TP_DIR/serveur" ]; then
-        verif_ok "Q5 validee. Vous etes dans serveur/." 5
-    else
-        verif_err "Vous etes dans : $PWD" \
-                  "Tapez : cd ~/infiltration_mirage/serveur/"
-    fi
-}
-
-Q6() {
-    p "${BOLD}[Q6] cat — Lecture${NC}"
-    if [ -f "$TP_DIR/message_secret.txt" ]; then
-        p "  ${DIM}Commande : cat ~/infiltration_mirage/message_secret.txt${NC}"
-        p ""
-        p "  ${CYAN}Contenu de message_secret.txt :${NC}"
-        cat "$TP_DIR/message_secret.txt" | sed 's/^/    /'
-        # Validation : tapé Q6 OU cat message_secret detecte
-        if _verif_history "cat.*message_secret"; then
-            p "  ${DIM}(cat message_secret.txt detecte dans l'historique)${NC}"
-        fi
-        verif_ok "Q6 validee." 6
-    else
-        verif_err "message_secret.txt introuvable." "Verifiez avec pwd."
-    fi
-}
-
-Q7() {
-    p "${BOLD}[Q7] cat | grep — Le pipe${NC}"
-    p ""
-    p "  ${CYAN}Principe du pipe | :${NC}"
-    p "  La SORTIE de la commande de gauche devient l'ENTREE de droite."
-    p ""
-    p "  ${DIM}cat access.log${NC}                    -> affiche tout le fichier"
-    p "  ${DIM}cat access.log | grep Transfert${NC}   -> garde seulement les lignes avec 'Transfert'"
-    p ""
-    p "  ${YELLOW}Commande complete :${NC}"
-    p "  cat ~/infiltration_mirage/serveur/logs/access.log | grep Transfert"
-    p ""
-    p "  ${CYAN}Resultat :${NC}"
-    grep "Transfert" "$TP_DIR/serveur/logs/access.log" 2>/dev/null | sed 's/^/    /' \
-        || p "    (fichier log absent — relancez le TP)"
-    # Validation : tapé Q7 OU cat...grep / cat...pipe detecte dans l'historique
-    if _verif_history "cat.*access\.log.*\|.*grep.*Transfert|cat.*\|.*grep.*Transfert"; then
-        p "  ${DIM}(cat | grep detecte dans l'historique)${NC}"
-    fi
-    verif_ok "Q7 validee." 7
-}
-
-Q8() {
-    p "${BOLD}[Q8] history | grep — Pipe sur l'historique${NC}"
-    p ""
-    p "  ${DIM}Meme principe que Q7 : history | grep passwd${NC}"
-    p ""
-    _hist=$(history 2>/dev/null | grep "passwd")
-    if [ -n "$_hist" ]; then
-        p "  ${CYAN}Lignes trouvees dans l'historique :${NC}"
-        echo "$_hist" | sed 's/^/    /'
-    else
-        p "  ${DIM}(Aucun resultat — normal, vous n'avez pas encore tape 'passwd')${NC}"
-        p "  Dans un vrai scenario : '  42  mysql -u root -pmonpasswd'"
-    fi
-    p ""
-    p "  ${DIM}Le pipe fonctionne avec n'importe quelle commande produisant du texte.${NC}"
-    # Validation : tapé Q8 OU history|grep detecte
-    if _verif_history "history[[:space:]]*\|[[:space:]]*grep"; then
-        p "  ${DIM}(history | grep detecte dans l'historique)${NC}"
-    fi
-    verif_ok "Q8 validee." 8
-}
-
-Q9() {
-    p "${BOLD}[Q9] touch — Creer un fichier vide${NC}"
-    if [ -f "$TP_DIR/serveur/agent.log" ]; then
-        verif_ok "Q9 validee. agent.log existe dans serveur/." 9
-    else
-        verif_err "agent.log absent de serveur/." \
-                  "Tapez : touch ~/infiltration_mirage/serveur/agent.log"
-        p "  ${DIM}(validation automatique dans les 3 secondes apres creation)${NC}"
-    fi
-}
-
-Q10() {
-    p "${BOLD}[Q10] find — Recherche recursive${NC}"
-    _found=$(find "$TP_DIR" -name "rapport.txt" 2>/dev/null)
-    if [ -n "$_found" ]; then
-        p "  ${DIM}Commande : find ~/infiltration_mirage/ -name rapport.txt${NC}"
-        p "  ${DIM}find cherche dans tous les sous-dossiers, contrairement a ls.${NC}"
-        p ""
-        p "  ${CYAN}Fichiers trouves :${NC}"
-        echo "$_found" | sed 's/^/    /'
-        # Validation : tapé Q10 OU find -name rapport detecte dans l'historique
-        if _verif_history "find.*-name.*rapport|find.*rapport\.txt"; then
-            p "  ${DIM}(find rapport.txt detecte dans l'historique)${NC}"
-        fi
-        verif_ok "Q10 validee." 10
-    else
-        verif_err "rapport.txt introuvable." \
-                  "Tapez : find ~/infiltration_mirage/ -name rapport.txt"
-    fi
-}
-
-Q11() {
-    p "${BOLD}[Q11] mkdir — Creer un dossier${NC}"
-    if [ -d "$TP_DIR/serveur/archive" ]; then
-        verif_ok "Q11 validee. Dossier archive/ cree dans serveur/." 11
-    else
-        verif_err "Dossier archive/ absent de serveur/." \
-                  "Tapez : mkdir ~/infiltration_mirage/serveur/archive"
-        p "  ${DIM}(validation automatique dans les 3 secondes apres creation)${NC}"
-    fi
-}
-
-Q12() {
-    p "${BOLD}[Q12] chmod 600 — Droits restrictifs${NC}"
-    _t="$TP_DIR/serveur/exfiltration/rapport.txt"
-    if [ ! -f "$_t" ]; then
-        verif_err "exfiltration/rapport.txt absent." "Relancez le TP."
-        return
-    fi
-    _p=$(_get_perms "$_t")
-    if [ "$_p" = "600" ]; then
-        p "  ${DIM}600 = rw------- : User(6=rw) Group(0=---) Others(0=---)${NC}"
-        verif_ok "Q12 validee. Droits 600 appliques." 12
-    else
-        verif_err "Droits actuels : ${_p:-inconnus} — attendu : 600." \
-                  "Tapez : chmod 600 ~/infiltration_mirage/serveur/exfiltration/rapport.txt"
-        p "  ${DIM}(validation automatique dans les 3 secondes)${NC}"
-    fi
-}
-
-Q13() {
-    p "${BOLD}[Q13] chmod u+x — Rendre executable${NC}"
-    _t="$TP_DIR/serveur/effacer_traces.sh"
-    _p=$(_get_perms "$_t" 2>/dev/null)
-    if [ -x "$_t" ]; then
-        p "  ${DIM}u+x : ajouter (+) execution (x) au proprietaire (u). Droits : $_p${NC}"
-        verif_ok "Q13 validee. effacer_traces.sh est executable." 13
-    else
-        verif_err "Pas executable. Droits actuels : ${_p:-inconnus}." \
-                  "Tapez : chmod u+x ~/infiltration_mirage/serveur/effacer_traces.sh"
-        p "  ${DIM}(validation automatique dans les 3 secondes)${NC}"
-    fi
-}
-
-Q14() {
-    p "${BOLD}[Q14] ps | grep — Reperer un processus${NC}"
-    _pid=$(_espion_pid)
-    if [ -n "$_pid" ]; then
-        p "  ${DIM}Commande : ps | grep espion_mirage${NC}"
-        p "  ${DIM}(la ligne contenant 'grep' apparait aussi — ignorez-la)${NC}"
-        p ""
-        p "  ${CYAN}Processus espion_mirage detecte :${NC}"
-        ps 2>/dev/null | grep "[e]spion_mirage" | sed 's/^/    /'
-        p ""
-        # Validation : tapé Q14 OU ps|grep espion detecte
-        if _verif_history "ps[[:space:]]*\|[[:space:]]*grep.*(espion|mirage)"; then
-            p "  ${DIM}(ps | grep detecte dans l'historique)${NC}"
-        fi
-        verif_ok "Q14 validee. PID de espion_mirage : ${RED}${BOLD}$_pid${NC}" 14
-        p "  ${DIM}Notez ce PID — il vous servira pour Q15 : kill $_pid${NC}"
-    else
-        verif_err "espion_mirage ne tourne pas." \
-                  "Relancez le TP : . ~/tp_infiltration.sh"
-    fi
-}
-
-Q15() {
-    p "${BOLD}[Q15] kill + mv — Neutralisation et camouflage${NC}"
-    _espion_mort=0; _renomme=0
-    _espion_alive || _espion_mort=1
-    [ -f "$TP_DIR/serveur/exfiltration/notes_vacances.txt" ] && _renomme=1
-
-    if [ "$_espion_mort" = "1" ] && [ "$_renomme" = "1" ]; then
-        verif_ok "Q15 validee. Espion neutralise + fichier camouffle." 15
-        p ""
-        p "  ${GREEN}${BOLD}OPERATION MIRAGE TERMINEE. Bien joue, agent.${NC}"
-    else
-        if [ "$_espion_mort" = "0" ]; then
-            _pid=$(_espion_pid)
-            verif_err "Espion toujours actif (PID : $_pid)." \
-                      "Tapez : kill $_pid   (force : kill -9 $_pid)"
-        else
-            p "  ${GREEN}[OK]${NC}  Espion neutralise."
-        fi
-        if [ "$_renomme" = "0" ]; then
-            verif_err "rapport_secret.txt pas encore renomme." \
-                      "Tapez : mv ~/infiltration_mirage/serveur/exfiltration/rapport_secret.txt ~/infiltration_mirage/serveur/exfiltration/notes_vacances.txt"
-            p "  ${DIM}(validation automatique dans les 3 secondes)${NC}"
-        else
-            p "  ${GREEN}[OK]${NC}  Fichier renomme en notes_vacances.txt."
-        fi
-    fi
-}
-
-# ============================================================
-# AGENT — aide hors-ligne avec 3 niveaux d'indices
-# Analyse l'etat reel du systeme avant de repondre
-# ============================================================
-AGENT() {
-    _n="${1:-}"
-
-    if [ -z "$_n" ]; then
-        p ""
-        p "${YELLOW}+--[ AGENT -- Aide hors-ligne ]------------------------------+${NC}"
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  Pour quelle mission ? (1-15, ou 'fin') :"
-        printf "${YELLOW}|${NC}  > "
-        read _n
-        if [ "$_n" = "fin" ] || [ -z "$_n" ]; then
-            p "${YELLOW}|${NC}  Annule."
-            p "${YELLOW}+------------------------------------------------------------+${NC}"
-            return
-        fi
-    fi
-
-    case "$_n" in
-        1|2|3|4|5|6|7|8|9|10|11|12|13|14|15) ;;
-        *)
-            p "  ${RED}Numero invalide. Exemple : AGENT 7${NC}"
-            return ;;
-    esac
-
-    p ""
-    p "${YELLOW}+--[ AGENT -- Mission Q${_n} ]-----------------------------------+${NC}"
-    p "${YELLOW}|${NC}"
-
-    # Verifier si deja validee
-    if _est_valide "$_n"; then
-        p "${YELLOW}|${NC}  ${GREEN}Cette mission est deja validee. Bravo !${NC}"
-        p "${YELLOW}|${NC}  Tapez MISSION pour voir les autres objectifs."
-        p "${YELLOW}+------------------------------------------------------------+${NC}"
-        return
-    fi
-
-    # Analyser l'etat et donner les indices en fonction
-    case "$_n" in
-
-    1)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} afficher votre repertoire courant."
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  Analyse : vous etes actuellement dans ${CYAN}$PWD${NC}"
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 1] Il existe une commande courte (3 lettres)"
-        p "${YELLOW}|${NC}             pour afficher ou on se trouve."
-        p "${YELLOW}|${NC}  [Indice 2] Son nom vient de 'Print Working Directory'."
-        p "${YELLOW}|${NC}  [Indice 3] Commande : ${YELLOW}pwd${NC}  puis tapez Q1."
-        ;;
-
-    2)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} lister le contenu de serveur/."
-        p "${YELLOW}|${NC}"
-        if [ -d "$TP_DIR/serveur" ]; then
-            p "${YELLOW}|${NC}  Analyse : le dossier serveur/ existe bien."
-        else
-            p "${YELLOW}|${NC}  ${RED}Analyse : serveur/ est absent — relancez le TP.${NC}"
-        fi
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 1] 'ls' liste le contenu d'un dossier."
-        p "${YELLOW}|${NC}  [Indice 2] On peut donner un chemin en argument : ls /chemin/"
-        p "${YELLOW}|${NC}  [Indice 3] Commande : ${YELLOW}ls ~/infiltration_mirage/serveur/${NC}"
-        ;;
-
-    3)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} trouver l'option -a de ls dans le manuel."
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 1] 'man commande' ouvre le manuel de cette commande."
-        p "${YELLOW}|${NC}             Naviguez avec Espace, quittez avec q."
-        p "${YELLOW}|${NC}  [Indice 2] Dans man, tapez /all puis Entree pour chercher"
-        p "${YELLOW}|${NC}             le mot 'all'. n passe a l'occurrence suivante."
-        p "${YELLOW}|${NC}  [Indice 3] L'option est ${YELLOW}-a${NC} (ou --all)."
-        p "${YELLOW}|${NC}             Apres avoir consulte man, tapez Q3 pour valider."
-        ;;
-
-    4)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} lister serveur/ avec fichiers caches."
-        p "${YELLOW}|${NC}"
-        _c="non"; [ -f "$TP_DIR/serveur/.fichier_cache" ] && _c="oui"
-        p "${YELLOW}|${NC}  Analyse : fichier cache .fichier_cache present = $_c"
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 1] Les fichiers dont le nom commence par '.' sont"
-        p "${YELLOW}|${NC}             caches par defaut. L'option -a les rend visibles."
-        p "${YELLOW}|${NC}  [Indice 2] L'option -l affiche les details (droits, taille...)."
-        p "${YELLOW}|${NC}             On peut combiner plusieurs options : -la ou -l -a"
-        p "${YELLOW}|${NC}  [Indice 3] Commande : ${YELLOW}ls -la ~/infiltration_mirage/serveur/${NC}"
-        ;;
-
-    5)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} se deplacer dans serveur/."
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  Analyse : vous etes dans ${CYAN}$PWD${NC}"
-        p "${YELLOW}|${NC}           destination : ${CYAN}$TP_DIR/serveur${NC}"
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 1] 'ls' LISTE un dossier sans y aller."
-        p "${YELLOW}|${NC}             'cd' CHANGE de dossier (change directory)."
-        p "${YELLOW}|${NC}  [Indice 2] cd suivi d'un chemin vous deplace dans ce dossier."
-        p "${YELLOW}|${NC}  [Indice 3] Commande : ${YELLOW}cd ~/infiltration_mirage/serveur/${NC}"
-        p "${YELLOW}|${NC}             puis tapez Q5 pour valider."
-        ;;
-
-    6)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} lire le contenu de message_secret.txt."
-        p "${YELLOW}|${NC}"
-        _e="non"; [ -f "$TP_DIR/message_secret.txt" ] && _e="oui"
-        p "${YELLOW}|${NC}  Analyse : message_secret.txt present = $_e"
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 1] 'cat' affiche le contenu d'un fichier texte."
-        p "${YELLOW}|${NC}             Son nom vient de 'concatenate'."
-        p "${YELLOW}|${NC}  [Indice 2] Donnez le chemin du fichier en argument."
-        p "${YELLOW}|${NC}  [Indice 3] Commande : ${YELLOW}cat ~/infiltration_mirage/message_secret.txt${NC}"
-        ;;
-
-    7)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} filtrer access.log avec cat | grep."
-        p "${YELLOW}|${NC}"
-        _l="non"
-        [ -f "$TP_DIR/serveur/logs/access.log" ] && _l="oui"
-        p "${YELLOW}|${NC}  Analyse : access.log present = $_l"
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 1] Le symbole | s'appelle 'pipe' (tuyau)."
-        p "${YELLOW}|${NC}             Il branche la SORTIE de gauche sur l'ENTREE de droite."
-        p "${YELLOW}|${NC}             commande1 | commande2"
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 2] 'grep mot' filtre les lignes contenant 'mot'."
-        p "${YELLOW}|${NC}             Avec pipe : cat fichier | grep mot"
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 3] Commande complete :"
-        p "${YELLOW}|${NC}    ${YELLOW}cat ~/infiltration_mirage/serveur/logs/access.log | grep Transfert${NC}"
-        p "${YELLOW}|${NC}    Puis tapez Q7 pour valider."
-        ;;
-
-    8)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} chercher 'passwd' dans l'historique."
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 1] 'history' affiche les dernieres commandes tapees."
-        p "${YELLOW}|${NC}             Essayez : history"
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 2] Combinez history et grep avec le pipe (comme Q7)."
-        p "${YELLOW}|${NC}             history | grep <motif>"
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 3] Commande : ${YELLOW}history | grep passwd${NC}"
-        p "${YELLOW}|${NC}             (le resultat peut etre vide — c'est normal)"
-        p "${YELLOW}|${NC}             Puis tapez Q8 pour valider."
-        ;;
-
-    9)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} creer le fichier vide agent.log."
-        p "${YELLOW}|${NC}"
-        _e="non"; [ -f "$TP_DIR/serveur/agent.log" ] && _e="oui"
-        p "${YELLOW}|${NC}  Analyse : agent.log existe deja = $_e"
-        p "${YELLOW}|${NC}"
-        if [ "$_e" = "oui" ]; then
-            p "${YELLOW}|${NC}  ${GREEN}Le fichier existe — validation automatique en cours.${NC}"
-        else
-            p "${YELLOW}|${NC}  [Indice 1] 'touch' cree un fichier vide."
-            p "${YELLOW}|${NC}             Si le fichier existe deja, il met juste a jour sa date."
-            p "${YELLOW}|${NC}  [Indice 2] Donnez le chemin complet du fichier a creer."
-            p "${YELLOW}|${NC}  [Indice 3] Commande :"
-            p "${YELLOW}|${NC}    ${YELLOW}touch ~/infiltration_mirage/serveur/agent.log${NC}"
-            p "${YELLOW}|${NC}    (validation automatique en 3 secondes)"
-        fi
-        ;;
-
-    10)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} localiser rapport.txt avec find."
-        p "${YELLOW}|${NC}"
-        _n_found=$(find "$TP_DIR" -name "rapport.txt" 2>/dev/null | wc -l | tr -d ' ')
-        p "${YELLOW}|${NC}  Analyse : ${_n_found} fichier(s) rapport.txt dans l'arborescence."
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 1] 'ls' ne voit qu'un seul niveau de dossier."
-        p "${YELLOW}|${NC}             'find' explore recursivement tous les sous-dossiers."
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 2] Syntaxe : find <dossier_de_depart> -name <nom_fichier>"
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 3] Commande :"
-        p "${YELLOW}|${NC}    ${YELLOW}find ~/infiltration_mirage/ -name rapport.txt${NC}"
-        ;;
-
-    11)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} creer le dossier archive/ dans serveur/."
-        p "${YELLOW}|${NC}"
-        _e="non"; [ -d "$TP_DIR/serveur/archive" ] && _e="oui"
-        p "${YELLOW}|${NC}  Analyse : dossier archive/ existe deja = $_e"
-        p "${YELLOW}|${NC}"
-        if [ "$_e" = "oui" ]; then
-            p "${YELLOW}|${NC}  ${GREEN}Le dossier existe — validation automatique en cours.${NC}"
-        else
-            p "${YELLOW}|${NC}  [Indice 1] 'mkdir' cree un nouveau dossier (make directory)."
-            p "${YELLOW}|${NC}  [Indice 2] Donnez le chemin complet du dossier a creer."
-            p "${YELLOW}|${NC}  [Indice 3] Commande :"
-            p "${YELLOW}|${NC}    ${YELLOW}mkdir ~/infiltration_mirage/serveur/archive${NC}"
-            p "${YELLOW}|${NC}    (validation automatique en 3 secondes)"
-        fi
-        ;;
-
-    12)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} chmod 600 sur exfiltration/rapport.txt."
-        p "${YELLOW}|${NC}"
-        _t="$TP_DIR/serveur/exfiltration/rapport.txt"
-        _p=$(_get_perms "$_t" 2>/dev/null)
-        p "${YELLOW}|${NC}  Analyse : droits actuels = ${CYAN}${_p:-fichier absent}${NC}"
-        p "${YELLOW}|${NC}           droits attendus = ${GREEN}600${NC}"
-        p "${YELLOW}|${NC}"
-        if [ "$_p" = "600" ]; then
-            p "${YELLOW}|${NC}  ${GREEN}Droits corrects — validation automatique en cours.${NC}"
-        else
-            p "${YELLOW}|${NC}  [Indice 1] Les droits en octal : r=4, w=2, x=1."
-            p "${YELLOW}|${NC}             On additionne par groupe : user / group / others."
-            p "${YELLOW}|${NC}             Exemple : 7 = r+w+x, 6 = r+w, 4 = r seulement."
-            p "${YELLOW}|${NC}"
-            p "${YELLOW}|${NC}  [Indice 2] 600 = User:6(lire+ecrire) Group:0 Others:0"
-            p "${YELLOW}|${NC}             Seul le proprietaire peut acceder au fichier."
-            p "${YELLOW}|${NC}"
-            p "${YELLOW}|${NC}  [Indice 3] Commande :"
-            p "${YELLOW}|${NC}    ${YELLOW}chmod 600 ~/infiltration_mirage/serveur/exfiltration/rapport.txt${NC}"
-        fi
-        ;;
-
-    13)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} rendre effacer_traces.sh executable."
-        p "${YELLOW}|${NC}"
-        _t="$TP_DIR/serveur/effacer_traces.sh"
-        _p=$(_get_perms "$_t" 2>/dev/null)
-        _x="non"; [ -x "$_t" ] && _x="oui"
-        p "${YELLOW}|${NC}  Analyse : droits actuels = ${CYAN}${_p:-inconnus}${NC}"
-        p "${YELLOW}|${NC}           executable par le proprietaire = $_x"
-        p "${YELLOW}|${NC}"
-        if [ "$_x" = "oui" ]; then
-            p "${YELLOW}|${NC}  ${GREEN}Fichier executable — validation automatique en cours.${NC}"
-        else
-            p "${YELLOW}|${NC}  [Indice 1] Mode relatif de chmod : on designe qui (u/g/o),"
-            p "${YELLOW}|${NC}             l'action (+ ajoute, - retire) et le droit (r/w/x)."
-            p "${YELLOW}|${NC}             u = user (proprietaire), x = execution."
-            p "${YELLOW}|${NC}"
-            p "${YELLOW}|${NC}  [Indice 2] 'u+x' = ajouter le droit d'execution au proprietaire."
-            p "${YELLOW}|${NC}"
-            p "${YELLOW}|${NC}  [Indice 3] Commande :"
-            p "${YELLOW}|${NC}    ${YELLOW}chmod u+x ~/infiltration_mirage/serveur/effacer_traces.sh${NC}"
-        fi
-        ;;
-
-    14)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} trouver le PID de espion_mirage."
-        p "${YELLOW}|${NC}"
-        _pid=$(_espion_pid)
-        if [ -n "$_pid" ]; then
-            p "${YELLOW}|${NC}  Analyse : espion_mirage tourne. ${GREEN}PID = ${RED}$_pid${NC}"
-        else
-            p "${YELLOW}|${NC}  ${RED}Analyse : espion_mirage ne tourne pas — relancez le TP.${NC}"
-        fi
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 1] 'ps' liste les processus en cours d'execution."
-        p "${YELLOW}|${NC}             Sur ce systeme, 'ps' sans option liste vos processus."
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 2] Combinez ps et grep avec un pipe pour filtrer."
-        p "${YELLOW}|${NC}             La colonne PID est la premiere colonne affichee."
-        p "${YELLOW}|${NC}"
-        p "${YELLOW}|${NC}  [Indice 3] Commande : ${YELLOW}ps | grep espion_mirage${NC}"
-        p "${YELLOW}|${NC}             Puis tapez Q14 pour valider."
-        ;;
-
-    15)
-        p "${YELLOW}|${NC}  ${BOLD}Objectif :${NC} tuer espion_mirage + renommer rapport_secret.txt."
-        p "${YELLOW}|${NC}"
-        _pid=$(_espion_pid)
-        _vit="non"; _espion_alive && _vit="oui"
-        _ren="non"
-        [ -f "$TP_DIR/serveur/exfiltration/notes_vacances.txt" ] && _ren="oui"
-        _src_ok="non"
-        [ -f "$TP_DIR/serveur/exfiltration/rapport_secret.txt" ] && _src_ok="oui"
-        p "${YELLOW}|${NC}  Analyse :"
-        p "${YELLOW}|${NC}    espion_mirage actif            = $(_espion_alive && echo oui || echo non)"
-        p "${YELLOW}|${NC}    rapport_secret.txt present     = $_src_ok"
-        p "${YELLOW}|${NC}    notes_vacances.txt cree        = $_ren"
-        p "${YELLOW}|${NC}"
-        if [ "$_vit" = "oui" ] && [ -n "$_pid" ]; then
-            p "${YELLOW}|${NC}  -- Tuer le processus --"
-            p "${YELLOW}|${NC}  [Indice 1] 'kill PID' envoie un signal d'arret au processus."
-            p "${YELLOW}|${NC}  [Indice 2] Le PID est dans l'analyse ci-dessus."
-            p "${YELLOW}|${NC}             Vous pouvez aussi le retrouver avec : ps | grep espion"
-            p "${YELLOW}|${NC}  [Indice 3] Commande : ${YELLOW}kill $_pid${NC}"
-            p "${YELLOW}|${NC}             Si bloque : ${YELLOW}kill -9 $_pid${NC}"
-            p "${YELLOW}|${NC}"
-        fi
-        if [ "$_ren" = "non" ]; then
-            p "${YELLOW}|${NC}  -- Renommer le fichier --"
-            p "${YELLOW}|${NC}  [Indice 1] 'mv' sert a deplacer ET a renommer des fichiers."
-            p "${YELLOW}|${NC}             Syntaxe : mv <source> <destination>"
-            p "${YELLOW}|${NC}  [Indice 2] Pour renommer, la destination est dans le meme"
-            p "${YELLOW}|${NC}             dossier mais avec un nom different."
-            p "${YELLOW}|${NC}  [Indice 3] Commande :"
-            p "${YELLOW}|${NC}    ${YELLOW}mv ~/infiltration_mirage/serveur/exfiltration/rapport_secret.txt \\"
-            p "${YELLOW}|${NC}       ~/infiltration_mirage/serveur/exfiltration/notes_vacances.txt${NC}"
-        fi
-        ;;
-    esac
-
-    p "${YELLOW}|${NC}"
-    p "${YELLOW}|${NC}  ${DIM}Reviens me voir si tu as besoin de plus d'aide : tape ${YELLOW}AGENT ${_n}${DIM}.${NC}"
-    p "${YELLOW}+------------------------------------------------------------+${NC}"
-    p ""
-}
-
-# ============================================================
-# STATUT
+# STATUT — score rapide
 # ============================================================
 STATUT() {
-    p "${BOLD}+=========================================+${NC}"
-    p "${BOLD}|    PROGRESSION -- OPERATION MIRAGE      |${NC}"
-    p "${BOLD}+=========================================+${NC}"
-    p ""
-    _f="$TP_DIR/.progression"
-    [ ! -f "$_f" ] && p "  Aucune progression enregistree." && return
-    _total=0
-    _i=1
+    _flush
+    _p=$(_prog); _total=0; _i=1
+    p ""; p "  ${BLD}Score — Operation MIRAGE${NC}"; p ""
     while [ "$_i" -le 15 ]; do
-        _v=$(_get_field "$(cat "$_f")" "$_i")
-        case "$_i" in
-            1)  _l="pwd       -- Repertoire courant" ;;
-            2)  _l="ls        -- Lister serveur/" ;;
-            3)  _l="man ls    -- Documentation" ;;
-            4)  _l="ls -la    -- Fichiers caches" ;;
-            5)  _l="cd        -- Navigation" ;;
-            6)  _l="cat       -- Lecture fichier" ;;
-            7)  _l="cat|grep  -- Introduction pipe" ;;
-            8)  _l="hist|grep -- Pipe historique" ;;
-            9)  _l="touch     -- Creer agent.log" ;;
-            10) _l="find      -- Localiser rapport.txt" ;;
-            11) _l="mkdir     -- Creer archive/" ;;
-            12) _l="chmod 600 -- Droits restrictifs" ;;
-            13) _l="chmod u+x -- Script executable" ;;
-            14) _l="ps|grep   -- Reperer espion_mirage" ;;
-            15) _l="kill+mv   -- Neutraliser et camoufler" ;;
-        esac
+        _v=$(_field "$_p" "$_i")
         if [ "$_v" = "1" ]; then
-            printf "  ${GREEN}OK${NC}  Q%-2s  %s\n" "$_i" "$_l"
-            _total=$((_total + 1))
+            printf "  ${GRN}OK${NC} Q%s\n" "$_i"; _total=$((_total+1))
         else
-            printf "  ${DIM}--${NC}  Q%-2s  %s\n" "$_i" "$_l"
+            printf "  ${DIM}--${NC} Q%s\n" "$_i"
         fi
-        _i=$((_i + 1))
+        _i=$((_i+1))
     done
     p ""
-    p "  Score : ${BOLD}${_total}/${NB_Q}${NC}"
-    if [ "$_total" -eq "$NB_Q" ]; then
-        p ""
-        p "  ${GREEN}${BOLD}MISSION ACCOMPLIE -- Operation MIRAGE terminee.${NC}"
-    elif [ "$_total" -ge 10 ]; then
-        p "  ${YELLOW}Plus que $(($NB_Q - $_total)) objectif(s).${NC}"
-    else
-        p "  ${DIM}Tapez MISSION pour voir les objectifs.${NC}"
-    fi
+    p "  ${BLD}${_total}/${NB_Q}${NC}"
+    [ "$_total" -eq "$NB_Q" ] && p "  ${GRN}${BLD}OPERATION TERMINEE.${NC}" \
+        || p "  ${DIM}Tapez MISSION pour les details.${NC}"
     p ""
+}
+
+# ============================================================
+# VERIFICATEURS — validation + indice progressif si echec
+# ============================================================
+
+# Succes : marquer + badge (via _write_badge dans le shell courant)
+_ok() {
+    _marquer "$2"
+    printf "%b\n" "$GRN"
+    printf "  +--------------------------------------------------+\n"
+    case "$2" in
+    1)  printf "  | Q1  ACCOMPLIE - Bonne orientation, agent.       |\n"
+        printf "  | Tout commence par connaitre sa position.        |\n" ;;
+    2)  printf "  | Q2  ACCOMPLIE - Premiere reconnaissance reussie.|\n"
+        printf "  | Le serveur commence a livrer ses secrets.       |\n" ;;
+    3)  printf "  | Q3  ACCOMPLIE - Vous lisez la doc avant d'agir. |\n"
+        printf "  | Un vrai professionnel. Q4 va etre facile.       |\n" ;;
+    4)  printf "  | Q4  ACCOMPLIE - Les fichiers caches sont vus.   |\n"
+        printf "  | Excellent travail d'infiltration.               |\n" ;;
+    5)  printf "  | Q5  ACCOMPLIE - Vous etes dans la place.        |\n"
+        printf "  | Navigation maitrisee.                           |\n" ;;
+    6)  printf "  | Q6  ACCOMPLIE - Message dechiffre.              |\n"
+        printf "  | Les donnees sont a portee de main.              |\n" ;;
+    7)  printf "  | Q7  ACCOMPLIE - LE PIPE EST DEBLOQUE !          |\n"
+        printf "  | Outil fondamental du terminal. Bien joue.       |\n" ;;
+    8)  printf "  | Q8  ACCOMPLIE - L historique ne ment pas.       |\n"
+        printf "  | Un operateur imprudent a laisse des traces.     |\n" ;;
+    9)  printf "  | Q9  ACCOMPLIE - Empreinte enregistree.          |\n"
+        printf "  | Discret, mais visible pour qui sait chercher.   |\n" ;;
+    10) printf "  | Q10 ACCOMPLIE - Rapport localise.               |\n"
+        printf "  | find est votre allie dans les profondeurs.      |\n" ;;
+    11) printf "  | Q11 ACCOMPLIE - Zone de transit prete.          |\n"
+        printf "  | La phase d exfiltration peut commencer.         |\n" ;;
+    12) printf "  | Q12 ACCOMPLIE - Fichier protege.                |\n"
+        printf "  | rw------- : vous seul pouvez y acceder.         |\n" ;;
+    13) printf "  | Q13 ACCOMPLIE - Script arme.                    |\n"
+        printf "  | Permissions maitrisees.                         |\n" ;;
+    14) printf "  | Q14 ACCOMPLIE - Espion identifie.               |\n"
+        printf "  | Vous avez son PID. Il ne sait pas ce qui vient. |\n" ;;
+    15) printf "  | Q15 ACCOMPLIE - *** OPERATION TERMINEE ***      |\n"
+        printf "  | Espion neutralise. Mission reussie, agent.      |\n" ;;
+    esac
+    _tot=0; _i=1; _pg=$(_prog)
+    while [ "$_i" -le 15 ]; do
+        [ "$(_field "$_pg" "$_i")" = "1" ] && _tot=$((_tot+1)); _i=$((_i+1))
+    done
+    printf "  | Score : %s/%s                                    |\n" "$_tot" "$NB_Q"
+    printf "  +--------------------------------------------------+\n"
+    printf "%b\n" "$NC"
+}
+
+# Echec : indice progressif
+_fail() {
+    _qn="$1"; _why="$2"
+    p "  ${RED}[--]${NC} $_why"
+    _lvl=$(_hint_inc "$_qn")
+    p "  ${YEL}[Indice $_lvl/3]${NC}"
+    case "$_lvl" in
+        1) _hint1 "$_qn" ;;
+        2) _hint2 "$_qn" ;;
+        3) _hint3 "$_qn" ;;
+    esac
+    [ "$_lvl" -lt 3 ] && p "  ${DIM}Retapez Q${_qn} pour l'indice suivant.${NC}"
+}
+
+_hint1() {
+    case "$1" in
+    1)  p "  Objectif : savoir ou vous etes dans l'arborescence."
+        p "  Commande : ${YEL}pwd${NC} (print working directory). Sans argument." ;;
+    2)  p "  Objectif : voir les fichiers d'un dossier."
+        p "  Commande : ${YEL}ls${NC}. Donnez le chemin en argument." ;;
+    3)  p "  Objectif : trouver l'option de ls pour les fichiers caches."
+        p "  Sur JSLinux : utilisez ${YEL}ls --help${NC} (man n'est pas installe)." ;;
+    4)  p "  Objectif : voir TOUS les fichiers, y compris les caches (nom en point)."
+        p "  ls a deux options utiles : ${YEL}-l${NC} (details) et ${YEL}-a${NC} (all = tout)." ;;
+    5)  p "  Objectif : se deplacer dans un dossier."
+        p "  ${YEL}ls${NC} liste. ${YEL}cd${NC} entre. Ce sont deux commandes differentes." ;;
+    6)  p "  Objectif : lire le contenu d'un fichier texte."
+        p "  Commande : ${YEL}cat${NC}. Syntaxe : cat /chemin/fichier" ;;
+    7)  p "  Objectif : filtrer les lignes d'un fichier contenant un mot."
+        p "  Le ${YEL}pipe |${NC} envoie la sortie d'une commande vers l'entree d'une autre."
+        p "  ${YEL}grep mot${NC} garde uniquement les lignes contenant 'mot'." ;;
+    8)  p "  Objectif : chercher dans les commandes deja tapees."
+        p "  ${YEL}history${NC} affiche l'historique. Combinez avec grep via le pipe." ;;
+    9)  p "  Objectif : creer un fichier vide."
+        p "  Commande : ${YEL}touch${NC} /chemin/nom_fichier" ;;
+    10) p "  Objectif : trouver un fichier dans tous les sous-dossiers."
+        p "  Commande : ${YEL}find${NC}. Syntaxe : find /dossier -name \"nom\"" ;;
+    11) p "  Objectif : creer un nouveau dossier."
+        p "  Commande : ${YEL}mkdir${NC} /chemin/nouveau_dossier" ;;
+    12) p "  Objectif : rendre un fichier lisible par vous seul."
+        p "  Commande : ${YEL}chmod${NC}. Droits en octal : r=4 w=2 x=1."
+        p "  On additionne par groupe : User | Group | Others." ;;
+    13) p "  Objectif : rendre un script executable par son proprietaire."
+        p "  ${YEL}chmod${NC} en mode symbolique : u=user + =ajouter x=execution" ;;
+    14) p "  Objectif : trouver le PID du processus espion."
+        p "  ${YEL}ps${NC} liste les processus. Combinez avec grep via le pipe." ;;
+    15) p "  Deux actions : ${YEL}kill PID${NC} arrete un processus."
+        p "  ${YEL}mv source dest${NC} renomme ou deplace un fichier." ;;
+    esac
+}
+
+_hint2() {
+    p "  Completez les ??? :"
+    case "$1" in
+    1)  p "    ${YEL}???${NC}" ;;
+    2)  p "    ${YEL}??? ~/infiltration_mirage/serveur/${NC}" ;;
+    3)  p "    ${YEL}ls ???${NC}   (option longue pour l'aide)" ;;
+    4)  p "    ${YEL}ls -?? ~/infiltration_mirage/serveur/${NC}  (deux lettres)" ;;
+    5)  p "    ${YEL}cd ~/infiltration_mirage/???/${NC}  puis Q5" ;;
+    6)  p "    ${YEL}??? ~/infiltration_mirage/message_secret.txt${NC}" ;;
+    7)  p "    ${YEL}cat .../access.log | ??? Transfert${NC}" ;;
+    8)  p "    ${YEL}??? | grep passwd${NC}" ;;
+    9)  p "    ${YEL}??? ~/infiltration_mirage/serveur/agent.log${NC}" ;;
+    10) p "    ${YEL}find ~/infiltration_mirage/ -name \"???\"${NC}" ;;
+    11) p "    ${YEL}mkdir ~/infiltration_mirage/serveur/???${NC}" ;;
+    12) p "    ${YEL}chmod ??? .../serveur/exfiltration/rapport.txt${NC}"
+        p "    (User=6 Group=0 Others=0)" ;;
+    13) p "    ${YEL}chmod ???+??? .../serveur/effacer_traces.sh${NC}"
+        p "    (1er ???=u  2e ???=x)" ;;
+    14) p "    ${YEL}ps | grep ???${NC}" ;;
+    15) _pid=$(_espion_pid)
+        p "    ${YEL}kill ???${NC}  (PID de Q14 : ${_pid:-?})"
+        p "    ${YEL}mv .../rapport_secret.txt .../???${NC}" ;;
+    esac
+}
+
+_hint3() {
+    p "  Solution :"
+    case "$1" in
+    1)  p "    ${GRN}pwd${NC}" ;;
+    2)  p "    ${GRN}ls ~/infiltration_mirage/serveur/${NC}" ;;
+    3)  p "    ${GRN}ls --help${NC}   (l'option est -a)" ;;
+    4)  p "    ${GRN}ls -la ~/infiltration_mirage/serveur/${NC}" ;;
+    5)  p "    ${GRN}cd ~/infiltration_mirage/serveur/${NC}  puis  ${GRN}Q5${NC}" ;;
+    6)  p "    ${GRN}cat ~/infiltration_mirage/message_secret.txt${NC}" ;;
+    7)  p "    ${GRN}cat ~/infiltration_mirage/serveur/logs/access.log | grep Transfert${NC}" ;;
+    8)  p "    ${GRN}history | grep passwd${NC}" ;;
+    9)  p "    ${GRN}touch ~/infiltration_mirage/serveur/agent.log${NC}" ;;
+    10) p "    ${GRN}find ~/infiltration_mirage/ -name \"rapport.txt\"${NC}" ;;
+    11) p "    ${GRN}mkdir ~/infiltration_mirage/serveur/archive${NC}" ;;
+    12) p "    ${GRN}chmod 600 ~/infiltration_mirage/serveur/exfiltration/rapport.txt${NC}" ;;
+    13) p "    ${GRN}chmod u+x ~/infiltration_mirage/serveur/effacer_traces.sh${NC}" ;;
+    14) _pid=$(_espion_pid)
+        p "    ${GRN}ps | grep espion_mirage${NC}"
+        [ -n "$_pid" ] && p "    PID actuel : ${RED}${BLD}$_pid${NC}" ;;
+    15) _pid=$(_espion_pid)
+        p "    ${GRN}kill ${_pid:-<PID_Q14>}${NC}"
+        p "    ${GRN}mv ~/infiltration_mirage/serveur/exfiltration/rapport_secret.txt \\"
+        p "       ~/infiltration_mirage/serveur/exfiltration/notes_vacances.txt${NC}" ;;
+    esac
+}
+
+# ============================================================
+# Q1 - Q15
+# ============================================================
+Q1() {
+    _flush
+    _done 1 && { p "  ${GRN}[OK]${NC} Q1 deja validee."; return; }
+    _inhist "^[0-9 ]*pwd[[:space:]]*$" \
+        && _ok "pwd detecte. Repertoire : $PWD" 1 \
+        || _fail 1 "pwd non detecte dans l'historique."
+}
+Q2() {
+    _flush
+    _done 2 && { p "  ${GRN}[OK]${NC} Q2 deja validee."; return; }
+    _inhist "^[0-9 ]*ls[[:space:]]+~/infiltration_mirage/serveur/[[:space:]]*$" \
+        && _ok "ls serveur/ detecte." 2 \
+        || _fail 2 "ls ~/infiltration_mirage/serveur/ non detecte."
+}
+Q3() {
+    _flush
+    _done 3 && { p "  ${GRN}[OK]${NC} Q3 deja validee."; return; }
+    _inhist "ls[[:space:]]+--help" \
+        && _ok "ls --help detecte. Option = -a (--all)." 3 \
+        || _fail 3 "ls --help non detecte dans l'historique."
+}
+Q4() {
+    _flush
+    _done 4 && { p "  ${GRN}[OK]${NC} Q4 deja validee."; return; }
+    _inhist "ls[[:space:]]+-la|ls[[:space:]]+-al" \
+        && _ok "ls -la detecte." 4 \
+        || _fail 4 "ls -la ou ls -al non detecte dans l'historique."
+}
+Q5() {
+    _flush
+    _done 5 && { p "  ${GRN}[OK]${NC} Q5 deja validee."; return; }
+    if [ "$PWD" = "$TP_DIR/serveur" ] || \
+       _inhist "^[0-9 ]*cd[[:space:]]+.*/infiltration_mirage/serveur[[:space:]]*$"; then
+        _ok "cd serveur/ detecte (position : $PWD)." 5
+    else
+        _fail 5 "cd ~/infiltration_mirage/serveur/ non detecte."
+    fi
+}
+Q6() {
+    _flush
+    _done 6 && { p "  ${GRN}[OK]${NC} Q6 deja validee."; return; }
+    _inhist "cat[[:space:]]+.*/message_secret\.txt" \
+        && _ok "cat message_secret.txt detecte." 6 \
+        || _fail 6 "cat message_secret.txt non detecte dans l'historique."
+}
+Q7() {
+    _flush
+    _done 7 && { p "  ${GRN}[OK]${NC} Q7 deja validee."; return; }
+    _inhist "cat.*access\.log.*\|.*grep.*Transfert|cat.*\|.*grep.*Transfert" \
+        && _ok "cat | grep Transfert detecte." 7 \
+        || _fail 7 "cat access.log | grep Transfert non detecte (pipe obligatoire)."
+}
+Q8() {
+    _flush
+    _done 8 && { p "  ${GRN}[OK]${NC} Q8 deja validee."; return; }
+    _inhist "history[[:space:]]*\|[[:space:]]*grep" \
+        && _ok "history | grep detecte." 8 \
+        || _fail 8 "history | grep non detecte (le pipe est obligatoire)."
+}
+Q9() {
+    _flush
+    _done 9 && { p "  ${GRN}[OK]${NC} Q9 deja validee."; return; }
+    [ -f "$TP_DIR/serveur/agent.log" ] \
+        && _ok "agent.log present dans serveur/." 9 \
+        || _fail 9 "agent.log absent de serveur/."
+}
+Q10() {
+    _flush
+    _done 10 && { p "  ${GRN}[OK]${NC} Q10 deja validee."; return; }
+    _inhist "find.*-name.*rapport|find.*rapport\.txt" \
+        && _ok "find rapport.txt detecte." 10 \
+        || _fail 10 "find -name rapport.txt non detecte dans l'historique."
+}
+Q11() {
+    _flush
+    _done 11 && { p "  ${GRN}[OK]${NC} Q11 deja validee."; return; }
+    [ -d "$TP_DIR/serveur/archive" ] \
+        && _ok "Dossier archive/ present dans serveur/." 11 \
+        || _fail 11 "Dossier archive/ absent de serveur/."
+}
+Q12() {
+    _flush
+    _done 12 && { p "  ${GRN}[OK]${NC} Q12 deja validee."; return; }
+    _t="$TP_DIR/serveur/exfiltration/rapport.txt"
+    [ ! -f "$_t" ] && { _fail 12 "rapport.txt absent d'exfiltration/. Relancez le TP."; return; }
+    _pp=$(_perms "$_t")
+    [ "$_pp" = "600" ] \
+        && _ok "Droits 600 appliques." 12 \
+        || { p "  ${DIM}Droits actuels : ${_pp:-?}  (attendu : 600)${NC}"
+             _fail 12 "Droits incorrects sur rapport.txt."; }
+}
+Q13() {
+    _flush
+    _done 13 && { p "  ${GRN}[OK]${NC} Q13 deja validee."; return; }
+    [ -x "$TP_DIR/serveur/effacer_traces.sh" ] \
+        && _ok "effacer_traces.sh executable." 13 \
+        || { p "  ${DIM}Droits actuels : $(_perms "$TP_DIR/serveur/effacer_traces.sh")${NC}"
+             _fail 13 "effacer_traces.sh non executable."; }
+}
+Q14() {
+    _flush
+    _done 14 && { p "  ${GRN}[OK]${NC} Q14 deja validee."; return; }
+    _pid=$(_espion_pid)
+    [ -z "$_pid" ] && { _fail 14 "espion_mirage inactif. Relancez le TP."; return; }
+    _inhist "ps[[:space:]]*\|[[:space:]]*grep.*(espion|mirage)" \
+        && _ok "ps | grep espion_mirage detecte. PID : ${RED}${BLD}$_pid${NC}" 14 \
+        || { p "  ${DIM}espion_mirage tourne (PID : $_pid).${NC}"
+             _fail 14 "ps | grep espion_mirage non detecte (pipe obligatoire)."; }
+}
+Q15() {
+    _flush
+    _done 15 && { p "  ${GRN}[OK]${NC} Q15 deja validee."; return; }
+    _eo=0; _ro=0
+    _espion_alive || _eo=1
+    [ -f "$TP_DIR/serveur/exfiltration/notes_vacances.txt" ] && _ro=1
+    if [ "$_eo" = "1" ] && [ "$_ro" = "1" ]; then
+        _ok "Espion neutralise + fichier renomme." 15
+    else
+        [ "$_eo" = "1" ] && p "  ${GRN}OK${NC} Espion neutralise." \
+            || { _pid=$(_espion_pid); p "  ${RED}--${NC} Espion actif (PID : $_pid)."; }
+        [ "$_ro" = "1" ] && p "  ${GRN}OK${NC} Fichier renomme." \
+            || p "  ${RED}--${NC} rapport_secret.txt pas encore renomme."
+        _fail 15 "Les deux conditions ne sont pas encore remplies."
+    fi
 }
 
 # ============================================================
@@ -959,12 +734,10 @@ STATUT() {
 # ============================================================
 _init_tp() {
     intro
-    p "${YELLOW}[SETUP] Preparation de l'environnement...${NC}"
+    p "${YEL}[SETUP] Preparation...${NC}"
     setup_tp
-    p "${GREEN}${BOLD}TP pret !${NC}"
-    p "   ${CYAN}${BOLD}MISSION${NC}      -> liste les 15 missions et leur statut"
-    p "   ${CYAN}${BOLD}STATUT${NC}       -> score detaille"
-    p "   ${YELLOW}${BOLD}AGENT <n>${NC}   -> aide pour une mission  ex: AGENT 7"
+    p ""
+    p "${GRN}${BLD}TP pret !${NC}  Tapez ${CYN}MISSION${NC} pour commencer."
     p ""
 }
 
