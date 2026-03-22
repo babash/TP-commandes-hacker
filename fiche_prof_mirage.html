@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Fiche Professeur — TP Infiltration MIRAGE v3</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700;900&display=swap');
+
+:root {
+  --bg: #0a0e17;
+  --surface: #111827;
+  --surface2: #1a2235;
+  --accent: #00ff88;
+  --accent2: #ff3e3e;
+  --accent3: #f5a623;
+  --accent4: #b06ef7;
+  --text: #c8d6ef;
+  --dim: #6b7a99;
+  --border: #1e3050;
+  --code-bg: #060b13;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+  padding: 0 0 80px 0;
+}
+
+/* ─── HEADER ─── */
+header {
+  background: var(--surface);
+  border-bottom: 2px solid var(--accent);
+  padding: 40px 60px 30px;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(0,255,136,0.03) 80px, rgba(0,255,136,0.03) 81px);
+}
+.header-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.header-tag a { color: var(--accent); text-decoration: none; opacity: 0.7; }
+.header-tag a:hover { opacity: 1; }
+header h1 { font-size: 2.4rem; font-weight: 900; color: #fff; letter-spacing: -1px; line-height: 1.1; }
+header h1 span { color: var(--accent); }
+.subtitle { font-family: 'Share Tech Mono', monospace; font-size: 0.85rem; color: var(--dim); margin-top: 10px; }
+.badge {
+  display: inline-block;
+  color: #fff; font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 2px; margin-left: 12px; vertical-align: middle;
+}
+.badge-prof { background: var(--accent2); }
+.badge-v3   { background: var(--accent4); }
+
+/* ─── LAYOUT ─── */
+main { max-width: 1020px; margin: 0 auto; padding: 40px 40px 0; }
+section { margin-bottom: 48px; }
+.section-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem; color: var(--accent);
+  letter-spacing: 4px; text-transform: uppercase;
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+h2 { font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 14px; }
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 22px 26px; margin-bottom: 14px;
+}
+.card p { font-size: 0.88rem; margin-bottom: 6px; }
+.card-accent { border-left: 3px solid var(--accent); }
+.card-warn   { border-left: 3px solid var(--accent3); background: rgba(245,166,35,0.04); }
+.card-agent  { border-left: 3px solid var(--accent4); background: rgba(176,110,247,0.05); }
+
+/* ─── CODE ─── */
+pre, code { font-family: 'Share Tech Mono', monospace; }
+pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 16px 20px; font-size: 0.8rem;
+  color: var(--accent); overflow-x: auto; line-height: 1.9; margin: 10px 0;
+}
+code { background: var(--code-bg); color: var(--accent); padding: 2px 6px; border-radius: 3px; font-size: 0.82rem; }
+.c-dim  { color: var(--dim); }
+.c-warn { color: var(--accent3); }
+.c-blue { color: #7eb8f7; }
+
+/* ─── TABLE ─── */
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 12px 0; }
+th {
+  background: var(--surface2); color: var(--dim);
+  font-family: 'Share Tech Mono', monospace; font-size: 0.68rem;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border);
+}
+td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 0.85rem; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.015); }
+
+/* ─── QUESTION CARDS ─── */
+.q-grid { display: grid; gap: 14px; }
+.q-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 18px 22px;
+  display: grid; grid-template-columns: 52px 1fr; gap: 16px; align-items: start;
+}
+.q-card.highlight { border-color: rgba(0,255,136,0.3); background: rgba(0,255,136,0.03); }
+.q-num {
+  font-family: 'Share Tech Mono', monospace; font-size: 1rem; font-weight: 700;
+  color: var(--accent); background: rgba(0,255,136,0.08);
+  border: 1px solid rgba(0,255,136,0.2); border-radius: 6px;
+  width: 52px; height: 52px; display: flex; align-items: center; justify-content: center;
+}
+.q-num.pipe { color: var(--accent3); background: rgba(245,166,35,0.08); border-color: rgba(245,166,35,0.25); }
+.q-body h3 { font-size: 0.98rem; font-weight: 700; color: #fff; margin-bottom: 5px; }
+.q-meta { display: flex; gap: 7px; margin-bottom: 9px; flex-wrap: wrap; }
+.tag {
+  font-family: 'Share Tech Mono', monospace; font-size: 0.61rem;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 2px; border: 1px solid;
+}
+.tag-nav  { color: #7eb8f7; border-color: #7eb8f7; background: rgba(126,184,247,0.08); }
+.tag-file { color: #b47ef7; border-color: #b47ef7; background: rgba(180,126,247,0.08); }
+.tag-perm { color: var(--accent3); border-color: var(--accent3); background: rgba(245,166,35,0.08); }
+.tag-proc { color: var(--accent2); border-color: var(--accent2); background: rgba(255,62,62,0.08); }
+.tag-read { color: var(--accent); border-color: var(--accent); background: rgba(0,255,136,0.08); }
+.tag-pipe { color: var(--accent3); border-color: var(--accent3); background: rgba(245,166,35,0.15); font-weight: 700; }
+.q-body p { font-size: 0.86rem; color: var(--text); margin-bottom: 7px; }
+.answer-label { font-family: 'Share Tech Mono', monospace; font-size: 0.62rem; color: var(--dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+.note { font-size: 0.78rem; color: var(--dim); margin-top: 6px; }
+
+/* ─── CHECKLIST ─── */
+.checklist { list-style: none; }
+.checklist li { padding: 5px 0; font-size: 0.87rem; display: flex; gap: 10px; align-items: flex-start; }
+.checklist li::before { content: '▸'; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+
+/* ─── INSTALL ─── */
+.install-block {
+  background: var(--code-bg); border: 1px solid var(--accent);
+  border-radius: 8px; padding: 18px 22px; margin: 14px 0;
+  font-family: 'Share Tech Mono', monospace; font-size: 0.82rem; line-height: 2;
+}
+.install-block .prompt { color: var(--accent2); }
+.install-block .path   { color: var(--accent3); }
+
+/* ─── PRINT ─── */
+@media print {
+  body { background: white; color: #111; }
+  header { background: #f0f0f0; border-color: #333; }
+  .card { background: #fafafa; border-color: #ccc; }
+  code, pre { background: #f5f5f5; color: #0a6640; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">// NSI — Terminale — TP Linux &nbsp;·&nbsp; <a href="https://github.com/babash/TP-commandes-hacker" target="_blank">github.com/babash/TP-commandes-hacker</a></div>
+  <h1>Opération <span>MIRAGE</span> <span class="badge badge-prof">PROF</span> <span class="badge badge-v3">v3.0</span></h1>
+  <div class="subtitle">15 questions progressives · Pipe introduit en contexte · Agent ECHO (IA) · Auto-corrigé</div>
+</header>
+
+<main>
+
+<!-- ══════════════════════════════════════════════
+     00 — PRÉSENTATION
+═══════════════════════════════════════════════ -->
+<section>
+  <div class="section-title">00 — Présentation</div>
+
+  <div class="card card-accent">
+    <p>Ce TP place les élèves dans un scénario fictif d'infiltration d'un serveur. Les 15 questions sont progressives : les premières sont quasi-guidées pour mettre tout le monde en confiance, la difficulté monte doucement vers les droits et les processus.</p>
+    <p style="margin-top:8px;">Nouveauté v3 : le <strong>pipe <code>|</code></strong> est introduit en contexte réel (Q7) avant d'être réutilisé (Q8). L'agent <strong>ECHO</strong> (IA) est disponible à tout moment via la commande <code>AGENT</code>.</p>
+    <p style="margin-top:8px; color:var(--accent3);">⚠ Un rappel légal est affiché à chaque lancement. Le TP est 100 % local et sans risque réseau.</p>
+  </div>
+
+  <div class="card">
+    <table>
+      <tr><th>Critère</th><th>Détail</th></tr>
+      <tr><td>Niveau</td><td>Terminale NSI</td></tr>
+      <tr><td>Durée estimée</td><td>1 h 30 à 2 h</td></tr>
+      <tr><td>Prérequis élève</td><td>Savoir ouvrir un terminal, notion de dossier/fichier</td></tr>
+      <tr><td>Environnement</td><td>Linux Debian/Ubuntu — compatible WSL</td></tr>
+      <tr><td>Dépôt GitHub</td><td><a href="https://github.com/babash/TP-commandes-hacker" style="color:var(--accent);">github.com/babash/TP-commandes-hacker</a></td></tr>
+      <tr><td>Questions</td><td>15 questions indépendantes, auto-corrigées</td></tr>
+      <tr><td>Thèmes</td><td>pwd · ls · man · cd · cat · touch · pipe | · grep · find · mkdir · cp · chmod · top · ps · kill · mv</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     01 — INSTALLATION
+═══════════════════════════════════════════════ -->
+<section>
+  <div class="section-title">01 — Installation &amp; lancement pour les élèves</div>
+
+  <div class="card card-accent">
+    <p style="margin-bottom:12px;">Deux commandes suffisent. Les élèves les recopient depuis la fiche élève distribuée en début de séance :</p>
+    <div class="install-block">
+      <span class="prompt">$</span> wget -O ~/tp_infiltration.sh <span class="path">https://raw.githubusercontent.com/babash/TP-commandes-hacker/main/tp_infiltration.sh</span><br>
+      <span class="prompt">$</span> source ~/tp_infiltration.sh
+    </div>
+    <p class="note">Le script crée l'arborescence dans <code>~/infiltration_mirage/</code>, lance le processus espion et affiche l'introduction narrative.</p>
+  </div>
+
+  <div class="card">
+    <p style="margin-bottom:10px;"><strong>Commandes disponibles une fois chargé :</strong></p>
+    <table>
+      <tr><th>Commande</th><th>Effet</th></tr>
+      <tr><td><code>MISSION</code></td><td>Affiche les 15 questions avec leurs énoncés complets</td></tr>
+      <tr><td><code>Q1</code> … <code>Q15</code></td><td>Vérifie la réponse + indice précis si échec + rappel <code>AGENT</code></td></tr>
+      <tr><td><code>STATUT</code></td><td>Score et progression globale</td></tr>
+      <tr><td><code style="color:var(--accent4);">AGENT</code></td><td>Ouvre une ligne avec l'agent ECHO (IA) — aide contextuelle</td></tr>
+    </table>
+  </div>
+
+  <div class="card card-warn">
+    <strong style="color:var(--accent3);">⚙ Avant la séance</strong>
+    <ul class="checklist" style="margin-top:10px;">
+      <li>Vérifiez que <code>wget</code>, <code>curl</code> et <code>python3</code> sont disponibles sur les postes élèves</li>
+      <li>L'agent ECHO nécessite une connexion internet et l'accès à <code>api.anthropic.com</code> — vérifiez que le pare-feu du lycée ne bloque pas ce domaine</li>
+      <li>Sans connexion, le TP fonctionne normalement — seul <code>AGENT</code> sera indisponible</li>
+      <li>Testez le lancement complet sur un poste élève avant la séance</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     02 — AGENT ECHO
+═══════════════════════════════════════════════ -->
+<section>
+  <div class="section-title">02 — L'agent ECHO</div>
+
+  <div class="card card-agent">
+    <strong style="color:var(--accent4);">Rôle pédagogique</strong>
+    <p style="margin-top:8px;">La commande <code>AGENT</code> ouvre une ligne de communication avec <strong>ECHO</strong>, un assistant IA (Claude Haiku) dont le system prompt lui donne connaissance du TP, des 15 questions et de la progression de l'élève. Il aide sans donner directement la réponse, reste dans la narration espionnage, et répond en texte brut (lisible dans le terminal).</p>
+    <p style="margin-top:8px;">L'agent peut expliquer un concept (le pipe, les droits octaux, les signaux kill…), débloquer un élève hésitant, ou valider une compréhension.</p>
+  </div>
+
+  <div class="card">
+    <strong>Ce qu'ECHO sait</strong>
+    <ul class="checklist" style="margin-top:8px;">
+      <li>Le texte des 15 questions et les commandes attendues</li>
+      <li>Les questions déjà réussies et celles restantes (lu depuis <code>.progression</code>)</li>
+      <li>Le contexte narratif de l'opération MIRAGE</li>
+    </ul>
+    <p style="margin-top:10px;" class="note">ECHO ne voit pas le terminal de l'élève — il ne peut pas diagnostiquer une erreur de frappe. Il raisonne à partir de ce que l'élève lui décrit.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     03 — QUESTIONS & CORRIGÉ
+═══════════════════════════════════════════════ -->
+<section>
+  <div class="section-title">03 — Questions &amp; Corrigé complet</div>
+
+  <div class="q-grid">
+
+    <!-- Q1 -->
+    <div class="q-card">
+      <div class="q-num">Q1</div>
+      <div class="q-body">
+        <h3>Orientation — Où êtes-vous ?</h3>
+        <div class="q-meta"><span class="tag tag-nav">navigation</span></div>
+        <p>Afficher le chemin complet du répertoire courant.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre>pwd</pre>
+        <p class="note">Validation automatique — la commande affiche <code>$PWD</code> et la question est validée immédiatement. Mise en confiance garantie.</p>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="q-card">
+      <div class="q-num">Q2</div>
+      <div class="q-body">
+        <h3>Exploration — Premiers pas</h3>
+        <div class="q-meta"><span class="tag tag-nav">navigation</span></div>
+        <p>Lister le contenu de <code>~/infiltration_mirage/serveur/</code> sans options.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre>ls ~/infiltration_mirage/serveur/</pre>
+        <p class="note">La vérification confirme que le dossier est lisible et affiche les fichiers visibles. Elle signale l'existence de fichiers cachés, créant un appel à l'action pour Q4.</p>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="q-card">
+      <div class="q-num">Q3</div>
+      <div class="q-body">
+        <h3>Documentation — Le manuel de ls</h3>
+        <div class="q-meta"><span class="tag tag-read">man</span></div>
+        <p>Consulter <code>man ls</code> pour trouver l'option qui affiche les fichiers cachés.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre>man ls
+<span class="c-dim"># Chercher avec /  → taper /-a puis Entrée
+# L'option -a (--all) est la réponse
+# Quitter avec q</span></pre>
+        <p class="note">Question déclarative — validée par simple appui sur <code>Q3</code>. L'occasion d'apprendre la navigation dans <code>man</code> (/<em>motif</em> pour chercher).</p>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="q-card">
+      <div class="q-num">Q4</div>
+      <div class="q-body">
+        <h3>Infiltration — Fichiers cachés</h3>
+        <div class="q-meta"><span class="tag tag-nav">navigation</span><span class="tag tag-read">ls -la</span></div>
+        <p>Lister <code>serveur/</code> avec tous les détails et les fichiers cachés. Appliquer l'option trouvée en Q3.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre>ls -la ~/infiltration_mirage/serveur/</pre>
+        <p class="note">La vérification confirme la présence de <code>.fichier_cache</code> et en affiche le contenu comme récompense narrative (message d'ECHO).</p>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="q-card">
+      <div class="q-num">Q5</div>
+      <div class="q-body">
+        <h3>Navigation — Pénétrez la base</h3>
+        <div class="q-meta"><span class="tag tag-nav">cd</span></div>
+        <p>Se déplacer dans <code>~/infiltration_mirage/serveur/</code>.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre>cd ~/infiltration_mirage/serveur/</pre>
+        <p class="note">Contrôle via <code>$PWD</code>. Erreur fréquente : confondre <code>ls</code> et <code>cd</code>. L'indice rappelle la distinction.</p>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="q-card">
+      <div class="q-num">Q6</div>
+      <div class="q-body">
+        <h3>Lecture — Premier contact</h3>
+        <div class="q-meta"><span class="tag tag-read">cat</span></div>
+        <p>Afficher le contenu de <code>message_secret.txt</code> à la racine de <code>~/infiltration_mirage/</code>.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre>cat ~/infiltration_mirage/message_secret.txt</pre>
+        <p class="note">Le fichier mentionne le journal <code>access.log</code> — lien narratif vers Q7.</p>
+      </div>
+    </div>
+
+    <!-- Q7 — HIGHLIGHT pipe -->
+    <div class="q-card highlight">
+      <div class="q-num pipe">Q7</div>
+      <div class="q-body">
+        <h3>Analyse — Introduction du pipe <code>|</code></h3>
+        <div class="q-meta"><span class="tag tag-pipe">★ pipe |</span><span class="tag tag-read">cat · grep</span></div>
+        <p>Filtrer le journal <code>serveur/logs/access.log</code> pour n'afficher que les lignes contenant <strong>Transfert</strong>.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre>cat ~/infiltration_mirage/serveur/logs/access.log | grep Transfert</pre>
+        <div class="answer-label" style="margin-top:12px;">// explication affichée à l'élève</div>
+        <pre><span class="c-dim">Sans pipe : cat access.log  →  affiche TOUT le fichier
+Avec pipe : cat ... | grep Transfert  →  affiche uniquement les lignes avec "Transfert"</span>
+
+<span class="c-blue"># Le | prend la SORTIE de gauche et la donne en ENTRÉE à droite</span></pre>
+        <p class="note"><strong>Point clé :</strong> la vérification affiche elle-même l'explication du pipe, le résultat filtré et l'interprétation narrative ("quelqu'un a transféré rapport.txt vers une IP externe"). Question déclarative — validée par <code>Q7</code>.</p>
+      </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="q-card>">
+      <div class="q-num pipe">Q8</div>
+      <div class="q-body">
+        <h3>Renseignement — Pipe sur l'historique</h3>
+        <div class="q-meta"><span class="tag tag-pipe">pipe |</span><span class="tag tag-read">history · grep</span></div>
+        <p>Réutiliser le pipe pour chercher <code>passwd</code> dans l'historique des commandes.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre>history | grep passwd</pre>
+        <p class="note">Résultat probablement vide (normal). La vérification l'explique et donne un exemple de ce qu'on trouverait dans un vrai scénario. Question déclarative.</p>
+      </div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="q-card">
+      <div class="q-num">Q9</div>
+      <div class="q-body">
+        <h3>Présence — Empreinte agent</h3>
+        <div class="q-meta"><span class="tag tag-file">touch</span></div>
+        <p>Créer un fichier vide <code>agent.log</code> dans <code>serveur/</code>.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre>touch ~/infiltration_mirage/serveur/agent.log</pre>
+        <p class="note">Vérification par existence du fichier. Simple et rapide — permet de reprendre de l'élan avant les questions plus techniques.</p>
+      </div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="q-card">
+      <div class="q-num">Q10</div>
+      <div class="q-body">
+        <h3>Localisation — Rapport confidentiel</h3>
+        <div class="q-meta"><span class="tag tag-read">find</span></div>
+        <p>Trouver tous les fichiers nommés <code>rapport.txt</code> dans toute l'arborescence.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre>find ~/infiltration_mirage/ -name "rapport.txt"</pre>
+        <p class="note">Résultat attendu : <code>serveur/confidentiel/rapport.txt</code>. Insister sur la différence <code>find</code> (récursif) vs <code>ls</code> (un seul niveau).</p>
+      </div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="q-card">
+      <div class="q-num">Q11</div>
+      <div class="q-body">
+        <h3>Exfiltration — Créer + copier</h3>
+        <div class="q-meta"><span class="tag tag-file">mkdir · cp</span></div>
+        <p>Créer <code>serveur/exfiltration/</code> puis y copier <code>rapport.txt</code>.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre>mkdir ~/infiltration_mirage/serveur/exfiltration
+cp ~/infiltration_mirage/serveur/confidentiel/rapport.txt \
+   ~/infiltration_mirage/serveur/exfiltration/</pre>
+        <p class="note">La vérification distingue les deux erreurs possibles : dossier absent, ou dossier présent mais fichier non copié. Indice spécifique à chaque cas.</p>
+      </div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="q-card">
+      <div class="q-num">Q12</div>
+      <div class="q-body">
+        <h3>Sécurisation — chmod 600</h3>
+        <div class="q-meta"><span class="tag tag-perm">droits octaux</span></div>
+        <p>Appliquer les droits <strong>600</strong> sur <code>exfiltration/rapport.txt</code>.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre>chmod 600 ~/infiltration_mirage/serveur/exfiltration/rapport.txt</pre>
+        <pre><span class="c-dim">Décomposition : 600 = rw-------
+  User  : 6 = r(4) + w(2) = lecture + écriture
+  Group : 0 = aucun droit
+  Others: 0 = aucun droit</span></pre>
+        <p class="note">Vérification via <code>stat -c "%a"</code>. Bon moment pour rappeler la table r=4, w=2, x=1.</p>
+      </div>
+    </div>
+
+    <!-- Q13 -->
+    <div class="q-card">
+      <div class="q-num">Q13</div>
+      <div class="q-body">
+        <h3>Préparation — chmod u+x</h3>
+        <div class="q-meta"><span class="tag tag-perm">droits relatifs</span></div>
+        <p>Rendre <code>effacer_traces.sh</code> exécutable pour son propriétaire.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre><span class="c-dim"># Mode relatif (recommandé ici)</span>
+chmod u+x ~/infiltration_mirage/serveur/effacer_traces.sh
+
+<span class="c-dim"># Mode octal (accepté aussi : 744, 755, 700…)</span>
+chmod 744 ~/infiltration_mirage/serveur/effacer_traces.sh</pre>
+        <p class="note">La vérification contrôle uniquement le bit <code>x</code> du propriétaire. Elle affiche le rappel <em>u=user, +=ajouter, x=exécution</em>.</p>
+      </div>
+    </div>
+
+    <!-- Q14 -->
+    <div class="q-card">
+      <div class="q-num">Q14</div>
+      <div class="q-body">
+        <h3>Surveillance — top + ps | grep</h3>
+        <div class="q-meta"><span class="tag tag-pipe">pipe |</span><span class="tag tag-proc">top · ps · grep</span></div>
+        <p>Lancer <code>top</code> pour observer les processus, repérer <code>espion_mirage</code>, puis trouver son PID avec <code>ps aux | grep</code>.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre><span class="c-dim"># Étape 1 : observer (quitter avec q)</span>
+top
+
+<span class="c-dim"># Étape 2 : trouver le PID</span>
+ps aux | grep espion_mirage
+<span class="c-dim"># ou plus propre :</span>
+pgrep -f espion_mirage</pre>
+        <p class="note">La vérification affiche directement le PID trouvé si le processus tourne. Signaler aux élèves que la ligne <code>grep</code> elle-même apparaît dans les résultats — c'est normal.</p>
+      </div>
+    </div>
+
+    <!-- Q15 -->
+    <div class="q-card">
+      <div class="q-num">Q15</div>
+      <div class="q-body">
+        <h3>Conclusion — kill + mv</h3>
+        <div class="q-meta"><span class="tag tag-proc">kill</span><span class="tag tag-file">mv</span></div>
+        <p>Tuer <code>espion_mirage</code> avec <code>kill</code>, puis renommer <code>rapport.txt</code> en <code>notes_vacances.txt</code>.</p>
+        <div class="answer-label">// corrigé</div>
+        <pre><span class="c-dim"># Tuer le processus (PID obtenu en Q14)</span>
+kill &lt;PID&gt;
+<span class="c-dim"># Si résistance :</span>
+kill -9 &lt;PID&gt;
+
+<span class="c-dim"># Renommer</span>
+mv ~/infiltration_mirage/serveur/exfiltration/rapport.txt \
+   ~/infiltration_mirage/serveur/exfiltration/notes_vacances.txt</pre>
+        <p class="note">La vérification teste les deux conditions indépendamment et donne un retour précis pour chacune. Si les deux sont remplies → message de fin de mission.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     04 — CONSEILS PÉDAGOGIQUES
+═══════════════════════════════════════════════ -->
+<section>
+  <div class="section-title">04 — Conseils pédagogiques</div>
+
+  <div class="card card-accent">
+    <strong>Déroulement recommandé</strong>
+    <ul class="checklist" style="margin-top:10px;">
+      <li><strong>5 min</strong> — introduction narrative orale + rappel légal + distribution de la fiche élève</li>
+      <li><strong>10 min</strong> — téléchargement et lancement (Q1 et Q2 validés en quelques minutes — mise en confiance)</li>
+      <li><strong>60–70 min</strong> — travail autonome ; encourager à lire les messages d'ECHO</li>
+      <li><strong>15 min</strong> — correction collective des moments-clés : pipe (Q7), droits octaux (Q12), kill (Q15)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <strong>Points d'attention par question</strong>
+    <ul class="checklist" style="margin-top:10px;">
+      <li><strong>Q3 man</strong> : certains élèves ne savent pas naviguer dans <code>man</code>. Rappeler <code>/mot</code> pour chercher et <code>q</code> pour quitter.</li>
+      <li><strong>Q5 cd</strong> : erreur classique — taper <code>ls serveur/</code> au lieu de <code>cd serveur/</code>. Insister sur la différence voir / aller.</li>
+      <li><strong>Q7 pipe</strong> : laisser les élèves lire l'explication intégrée dans le vérificateur avant d'intervenir. Le vérificateur est conçu pour être auto-suffisant.</li>
+      <li><strong>Q10 find</strong> : rappeler que <code>find</code> cherche récursivement — <code>ls</code> non. Montrer la différence sur un exemple.</li>
+      <li><strong>Q12 chmod</strong> : décomposer 600 au tableau (r=4, w=2, x=1) si les élèves bloquent.</li>
+      <li><strong>Q14 ps</strong> : la ligne <code>grep espion_mirage</code> qui s'affiche dans les résultats perturbe souvent. Expliquer que grep se voit lui-même dans la liste des processus.</li>
+      <li><strong>Q15 kill</strong> : différence entre <code>kill</code> (signal SIGTERM, poli) et <code>kill -9</code> (SIGKILL, immédiat) — bonne opportunité pour parler des signaux Unix.</li>
+    </ul>
+  </div>
+
+  <div class="card card-warn">
+    <strong style="color:var(--accent3);">Réinitialiser le TP</strong>
+    <p style="margin-top:8px; font-size:0.87rem;">En cas de problème ou pour repartir de zéro :</p>
+    <pre>source ~/tp_infiltration.sh</pre>
+    <p class="note">L'arborescence est recréée, le processus espion relancé, la progression réinitialisée.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     05 — STRUCTURE FICHIERS
+═══════════════════════════════════════════════ -->
+<section>
+  <div class="section-title">05 — Structure générée par le script</div>
+  <div class="card">
+    <pre>~/infiltration_mirage/
+├── message_secret.txt          <span class="c-dim"># Q6 — cat</span>
+├── .progression                <span class="c-dim"># suivi interne (caché)</span>
+├── .espion_pid                 <span class="c-dim"># PID de l'espion (caché)</span>
+└── serveur/
+    ├── acces.txt
+    ├── effacer_traces.sh       <span class="c-dim"># Q13 — chmod u+x</span>
+    ├── .fichier_cache          <span class="c-dim"># Q4 — visible avec ls -la</span>
+    ├── agent.log               <span class="c-dim"># Q9 — créé par l'élève avec touch</span>
+    ├── confidentiel/
+    │   └── rapport.txt         <span class="c-dim"># Q10/Q11 — find + cp</span>
+    ├── public/
+    │   └── index.html
+    ├── logs/
+    │   └── access.log          <span class="c-dim"># Q7 — cat | grep Transfert</span>
+    └── exfiltration/           <span class="c-dim"># Q11/Q12/Q15 — mkdir, cp, chmod, mv</span>
+        └── rapport.txt → notes_vacances.txt   <span class="c-dim">(renommé en Q15)</span>
+
+/tmp/espion_mirage              <span class="c-dim"># Q14/Q15 — top, ps | grep, kill</span></pre>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

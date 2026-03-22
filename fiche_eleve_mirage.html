@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Fiche Élève — Opération MIRAGE</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap');
+
+:root {
+  --bg: #f0ece4;
+  --paper: #faf8f4;
+  --ink: #1a1a1a;
+  --ink-dim: #5a5a5a;
+  --red: #c0392b;
+  --green: #1a6640;
+  --amber: #7a4f00;
+  --border: #c8bfb0;
+  --stamp: rgba(192, 57, 43, 0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+@media screen {
+  body { background: #888; display: flex; justify-content: center; padding: 30px; }
+}
+
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Barlow Condensed', sans-serif;
+  position: relative;
+  overflow: hidden;
+  padding: 14mm 16mm 12mm;
+
+  /* Texture papier */
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 24px, rgba(0,0,0,0.03) 24px, rgba(0,0,0,0.03) 25px);
+}
+
+/* Stamp décoratif */
+.page::before {
+  content: 'CONFIDENTIEL';
+  position: absolute;
+  top: 38mm; right: 10mm;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--red);
+  opacity: 0.13;
+  transform: rotate(-22deg);
+  letter-spacing: 4px;
+  border: 4px solid var(--red);
+  padding: 6px 14px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* ─── HEADER ─── */
+.header {
+  border-bottom: 3px solid var(--ink);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.header-left {}
+.doc-ref {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--red);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+h1 {
+  font-size: 2.2rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -1px;
+  color: var(--ink);
+}
+h1 em {
+  font-style: normal;
+  color: var(--red);
+  font-size: 2.6rem;
+}
+.header-right {
+  text-align: right;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--ink-dim);
+  line-height: 1.6;
+}
+
+/* ─── TRANSMISSION BOX ─── */
+.transmission {
+  background: var(--ink);
+  color: #00ff88;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  line-height: 1.7;
+  padding: 10px 14px;
+  border-radius: 3px;
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
+}
+.transmission .dim { color: #5a8a6a; }
+.transmission .warn { color: #f5a623; }
+
+/* ─── SECTIONS ─── */
+.section {
+  margin-bottom: 11px;
+}
+.section-head {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--red);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 3px;
+  margin-bottom: 8px;
+}
+
+/* ─── STEPS ─── */
+.steps { display: flex; flex-direction: column; gap: 7px; }
+.step {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 8px;
+  align-items: start;
+}
+.step-num {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--paper);
+  background: var(--ink);
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-body { font-size: 0.82rem; line-height: 1.4; }
+.step-body strong { font-weight: 700; font-size: 0.85rem; }
+
+/* ─── CODE ─── */
+code, .cmd {
+  font-family: 'Share Tech Mono', monospace;
+  background: var(--ink);
+  color: #00ff88;
+  padding: 1px 5px;
+  border-radius: 2px;
+  font-size: 0.72rem;
+  letter-spacing: 0.2px;
+}
+.cmd-block {
+  font-family: 'Share Tech Mono', monospace;
+  background: var(--ink);
+  color: #00ff88;
+  padding: 8px 12px;
+  border-radius: 3px;
+  font-size: 0.72rem;
+  line-height: 2;
+  margin: 5px 0;
+  border-left: 3px solid var(--red);
+}
+.cmd-block .prompt { color: #ff6b6b; }
+.cmd-block .dim    { color: #5a8a6a; }
+.cmd-block .url    { color: #f5a623; font-size: 0.65rem; }
+
+/* ─── COMMANDS TABLE ─── */
+.cmd-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  margin: 5px 0;
+}
+.cmd-table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.cmd-table td:first-child {
+  font-family: 'Share Tech Mono', monospace;
+  background: var(--ink);
+  color: #00ff88;
+  font-size: 0.72rem;
+  width: 110px;
+  border-radius: 2px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+.cmd-table tr:last-child td { border-bottom: none; }
+
+/* ─── AIDE ECHO ─── */
+.echo-box {
+  border: 2px dashed var(--red);
+  border-radius: 4px;
+  padding: 9px 12px;
+  background: rgba(192,57,43,0.04);
+  margin-bottom: 11px;
+}
+.echo-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.echo-title::before {
+  content: '◉';
+  font-size: 0.8rem;
+}
+.echo-box p { font-size: 0.8rem; line-height: 1.45; color: var(--ink-dim); }
+.echo-box strong { color: var(--ink); }
+
+/* ─── QUESTIONS GRID ─── */
+.q-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  margin: 6px 0;
+}
+.q-cell {
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 4px 5px;
+  text-align: center;
+  font-size: 0.7rem;
+}
+.q-cell .qn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--red);
+  display: block;
+}
+.q-cell .ql {
+  font-size: 0.62rem;
+  color: var(--ink-dim);
+  display: block;
+  line-height: 1.3;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  position: absolute;
+  bottom: 10mm; left: 16mm; right: 16mm;
+  border-top: 1px solid var(--border);
+  padding-top: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--ink-dim);
+}
+footer a { color: var(--ink-dim); text-decoration: none; }
+
+@media print {
+  body { background: none; padding: 0; }
+  .page { box-shadow: none; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="doc-ref">// NSI — Terminale — Séance Terminal Linux</div>
+      <h1>Opération <em>MIRAGE</em></h1>
+    </div>
+    <div class="header-right">
+      Nom : ______________________<br>
+      Classe : ___________________<br>
+      Date : _____________________
+    </div>
+  </div>
+
+  <!-- TRANSMISSION -->
+  <div class="transmission">
+    <span class="dim">[ECHO]</span> Agent. Vous avez accès au serveur MIRAGE. 15 objectifs vous attendent.<br>
+    <span class="dim">[ECHO]</span> Commencez par télécharger votre kit d'infiltration. Les commandes sont ci-dessous.<br>
+    <span class="dim">[ECHO]</span> En cas de blocage : tapez <strong>AGENT</strong> dans le terminal. Je répondrai. <span class="warn">Ne perdez pas de temps.</span>
+  </div>
+
+  <!-- SECTION 1 : DÉMARRAGE -->
+  <div class="section">
+    <div class="section-head">01 — Démarrer le TP</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Ouvrir un terminal</strong> — cherchez « Terminal » dans les applications, ou appuyez sur <code>Ctrl+Alt+T</code>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Télécharger le script</strong> — copiez exactement cette commande :
+          <div class="cmd-block">
+            <span class="prompt">$</span> wget -O ~/tp_infiltration.sh <span class="url">https://raw.githubusercontent.com/babash/TP-commandes-hacker/main/tp_infiltration.sh</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Lancer le TP</strong> — cette commande initialise tout automatiquement :
+          <div class="cmd-block">
+            <span class="prompt">$</span> source ~/tp_infiltration.sh
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <strong>Afficher les questions</strong> — tapez ensuite dans le terminal :
+          <div class="cmd-block">
+            <span class="prompt">$</span> MISSION
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 : COMMANDES DISPONIBLES -->
+  <div class="section">
+    <div class="section-head">02 — Commandes du TP</div>
+    <table class="cmd-table">
+      <tr>
+        <td>MISSION</td>
+        <td>Afficher les 15 questions avec leurs énoncés</td>
+      </tr>
+      <tr>
+        <td>Q1 … Q15</td>
+        <td>Vérifier si la question est réussie — affiche un indice si ce n'est pas le cas</td>
+      </tr>
+      <tr>
+        <td>STATUT</td>
+        <td>Voir votre score et progression globale</td>
+      </tr>
+      <tr>
+        <td>AGENT</td>
+        <td>Contacter l'agent ECHO pour de l'aide (voir section ci-dessous)</td>
+      </tr>
+    </table>
+    <p style="font-size:0.75rem; color:var(--ink-dim); margin-top:5px;">
+      Exemple : vous avez fait la question 3 → tapez <code>Q3</code> pour savoir si c'est correct.
+    </p>
+  </div>
+
+  <!-- SECTION 3 : AGENT ECHO -->
+  <div class="echo-box">
+    <div class="echo-title">03 — Contacter l'agent ECHO</div>
+    <p>
+      Si vous êtes bloqué sur une question, tapez <strong><code>AGENT</code></strong> dans le terminal.
+      Une ligne de communication s'ouvre avec ECHO, votre analyste à distance.
+    </p>
+    <p style="margin-top:5px;">
+      Décrivez votre problème en français : <em>"Je ne comprends pas le pipe"</em>,
+      <em>"Quelle est la différence entre ls et cd ?"</em>, <em>"Je cherche le PID mais je ne sais pas comment faire"</em>…
+    </p>
+    <p style="margin-top:5px;">
+      ECHO connaît les questions du TP et votre progression. Il vous guidera <strong>sans donner la réponse directement</strong>.
+      Tapez <strong>fin</strong> pour fermer la communication.
+    </p>
+  </div>
+
+  <!-- SECTION 4 : LISTE DES QUESTIONS -->
+  <div class="section">
+    <div class="section-head">04 — Les 15 objectifs</div>
+    <div class="q-grid">
+      <div class="q-cell"><span class="qn">Q1</span><span class="ql">pwd</span></div>
+      <div class="q-cell"><span class="qn">Q2</span><span class="ql">ls</span></div>
+      <div class="q-cell"><span class="qn">Q3</span><span class="ql">man</span></div>
+      <div class="q-cell"><span class="qn">Q4</span><span class="ql">ls -la</span></div>
+      <div class="q-cell"><span class="qn">Q5</span><span class="ql">cd</span></div>
+      <div class="q-cell"><span class="qn">Q6</span><span class="ql">cat</span></div>
+      <div class="q-cell"><span class="qn" style="color:#c47a00;">Q7</span><span class="ql">cat <strong>|</strong> grep</span></div>
+      <div class="q-cell"><span class="qn" style="color:#c47a00;">Q8</span><span class="ql">history <strong>|</strong> grep</span></div>
+      <div class="q-cell"><span class="qn">Q9</span><span class="ql">touch</span></div>
+      <div class="q-cell"><span class="qn">Q10</span><span class="ql">find</span></div>
+      <div class="q-cell"><span class="qn">Q11</span><span class="ql">mkdir + cp</span></div>
+      <div class="q-cell"><span class="qn">Q12</span><span class="ql">chmod 600</span></div>
+      <div class="q-cell"><span class="qn">Q13</span><span class="ql">chmod u+x</span></div>
+      <div class="q-cell"><span class="qn">Q14</span><span class="ql">top + ps</span></div>
+      <div class="q-cell"><span class="qn">Q15</span><span class="ql">kill + mv</span></div>
+    </div>
+    <p style="font-size:0.72rem; color:var(--ink-dim); margin-top:4px;">
+      Les questions en <span style="color:#c47a00; font-weight:700;">orange</span> introduisent le <strong>pipe <code>|</code></strong> — un outil clé du terminal.
+    </p>
+  </div>
+
+  <!-- SECTION 5 : EN CAS DE PROBLÈME -->
+  <div class="section">
+    <div class="section-head">05 — En cas de problème</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">!</div>
+        <div class="step-body">
+          <strong>Relancer le TP depuis zéro</strong> — si quelque chose ne fonctionne plus, retapez simplement :
+          <div class="cmd-block">
+            <span class="prompt">$</span> source ~/tp_infiltration.sh
+            <br><span class="dim"># Tout est réinitialisé : arborescence, espion, progression</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>Opération MIRAGE — TP Linux NSI · Terminale</span>
+    <span><a href="https://github.com/babash/TP-commandes-hacker">github.com/babash/TP-commandes-hacker</a></span>
+  </footer>
+
+</div>
+</body>
+</html>
