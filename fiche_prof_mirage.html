@@ -215,7 +215,7 @@ tr:hover td { background: rgba(255,255,255,0.015); }
     <p style="margin-bottom:12px;">Deux commandes suffisent. Les élèves les recopient depuis la fiche élève distribuée en début de séance :</p>
     <div class="install-block">
       <span class="prompt">$</span> wget -O ~/tp_infiltration.sh <span class="path">https://raw.githubusercontent.com/babash/TP-commandes-hacker/main/tp_infiltration.sh</span><br>
-      <span class="prompt">$</span> source ~/tp_infiltration.sh
+      <span class="prompt">$</span> . ~/tp_infiltration.sh
     </div>
     <p class="note">Le script crée l'arborescence dans <code>~/infiltration_mirage/</code>, lance le processus espion et affiche l'introduction narrative.</p>
   </div>
@@ -534,7 +534,7 @@ mv ~/infiltration_mirage/serveur/exfiltration/rapport.txt \
   <div class="card card-warn">
     <strong style="color:var(--accent3);">Réinitialiser le TP</strong>
     <p style="margin-top:8px; font-size:0.87rem;">En cas de problème ou pour repartir de zéro :</p>
-    <pre>source ~/tp_infiltration.sh</pre>
+    <pre>. ~/tp_infiltration.sh</pre>
     <p class="note">L'arborescence est recréée, le processus espion relancé, la progression réinitialisée.</p>
   </div>
 </section>
