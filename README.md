@@ -1,6 +1,6 @@
 # 🕵️ Opération MIRAGE : TP de commandes Linux
 
-**Le terminal Linux en quinze missions d'infiltration, avec de vraies commandes, dans un Linux qui tourne dans le navigateur.** Pour la 1re et la terminale NSI.
+**Le terminal Linux en 15 missions d'infiltration, avec de vraies commandes, dans un Linux qui tourne dans le navigateur.** Pour la 1re et la terminale NSI.
 
 > Les élèves s'introduisent dans le serveur fictif du projet MIRAGE. Ils et elles s'y repèrent, lisent un message secret, copient puis cachent un rapport confidentiel, changent des droits, et finissent par **repérer un processus espion avec `ps` et l'arrêter avec `kill`**. Chaque mission se vérifie d'une commande, de `Q1` à `Q15` : après un échec, un indice s'affiche, puis un deuxième, puis la solution.
 
@@ -23,7 +23,7 @@ Tu veux d'abord essayer le TP seul·e ? Les étapes 2 et 3 suffisent.
 
 ## Ce que font les élèves
 
-`MISSION` affiche les quinze missions, chacune avec son contexte, sa tâche et son état (`[OK]` ou `[ ]`) :
+`MISSION` affiche les 15 missions, chacune avec son contexte, sa tâche et son état (`[OK]` ou `[ ]`) :
 
 ```text
   [ ] Q11  ps + kill
@@ -58,7 +58,7 @@ Le pipe (le tube) `|` envoie ce qu'affiche une commande vers une autre. Il arriv
 - **Des coups de pouce gradués** : l'objectif, puis la structure, puis la solution ; chaque mission se retente autant de fois qu'il le faut.
 - **Lire le résultat, pas seulement taper la commande** : pour `ls`, `cat`, `ps` ou `grep`, la mission pose une question sur ce qui s'est affiché.
 - **Une progression** : se repérer et manipuler des fichiers d'abord, les droits et les processus ensuite, les options et le pipe à la fin.
-- **L'éthique du hacker** : l'histoire d'infiltration donne envie, et le TP commence par rappeler la loi.
+- **L'éthique hacker** (celle des passionné·e·s d'informatique qui explorent les systèmes sans enfreindre la loi) : l'histoire d'infiltration donne envie, et le TP commence par rappeler la loi.
 
 ## Avertissement
 
