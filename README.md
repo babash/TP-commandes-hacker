@@ -28,10 +28,10 @@ Tu veux d'abord essayer le TP seul·e ? Les étapes 2 et 3 suffisent.
 ```text
   [ ] Q11  ps + kill
      Un processus espion surveille le serveur.
-     >> Trouvez son PID avec ps, eliminez-le avec kill, puis Q11.
+     >> Trouver son PID avec ps, l'eliminer avec kill, puis Q11.
 ```
 
-Une fois la tâche faite, l'élève tape le numéro de la mission (`Q11`). Selon la mission, le script regarde l'historique des commandes, le dossier courant, les fichiers et leurs droits, ou pose une question sur ce que la commande a affiché. Un échec donne un indice : d'abord l'objectif et la commande, puis la structure avec des `???` à compléter, enfin la solution.
+Une fois la tâche faite, l'élève tape le numéro de la mission (`Q11`). Selon la mission, le script regarde l'historique des commandes, le dossier courant, les fichiers et leurs droits, ou pose une question sur ce que la commande a affiché. Un échec donne un indice : d'abord l'objectif et la commande, puis la structure avec des `???` à compléter, enfin la solution. Le message d'échec ne donne jamais la réponse.
 
 | Phase | Missions | Commandes | La tâche |
 |---|---|---|---|

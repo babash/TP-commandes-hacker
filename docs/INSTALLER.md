@@ -5,10 +5,9 @@
 ## 1. Avant la séance
 
 - Teste le lancement complet sur un poste élève, avec le navigateur de la salle.
-- Le lancement se termine par ce message : « TP pret ! Tapez MISSION pour commencer. »
+- Le lancement se termine par ce message : « TP pret ! Tape MISSION pour commencer. »
+- Tape `ps` : la ligne de `espion_mirage` doit apparaître (c'est la cible de Q11).
 - Imprime la [fiche élève](https://babash.github.io/TP-commandes-hacker/fiche_eleve_mirage.html) : une page A4.
-
-La fiche professeur demande aussi de vérifier le message « Daemon actif (PID: …) ». Il venait de la version 10 du script : la version actuelle (11.0) n'a plus de démon et n'affiche plus ce message (voir [Architecture](ARCHITECTURE.md), § 6).
 
 ## 2. Lancer le TP dans JSLinux
 
@@ -44,7 +43,7 @@ Relancer recrée le dossier `~/infiltration_mirage/` à neuf : les fichiers cré
 | WSL (Windows) | compatible |
 | macOS | `stat -c` peut donner un autre résultat (le script essaie alors `stat -f`) |
 
-Le script est écrit en POSIX sh strict, pour `ash`, `dash` et `bash`. Il a besoin de `sh`, `ps`, `stat`, `awk` et `sed`, présents par défaut sur Alpine.
+Le script est écrit en POSIX sh strict, pour `ash`, `dash` et `bash`. Il a besoin de `sh`, `ps`, `stat`, `awk` et `grep`, présents par défaut sur Alpine.
 
 Les missions Q1 et Q15 lisent l'historique des commandes (`history`) : lance le TP dans un shell interactif qui en garde un, comme `ash` (JSLinux) ou `bash`. `dash` n'a pas de commande `history`.
 
@@ -55,7 +54,7 @@ Les missions Q1 et Q15 lisent l'historique des commandes (`history`) : lance le 
 | `MISSION` : commande introuvable | Le script a été lancé sans le point (par exemple `sh tp_infiltration.sh`) : relance-le avec `. ~/tp_infiltration.sh`. |
 | `Ctrl+V` ne colle rien | Dans JSLinux, coller avec un **clic droit → Paste**. |
 | `man` n'existe pas | JSLinux n'a pas `man` : `--help` le remplace (c'est le sujet de Q12). |
-| Q11 : quel PID ? | Dans l'affichage de `ps`, le PID est la première colonne ; on cherche la ligne de `espion_mirage`. |
+| Q11 : quel PID ? | Dans l'affichage de `ps`, le PID est la première colonne ; on cherche la ligne de `espion_mirage` (`espion_mirage.s` sous Debian ou Ubuntu). |
 
 ## 6. Ta propre copie
 
