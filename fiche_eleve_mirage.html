@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Fiche Élève — Opération MIRAGE v10</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fiche élève — Opération MIRAGE v11.1</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap');
 :root{
@@ -15,7 +16,7 @@
   width:210mm;min-height:297mm;
   background:var(--paper);color:var(--ink);
   font-family:'Barlow Condensed',sans-serif;
-  position:relative;padding:10mm 14mm 15mm;
+  position:relative;padding:8mm 14mm 14mm;
   background-image:repeating-linear-gradient(0deg,transparent,transparent 26px,rgba(0,0,0,.025) 26px,rgba(0,0,0,.025) 27px);
 }
 .page::before{
@@ -25,28 +26,28 @@
   color:var(--red);opacity:.1;transform:rotate(-22deg);letter-spacing:4px;
   border:3px solid var(--red);padding:5px 12px;border-radius:3px;pointer-events:none;
 }
-.hd{border-bottom:3px solid var(--ink);padding-bottom:6px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-end;}
+.hd{border-bottom:3px solid var(--ink);padding-bottom:6px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-end;gap:8px;}
 .ref{font-family:'Share Tech Mono',monospace;font-size:.57rem;color:var(--red);letter-spacing:3px;text-transform:uppercase;margin-bottom:3px;}
 h1{font-size:1.85rem;font-weight:900;line-height:1;letter-spacing:-1px;}
 h1 em{font-style:normal;color:var(--red);font-size:2.2rem;}
 .hr{text-align:right;font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--dim);line-height:1.7;}
-.tx{background:var(--ink);color:#00e676;font-family:'Share Tech Mono',monospace;font-size:.66rem;line-height:1.6;padding:7px 11px;border-radius:3px;margin-bottom:8px;}
-.tx .d{color:#3a7a5a;}.tx .w{color:#ffb300;}
+.tx{background:var(--ink);color:#00e676;font-family:'Share Tech Mono',monospace;font-size:.66rem;line-height:1.5;padding:6px 11px;border-radius:3px;margin-bottom:7px;}
+.tx .d{color:#5a9a78;}.tx .w{color:#ffb300;}
 .sec{margin-bottom:7px;}
 .sh{font-family:'Share Tech Mono',monospace;font-size:.57rem;letter-spacing:3px;text-transform:uppercase;color:var(--red);border-bottom:1px solid var(--border);padding-bottom:2px;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
 .sh .n{background:var(--red);color:white;font-size:.57rem;padding:1px 5px;border-radius:2px;}
-.steps{display:flex;flex-direction:column;gap:4px;}
+.steps{display:flex;flex-direction:column;gap:3px;}
 .step{display:grid;grid-template-columns:20px 1fr;gap:7px;align-items:start;}
 .sn{font-family:'Share Tech Mono',monospace;font-size:.68rem;font-weight:700;color:white;background:var(--ink);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
-.sb{font-size:.76rem;line-height:1.35;}
+.sb{font-size:.76rem;line-height:1.35;min-width:0;}
 code{font-family:'Share Tech Mono',monospace;background:var(--ink);color:var(--fg);padding:1px 5px;border-radius:2px;font-size:.68rem;}
-.cmd{font-family:'Share Tech Mono',monospace;background:var(--ink);color:var(--fg);padding:5px 10px;border-radius:3px;font-size:.68rem;line-height:1.85;margin:3px 0;border-left:3px solid var(--red);}
-.cmd .pr{color:#ff5252;}.cmd .d{color:#4a7a5a;}
+.cmd{font-family:'Share Tech Mono',monospace;background:var(--ink);color:var(--fg);padding:3px 10px;border-radius:3px;font-size:.68rem;line-height:1.55;margin:2px 0;border-left:3px solid var(--red);overflow-wrap:anywhere;}
+.cmd .pr{color:#ff5252;}.cmd .d{color:#5a9a78;}
 .jsl{border:1px solid var(--border);border-radius:4px;overflow:hidden;margin:4px 0;font-family:'Share Tech Mono',monospace;}
 .jsl-bar{background:#444;color:#ccc;padding:3px 8px;font-size:.6rem;display:flex;align-items:center;gap:6px;}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
-.jsl-term{background:#111;color:#00e676;padding:5px 10px;line-height:1.75;font-size:.63rem;min-height:42px;}
-.jsl-tb{background:#2a2a2a;color:#888;padding:4px 10px;display:flex;align-items:center;gap:10px;font-size:.6rem;}
+.jsl-term{background:#111;color:#00e676;padding:4px 10px;line-height:1.5;font-size:.63rem;min-height:28px;}
+.jsl-tb{background:#2a2a2a;color:#999;padding:4px 10px;display:flex;align-items:center;gap:10px;font-size:.6rem;}
 .ahl{background:rgba(0,230,118,.15);border:1px dashed #00e676;border-radius:3px;padding:1px 6px;color:#00e676;}
 /* Commandes */
 .ct{width:100%;border-collapse:collapse;font-size:.73rem;margin:4px 0;}
@@ -65,12 +66,23 @@ code{font-family:'Share Tech Mono',monospace;background:var(--ink);color:var(--f
 .mc{border:1px solid var(--bl);border-radius:2px;padding:3px 4px;text-align:center;}
 .mn{font-family:'Share Tech Mono',monospace;font-size:.67rem;font-weight:700;color:var(--red);display:block;}
 .ml{font-size:.58rem;color:var(--dim);display:block;line-height:1.2;}
-.mc.a{background:rgba(255,179,0,.07);border-color:#c8a020;}.mc.a .mn{color:#8a6000;}
 .mc.q{background:rgba(192,57,43,.04);border-color:#c03920;}.mc.q .mn{color:#8a2010;}
+.mc.vide{border-color:transparent;background:transparent;}
 /* phases */
 .phase{font-family:'Share Tech Mono',monospace;font-size:.56rem;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin:5px 0 2px;grid-column:1/-1;}
-footer{position:absolute;bottom:8mm;left:14mm;right:14mm;border-top:1px solid var(--border);padding-top:4px;display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:.53rem;color:var(--dim);}
+footer{position:absolute;bottom:8mm;left:14mm;right:14mm;border-top:1px solid var(--border);padding-top:4px;display:flex;justify-content:space-between;gap:8px;font-family:'Share Tech Mono',monospace;font-size:.53rem;color:var(--dim);}
 footer a{color:var(--dim);text-decoration:none;}
+/* Téléphone : la feuille prend la largeur de l'écran */
+@media screen and (max-width:600px){
+  body{padding:0;}
+  .page{width:100%;min-height:0;padding:16px 16px 64px;}
+  .hd{flex-wrap:wrap;}
+  .hr{text-align:left;}
+  .mg{grid-template-columns:repeat(4,1fr);}
+  .mc.vide{display:none;}
+  footer{left:16px;right:16px;bottom:16px;flex-wrap:wrap;}
+}
+@page{size:A4;margin:0;}
 @media print{body{background:none;padding:0;}.page{box-shadow:none;}}
 </style>
 </head>
@@ -79,20 +91,20 @@ footer a{color:var(--dim);text-decoration:none;}
 
   <div class="hd">
     <div>
-      <div class="ref">// NSI — Terminale — TP Terminal Linux · v10.0</div>
+      <div class="ref">// NSI — Terminale — TP Terminal Linux · v11.1</div>
       <h1>Opération <em>MIRAGE</em></h1>
     </div>
     <div class="hr">
-      Nom : ______________________<br>
-      Classe : ___________________<br>
-      Date : _____________________
+      Prénom ou pseudo : _____________<br>
+      Classe : _______________________<br>
+      Date : _________________________
     </div>
   </div>
 
   <div class="tx">
-    <span class="d">[ECHO]</span> Agent. Accès au serveur MIRAGE confirmé. 15 missions vous attendent.<br>
-    <span class="d">[ECHO]</span> Suivez la procédure ci-dessous pour charger votre kit d'infiltration.<br>
-    <span class="d">[ECHO]</span> Bloqué ? Retapez <strong>Qn</strong> pour obtenir un indice. <span class="w">Chaque appel = un indice de plus.</span>
+    <span class="d">[ECHO]</span> Agent·e. Accès au serveur MIRAGE confirmé. 15 missions t'attendent.<br>
+    <span class="d">[ECHO]</span> Suis la procédure ci-dessous pour charger ton kit d'infiltration.<br>
+    <span class="d">[ECHO]</span> Mission faite ? Tape <strong>Qn</strong> pour la valider. Bloqué·e ? <span class="w">Chaque échec = un indice de plus.</span>
   </div>
 
   <!-- 01 DÉMARRAGE -->
@@ -100,33 +112,33 @@ footer a{color:var(--dim);text-decoration:none;}
     <div class="sh"><span class="n">01</span> Démarrer le TP dans JSLinux</div>
     <div class="steps">
       <div class="step"><div class="sn">1</div>
-        <div class="sb"><strong>Ouvrez JSLinux</strong> (attendez 15–20 sec.) :
+        <div class="sb"><strong>Ouvrir JSLinux</strong> (15 à 20 s de chargement) :
           <div class="cmd" style="border-left-color:#1a3a6a;"><span style="color:#7eb8f7;">https://bellard.org/jslinux/vm.html?url=alpine-x86.cfg&amp;mem=192</span></div>
         </div>
       </div>
       <div class="step"><div class="sn">2</div>
-        <div class="sb"><strong>Téléchargez</strong> <code>tp_infiltration.sh</code> sur votre ordinateur :
+        <div class="sb"><strong>Télécharger</strong> <code>tp_infiltration.sh</code> sur l'ordinateur :
           <div class="cmd" style="border-left-color:#1a3a6a;"><span style="color:#7eb8f7;">https://github.com/babash/TP-commandes-hacker/raw/main/tp_infiltration.sh</span></div>
         </div>
       </div>
       <div class="step"><div class="sn">3</div>
-        <div class="sb"><strong>Importez</strong> — cliquez sur la <strong>flèche ↑</strong> sous le terminal :
+        <div class="sb"><strong>Importer</strong> — cliquer sur la <strong>flèche ↑</strong> sous le terminal :
           <div class="jsl">
             <div class="jsl-bar"><span class="dot" style="background:#ff5f57;"></span><span class="dot" style="background:#febc2e;"></span><span class="dot" style="background:#28c840;"></span><span style="font-size:.58rem;margin-left:4px;">JSLinux — Alpine Linux</span></div>
             <div class="jsl-term">~ # ▌</div>
-            <div class="jsl-tb"><span style="font-size:.58rem;color:#555;">© Fabrice Bellard</span><span class="ahl">↑ &nbsp;Cliquez ici — importer un fichier</span></div>
+            <div class="jsl-tb"><span style="font-size:.58rem;color:#999;">© Fabrice Bellard</span><span class="ahl">↑ &nbsp;Cliquer ici — importer un fichier</span></div>
           </div>
         </div>
       </div>
       <div class="step"><div class="sn">4</div>
-        <div class="sb"><strong>Lancez :</strong>
+        <div class="sb"><strong>Lancer :</strong>
           <div class="cmd"><span class="pr">~#</span> . ~/tp_infiltration.sh
 <span class="d"># Le point . charge le script — NE PAS écrire "source"</span></div>
-          <span style="font-size:.69rem;color:var(--red);">⚠ Utilisez bien le point <code>.</code> — pas le mot <code>source</code></span>
+          <span style="font-size:.69rem;color:var(--red);">⚠ Bien taper le point <code>.</code> — pas le mot <code>source</code></span>
         </div>
       </div>
       <div class="step"><div class="sn">5</div>
-        <div class="sb"><strong>Affichez les missions :</strong>
+        <div class="sb"><strong>Afficher les missions :</strong>
           <div class="cmd"><span class="pr">~#</span> MISSION</div>
         </div>
       </div>
@@ -141,22 +153,22 @@ footer a{color:var(--dim);text-decoration:none;}
 
   <!-- 03 COMMANDES -->
   <div class="sec">
-    <div class="sh"><span class="n">03</span> Vos 3 commandes</div>
+    <div class="sh"><span class="n">03</span> Les 3 commandes</div>
     <table class="ct">
       <tr><td>MISSION</td><td>Affiche les 15 missions avec contexte et statut <code>[OK]</code> ou <code>[ ]</code></td></tr>
-      <tr><td>Q1 … Q15</td><td><strong style="color:var(--green);">Succès</strong> → badge + score. &nbsp; <strong style="color:var(--red);">Échec</strong> → indice niveau 1. Retapez pour le niveau 2, puis 3 (solution).</td></tr>
+      <tr><td>Q1 … Q15</td><td>Vérifie la mission, une fois la tâche faite. <strong style="color:var(--green);">Succès</strong> → badge + score. &nbsp; <strong style="color:var(--red);">Échec</strong> → indice niveau 1. Retaper pour le niveau 2, puis 3 (solution).</td></tr>
       <tr><td>STATUT</td><td>Score rapide — liste des missions validées</td></tr>
     </table>
   </div>
 
   <!-- 04 INDICES -->
   <div class="hint">
-    <div class="hint-t">04 — Indices progressifs (si bloqué)</div>
-    <p>Tapez <strong><code>Qn</code></strong> pour vérifier. Si la mission échoue, un indice s'affiche. Retapez pour en avoir un autre :</p>
+    <div class="hint-t">04 — Indices progressifs (si bloqué·e)</div>
+    <p>Taper <strong><code>Qn</code></strong> pour vérifier. Si la mission échoue, un indice s'affiche. Retaper <code>Qn</code> pour le suivant :</p>
     <div class="lvls">
-      <div class="lvl"><strong>1er appel</strong>Objectif + commande</div>
-      <div class="lvl"><strong>2e appel</strong>Structure avec <code>???</code></div>
-      <div class="lvl"><strong>3e appel</strong>Solution complète</div>
+      <div class="lvl"><strong>1er échec</strong>Objectif + commande</div>
+      <div class="lvl"><strong>2e échec</strong>Structure avec <code>???</code></div>
+      <div class="lvl"><strong>3e échec</strong>Solution complète</div>
     </div>
   </div>
 
@@ -166,35 +178,35 @@ footer a{color:var(--dim);text-decoration:none;}
     <div class="mg">
       <div class="phase">Phase 1 — Reconnaissance</div>
       <div class="mc"><span class="mn">Q1</span><span class="ml">pwd</span></div>
-      <div class="mc q"><span class="mn">Q2</span><span class="ml">ls</span></div>
-      <div class="mc q"><span class="mn">Q3</span><span class="ml">cd</span></div>
-      <div class="mc q"><span class="mn">Q4</span><span class="ml">cat</span></div>
-      <div class="mc" style="border-color:transparent;background:transparent;"></div>
+      <div class="mc q"><span class="mn">Q2</span><span class="ml">ls [?]</span></div>
+      <div class="mc"><span class="mn">Q3</span><span class="ml">cd</span></div>
+      <div class="mc q"><span class="mn">Q4</span><span class="ml">cat [?]</span></div>
+      <div class="mc vide"></div>
 
       <div class="phase">Phase 2 — Manipulation de fichiers</div>
-      <div class="mc a"><span class="mn">Q5</span><span class="ml">touch [auto]</span></div>
-      <div class="mc a"><span class="mn">Q6</span><span class="ml">cp [auto]</span></div>
-      <div class="mc a"><span class="mn">Q7</span><span class="ml">mv [auto]</span></div>
-      <div class="mc a"><span class="mn">Q8</span><span class="ml">mkdir [auto]</span></div>
-      <div class="mc" style="border-color:transparent;background:transparent;"></div>
+      <div class="mc"><span class="mn">Q5</span><span class="ml">touch</span></div>
+      <div class="mc"><span class="mn">Q6</span><span class="ml">cp</span></div>
+      <div class="mc"><span class="mn">Q7</span><span class="ml">mv</span></div>
+      <div class="mc"><span class="mn">Q8</span><span class="ml">mkdir</span></div>
+      <div class="mc vide"></div>
 
       <div class="phase">Phase 3 — Droits &nbsp;·&nbsp; Phase 4 — Processus</div>
-      <div class="mc a"><span class="mn">Q9</span><span class="ml">chmod 600 [auto]</span></div>
-      <div class="mc a"><span class="mn">Q10</span><span class="ml">chmod u+x [auto]</span></div>
-      <div class="mc q"><span class="mn">Q11</span><span class="ml">ps + kill</span></div>
-      <div class="mc" style="border-color:transparent;background:transparent;"></div>
-      <div class="mc" style="border-color:transparent;background:transparent;"></div>
+      <div class="mc"><span class="mn">Q9</span><span class="ml">chmod 600</span></div>
+      <div class="mc"><span class="mn">Q10</span><span class="ml">chmod u+x</span></div>
+      <div class="mc q"><span class="mn">Q11</span><span class="ml">ps + kill [?]</span></div>
+      <div class="mc vide"></div>
+      <div class="mc vide"></div>
 
       <div class="phase">Phase 5 — Options et pipe |</div>
-      <div class="mc q"><span class="mn">Q12</span><span class="ml">ls --help</span></div>
-      <div class="mc q"><span class="mn">Q13</span><span class="ml">ls -la</span></div>
-      <div class="mc q"><span class="mn">Q14</span><span class="ml">cat | grep</span></div>
-      <div class="mc q"><span class="mn">Q15</span><span class="ml">history | grep</span></div>
-      <div class="mc" style="border-color:transparent;background:transparent;"></div>
+      <div class="mc q"><span class="mn">Q12</span><span class="ml">ls --help [?]</span></div>
+      <div class="mc q"><span class="mn">Q13</span><span class="ml">ls -la [?]</span></div>
+      <div class="mc q"><span class="mn">Q14</span><span class="ml">cat | grep [?]</span></div>
+      <div class="mc q"><span class="mn">Q15</span><span class="ml">history | grep [?]</span></div>
+      <div class="mc vide"></div>
     </div>
     <div style="font-size:.68rem;color:var(--dim);margin-top:3px;">
-      <span style="color:#8a6000;font-weight:700;">[auto]</span> = le daemon valide automatiquement dès que la tâche est faite.&nbsp;
-      <span style="color:#8a2010;font-weight:700;">Question</span> = Qn pose une question sur le résultat.
+      <span style="color:#8a2010;font-weight:700;">[?]</span> = Qn pose une question sur ce que la commande a affiché.&nbsp;
+      Sinon, Qn vérifie ce qui a été fait (historique, dossier, fichiers, droits).
     </div>
   </div>
 
@@ -207,7 +219,7 @@ footer a{color:var(--dim);text-decoration:none;}
   </div>
 
   <footer>
-    <span>Opération MIRAGE v10.0 — TP Terminal Linux · Terminale NSI</span>
+    <span>Opération MIRAGE v11.1 — TP Terminal Linux · Terminale NSI</span>
     <a href="https://github.com/babash/TP-commandes-hacker">github.com/babash/TP-commandes-hacker</a>
   </footer>
 
