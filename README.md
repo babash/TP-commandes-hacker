@@ -6,7 +6,7 @@
 
 ## 👉 [Essayer maintenant : babash.github.io/TP-commandes-hacker/terminal/](https://babash.github.io/TP-commandes-hacker/terminal/)
 
-Le **terminal est déjà prêt** dans la page : l'arborescence du TP est en place, les élèves tapent `MISSION` et commencent. Rien à installer, rien à copier-coller. Tu préfères un vrai Linux ? Ouvre [JSLinux](https://bellard.org/jslinux/vm.html?url=alpine-x86.cfg&mem=192) et suis la [fiche élève](https://babash.github.io/TP-commandes-hacker/fiche_eleve_mirage.html).
+Le **terminal est déjà prêt** dans la page : l'arborescence du TP est en place, les élèves tapent `MISSION` et commencent. Rien à installer, rien à copier-coller. C'est un terminal d'entraînement qui imite bash et les commandes de Debian : jokers (`ls *.txt`), vraies expressions régulières de `grep`, tube `|`, redirections, `tree`, `ps aux`, `sort`, `cut`, historique avec `!!`… Une erreur s'affiche en anglais comme dans un vrai terminal, et `?` l'explique en français. Tu préfères un vrai Linux ? Ouvre [JSLinux](https://bellard.org/jslinux/vm.html?url=alpine-x86.cfg&mem=192) et suis la [fiche élève](https://babash.github.io/TP-commandes-hacker/fiche_eleve_mirage.html).
 
 **Gratuit · sans compte · rien à installer · ce qui est saisi reste dans le navigateur**
 
@@ -71,7 +71,7 @@ Opération MIRAGE est une simulation **fictive et entièrement locale** : le ser
 | Document | Contenu |
 |---|---|
 | [Terminal intégré](https://babash.github.io/TP-commandes-hacker/terminal/) | La page où le TP se joue directement : terminal déjà prêt, progression gardée dans le navigateur |
-| [Écarts du terminal intégré](terminal/ECARTS.md) | Ce qui diffère entre ce petit shell et un vrai Linux |
+| [Le terminal intégré : ce qui marche, et les écarts](terminal/ECARTS.md) | Les commandes et options disponibles, ce qui diffère d'un vrai Linux, et comment c'est vérifié (181 commandes comparées à un vrai bash) |
 | [Fiche élève](https://babash.github.io/TP-commandes-hacker/fiche_eleve_mirage.html) | La page A4 à distribuer : le lancement, les trois commandes, les indices, les 15 missions |
 | [Fiche professeur](https://babash.github.io/TP-commandes-hacker/fiche_prof_mirage.html) | L'installation, la vérification des missions, le corrigé, le déroulé conseillé et les points d'attention |
 | [Installer et lancer le TP](docs/INSTALLER.md) | JSLinux pas à pas, relancer ou repartir de zéro, les autres systèmes, le dépannage |

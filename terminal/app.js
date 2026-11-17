@@ -285,14 +285,15 @@ const AIDE =
   '  STATUT        score rapide\n' +
   '  recommencer   repart de zéro (efface la progression)\n\n' +
   '<span class="b">Commandes Linux disponibles</span>\n' +
-  '  pwd cd ls cat touch mkdir cp mv rm rmdir chmod stat\n' +
-  '  grep find head tail wc echo  ps kill history clear\n' +
-  '  redirections > et >>   tube |   complétion par Tab\n\n' +
+  '  fichiers  pwd cd ls cat touch mkdir cp mv rm rmdir chmod stat file find tree du\n' +
+  '  texte     grep head tail wc sort uniq cut tr echo less more\n' +
+  '  système   ps kill whoami date df which type history alias export env clear man\n' +
+  '  la ligne  jokers * ? [a-z]   tube |   > >> < 2>   ; && ||   $VAR   !!   Tab\n\n' +
   '<span class="b">Lire une erreur</span>\n' +
   '  L\'erreur s\'affiche en anglais (comme un vrai terminal).\n' +
   '  Tape <span class="y">?</span> pour la faire traduire et expliquer en français.\n\n' +
   '<span class="b">Aide d\'une commande</span>\n' +
-  '  <span class="y">ls --help</span>  ou  <span class="y">man ls</span>  (en français)';
+  '  <span class="y">grep --help</span>  ou  <span class="y">man grep</span>  (en français)';
 
 // ---------- Démarrage ----------
 (function start() {

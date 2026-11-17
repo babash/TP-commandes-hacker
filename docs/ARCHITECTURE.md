@@ -14,7 +14,7 @@
 
 ## 1 bis. Le terminal intégré (`terminal/`)
 
-Une page entièrement statique où le TP se joue sans JSLinux ni copier-coller. Un petit shell et un système de fichiers virtuels, écrits en JavaScript, reproduisent l'arborescence et les commandes dont les missions ont besoin, et rejouent la vérification des missions et les indices gradués du script v11.1. Aucune ressource n'est chargée d'un autre site ; la progression est gardée dans `localStorage`.
+Une page entièrement statique où le TP se joue sans JSLinux ni copier-coller. Un petit shell et un système de fichiers virtuels, écrits en JavaScript, imitent bash 5.2 et GNU coreutils (jokers, `;` `&&` `||`, tube, redirections, variables, historique, `grep` avec ses vraies expressions régulières, `tree`, `ps`…) et rejouent la vérification des missions et les indices gradués du script v11.1. Les commandes du TP (`MISSION`, `Q1` à `Q15`, `STATUT`) y sont des fonctions du shell, comme dans le script. Aucune ressource n'est chargée d'un autre site ; la progression est gardée dans `localStorage`.
 
 | Fichier | Rôle |
 |---|---|
@@ -25,7 +25,8 @@ Une page entièrement statique où le TP se joue sans JSLinux ni copier-coller. 
 | `terminal/app.js` | Le contrôleur : affichage, clavier, complétion, thème |
 | `terminal/terminal.css` | Le style (clair et obscur, responsive) |
 | `terminal/ECARTS.md` | Les écarts connus avec un vrai Linux |
-| `terminal/tests/run.mjs` | Les tests automatiques (shell et missions) |
+| `terminal/tests/run.mjs` | Les tests automatiques : chaque commande, les cas d'élèves, les 15 missions et leurs contournements (`node terminal/tests/run.mjs`) |
+| `terminal/tests/diff.mjs` | Le banc différentiel : chaque cas est exécuté dans un vrai bash et dans ce terminal, puis comparé (Linux, `node terminal/tests/diff.mjs`) |
 
 ## 2. Ce que fait le script
 

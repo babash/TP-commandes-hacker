@@ -2290,6 +2290,7 @@ class Shell {
     if (name === '$') return String(this.shellPid);
     if (name === '#') return '0';
     if (name === '0') return 'bash';
+    if (name === 'RANDOM' && this.env.RANDOM === undefined) return String(Math.floor(Math.random() * 32768));
     if (/^\d$/.test(name)) return '';
     return this.env[name] !== undefined ? this.env[name] : '';
   }
