@@ -12,6 +12,78 @@
 // explication française qui dit ce que veut dire l'erreur et quoi faire.
 const REGLES = [
   {
+    re: /bash: (MISSION|STATUT|Q\d+|mission|statut|q\d+): command not found/i,
+    fr: "Les commandes du TP s'écrivent en MAJUSCULES : MISSION, STATUT, Q1 à Q15. " +
+        "Le terminal distingue les majuscules des minuscules (mission ≠ MISSION)."
+  },
+  {
+    re: /tp_infiltration\.sh: No such file or directory/,
+    fr: "Pas besoin du script ici : dans cette page, le TP est déjà chargé. Tape MISSION. " +
+        "(Le script tp_infiltration.sh sert dans un vrai Linux, comme JSLinux.)"
+  },
+  {
+    re: /event not found/,
+    fr: "« event not found » = « événement introuvable ». Le point d'exclamation ! rappelle une " +
+        "commande de l'historique (!! la dernière, !12 la n° 12, !cat la dernière qui commence par cat). " +
+        "Aucune ne correspond. Pour écrire un vrai !, mets-le entre apostrophes : echo 'Bravo !'."
+  },
+  {
+    re: /syntax error near unexpected token|syntax error: unexpected end of file/,
+    fr: "« syntax error » = « erreur de syntaxe ». La ligne est mal construite : un | ou un ; " +
+        "au début, deux à la suite, ou un | à la fin sans commande derrière. Exemple correct : ls | wc -l."
+  },
+  {
+    re: /unexpected EOF while looking for matching/,
+    fr: "Un guillemet ouvert n'est pas fermé. Chaque \" ou ' doit aller par paire : echo \"bonjour\"."
+  },
+  {
+    re: /ambiguous redirect/,
+    fr: "« ambiguous redirect » = « redirection ambiguë ». Après > ou <, il faut UN seul nom de " +
+        "fichier ; ici, le joker en donne plusieurs (ou aucun)."
+  },
+  {
+    re: /Permission denied/,
+    fr: "« Permission denied » = « Permission refusée ». Pour lancer un script avec ./script.sh, " +
+        "il doit être exécutable : chmod u+x script.sh. Regarde ses droits avec ls -l (le x)."
+  },
+  {
+    re: /arguments must be process or job IDs/,
+    fr: "kill attend un numéro de processus (PID), pas un nom. Lis le PID avec ps, puis kill PID."
+  },
+  {
+    re: /Unmatched \( or|Unmatched \[|Unmatched \\\{|Invalid regular expression|Trailing backslash|Invalid content/,
+    fr: "grep ne comprend pas le motif : une parenthèse, un crochet ou une accolade n'est pas fermé. " +
+        "Pour chercher le caractère lui-même, protège-le : \\( \\[ \\. ou utilise grep -F (texte simple)."
+  },
+  {
+    re: /paths must precede expression/,
+    fr: "Piège classique : le shell a remplacé le joker (*.txt) par la liste des fichiers AVANT de " +
+        "lancer find. Mets le motif entre guillemets : find . -name \"*.txt\"."
+  },
+  {
+    re: /cannot access '.*[*?[].*': No such file/,
+    fr: "Le joker (* ou ?) ne correspond à aucun fichier : le shell l'a laissé tel quel, et la commande " +
+        "a cherché un fichier qui s'appelle vraiment comme ça. Vérifie avec ls le nom des fichiers."
+  },
+  {
+    re: /too many arguments/,
+    fr: "« too many arguments » = « trop d'arguments ». cd n'accepte qu'un seul dossier. Un nom avec " +
+        "des espaces se met entre guillemets : cd \"mon dossier\"."
+  },
+  {
+    re: /OLDPWD not set/,
+    fr: "cd - revient au dossier précédent, mais tu n'as encore changé de dossier qu'une fois au plus."
+  },
+  {
+    re: /invalid signal specification/,
+    fr: "Ce signal n'existe pas. Les plus courants : kill PID (TERM, 15) et kill -9 PID (KILL)."
+  },
+  {
+    re: /cannot remove '.*[*?].*': No such file/,
+    fr: "Le joker ne correspond à aucun fichier (ils sont peut-être déjà supprimés) : rm a cherché un " +
+        "fichier dont le nom contient vraiment * ou ?."
+  },
+  {
     re: /No such file or directory/,
     fr: "« No such file or directory » = « Aucun fichier ou dossier de ce nom ». " +
         "Le chemin que tu as tapé n'existe pas (ou il est mal orthographié). " +

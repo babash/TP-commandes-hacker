@@ -2226,6 +2226,7 @@ COMMANDS['.'] = (args, io, sh) => {
   return runScript(sh, io, args[0], n.content, true);
 };
 COMMANDS.source = COMMANDS['.'];
+
 HELP.sh = `Utilisation : sh SCRIPT
 Exécute un script shell (les scripts simples seulement, dans ce terminal).
 Un script rendu exécutable (chmod u+x) se lance aussi avec ./script.sh
@@ -2234,6 +2235,7 @@ HELP.bash = HELP.sh.replace(/sh SCRIPT/, 'bash SCRIPT');
 HELP['.'] = `Utilisation : . FICHIER   (ou source FICHIER)
 Exécute les commandes d'un fichier dans le shell courant.
 `;
+HELP.source = HELP['.'];
 
 // ============================================================
 //  Le shell
