@@ -8,7 +8,7 @@ import { Shell, COMMANDS } from './shell.js';
 import { Mirage, esc } from './mirage.js';
 import { explain } from './erreurs.js';
 
-const KEY = 'mirage.tp.v1';
+const KEY = 'mirage.tp.v2';
 const out = document.getElementById('sortie');
 const input = document.getElementById('saisie');
 const promptEl = document.getElementById('invite');
@@ -36,19 +36,67 @@ function append(html, cls) {
 }
 function clearScreen() { out.innerHTML = ''; }
 
-function render(res) {
-  if (res.html) {
-    if (res.html.indexOf('\x0c') !== -1) { clearScreen(); return; }
-    append(res.html.replace(/\n/g, '<br>'), 'tp');
-  }
-  if (res.out) {
-    if (res.out.indexOf('\x0c') !== -1) { clearScreen(); return; }
-    if (res.out.trim() !== '') append(esc(res.out).replace(/\n$/, '').replace(/\n/g, '<br>'));
-  }
-  if (res.err) {
-    append('<span class="r">' + esc(res.err).replace(/\n$/, '').replace(/\n/g, '<br>') + '</span>', 'erreur');
-  }
+function textBlock(t, cls) {
+  const body = esc(t.replace(/\n$/, '')).replace(/\n/g, '<br>');
+  append(cls === 'erreur' ? '<span class="r">' + body + '</span>' : body, cls);
 }
+// Le flux de sortie, dans l'ordre réel : stdout (fd 1), stderr (fd 2),
+// sorties du TP (html), effacement (clear) et pager (less, more, man).
+function render(res) {
+  if (res.expanded) append(esc(res.expanded), 'echo');   // !! affiche la commande développée
+  let buf = '', kind = null;
+  const flush = () => { if (buf !== '') textBlock(buf, kind === 2 ? 'erreur' : ''); buf = ''; kind = null; };
+  for (const c of res.stream || []) {
+    if (c.clear) { flush(); clearScreen(); continue; }
+    if (c.html !== undefined) { flush(); append(c.html.replace(/\n/g, '<br>'), 'tp'); continue; }
+    if (c.pager !== undefined) { flush(); openPager(c.pager, c.name); continue; }
+    if (kind !== null && kind !== c.fd) flush();
+    kind = c.fd; buf += c.text;
+  }
+  flush();
+}
+
+// ---------- Pager (less, more, man) ----------
+const pagerEl = document.getElementById('pager');
+const pagerText = document.getElementById('pager-texte');
+const pagerTitre = document.getElementById('pager-titre');
+function openPager(text, name) {
+  pagerTitre.textContent = name || '';
+  pagerText.textContent = text;
+  pagerEl.hidden = false;
+  pagerText.scrollTop = 0;
+  pagerText.focus();
+}
+function closePager() { pagerEl.hidden = true; input.focus(); }
+function pageBy(dir) { pagerText.scrollTop += dir * (pagerText.clientHeight - 24); }
+if (pagerEl) {
+  pagerText.addEventListener('keydown', (e) => {
+    const k = e.key;
+    if (k === 'q' || k === 'Q' || k === 'Escape') { e.preventDefault(); closePager(); }
+    else if (k === ' ' || k === 'PageDown' || k === 'f') { e.preventDefault(); pageBy(1); }
+    else if (k === 'b' || k === 'PageUp') { e.preventDefault(); pageBy(-1); }
+    else if (k === 'j' || k === 'Enter') { e.preventDefault(); pagerText.scrollTop += 20; }
+    else if (k === 'k') { e.preventDefault(); pagerText.scrollTop -= 20; }
+  });
+  document.getElementById('pager-suivant').addEventListener('click', () => { pageBy(1); pagerText.focus(); });
+  document.getElementById('pager-precedent').addEventListener('click', () => { pageBy(-1); pagerText.focus(); });
+  document.getElementById('pager-quitter').addEventListener('click', closePager);
+}
+
+// Largeur du terminal en caractères (pour les colonnes de ls)
+function measureColumns() {
+  const probe = document.createElement('span');
+  probe.textContent = 'M'.repeat(20);
+  probe.style.visibility = 'hidden';
+  out.appendChild(probe);
+  const cw = probe.getBoundingClientRect().width / 20;
+  probe.remove();
+  const style = getComputedStyle(out);
+  const inner = out.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+  return Math.max(20, Math.floor(inner / (cw || 8)));
+}
+function updateColumns() { if (tp) tp.shell.columns = measureColumns(); }
+window.addEventListener('resize', updateColumns);
 
 // ---------- Invite (prompt) ----------
 function refreshPrompt() {
@@ -106,6 +154,7 @@ function intro() {
 function recommencer() {
   try { localStorage.removeItem(KEY); } catch (e) {}
   tp = new Mirage(Shell, { save });
+  updateColumns();
   hist = []; histPos = 0;
   intro();
   refreshPrompt();
@@ -119,15 +168,15 @@ function complete() {
   const last = toks[toks.length - 1];
   let candidates = [];
   if (toks.length <= 1) {
-    const cmds = Object.keys(COMMANDS).concat(['MISSION', 'STATUT', 'aide', 'recommencer']);
-    for (let i = 1; i <= 15; i++) cmds.push('Q' + i);
+    const cmds = [...new Set(Object.keys(COMMANDS).concat(Object.keys(tp.shell.functions), Object.keys(tp.shell.aliases), ['aide', 'recommencer']))].sort();
     candidates = cmds.filter(c => c.startsWith(last));
   } else {
     // complétion de chemin
     const sh = tp.shell;
     let dirPart = last.lastIndexOf('/') >= 0 ? last.slice(0, last.lastIndexOf('/') + 1) : '';
     let basePart = last.slice(dirPart.length);
-    const absDir = sh.fs.resolve(dirPart || '.', sh.cwd, sh.home);
+    const realDir = dirPart.replace(/^~(?=\/|$)/, sh.env.HOME || sh.home);
+    const absDir = sh.fs.resolve(realDir || '.', sh.cwd);
     const node = sh.fs.node(absDir);
     if (node && node.type === 'dir') {
       candidates = Object.keys(node.children)
@@ -150,6 +199,13 @@ function complete() {
 
 // ---------- Clavier ----------
 input.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && (e.key === 'c' || e.key === 'C') && input.selectionStart === input.selectionEnd) {
+    e.preventDefault();
+    append('<span class="invite-echo">' + esc(promptEl.textContent) + '</span> ' + esc(input.value) + '^C', 'echo');
+    input.value = ''; if (tp.awaiting) { tp.awaiting = null; refreshPrompt(); }
+    return;
+  }
+  if (e.ctrlKey && (e.key === 'l' || e.key === 'L')) { e.preventDefault(); clearScreen(); return; }
   if (e.key === 'Enter') {
     e.preventDefault();
     const line = input.value;
@@ -251,6 +307,7 @@ const AIDE =
   } else {
     intro();
   }
+  updateColumns();
   refreshPrompt();
   input.focus();
 })();

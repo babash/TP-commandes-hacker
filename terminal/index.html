@@ -31,6 +31,18 @@
       <span class="titre mono">mirage — terminal</span>
     </div>
     <div id="sortie" role="log" aria-live="polite" aria-label="Sortie du terminal" tabindex="0"></div>
+    <div id="pager" class="pager" role="dialog" aria-label="Lecture page par page" hidden>
+      <div class="pager-barre">
+        <span id="pager-titre" class="mono"></span>
+        <span class="pager-aide">Espace : page suivante · b : précédente · q : quitter</span>
+      </div>
+      <pre id="pager-texte" class="mono" tabindex="0"></pre>
+      <div class="pager-boutons">
+        <button type="button" id="pager-precedent">▲ Page précédente</button>
+        <button type="button" id="pager-suivant">▼ Page suivante</button>
+        <button type="button" id="pager-quitter">q Quitter</button>
+      </div>
+    </div>
     <div class="saisie-ligne">
       <span id="invite" class="mono" aria-hidden="true">~ #</span>
       <input id="saisie" type="text" class="mono" autocomplete="off" autocapitalize="off"

@@ -129,27 +129,21 @@ class Mirage {
       espionPid: st.espionPid,
       special: (line, sh) => this.special(line, sh),
     });
-    // restaurer l'état du shell (FS, cwd, history, processes) si fourni
-    if (st.shell) {
-      try {
-        this.shell.fs.load(st.shell.fs);
-        this.shell.cwd = st.shell.cwd;
-        this.shell.history = st.shell.history || [];
-        this.shell.processes = st.shell.processes || this.shell.processes;
-        this.shell.espionPid = st.shell.espionPid;
-      } catch (e) {}
-    }
+    // Les commandes du TP sont des fonctions du shell, comme dans le script
+    // (où MISSION, Q1…Q15 et STATUT sont des fonctions sh) : elles marchent
+    // aussi après ; && || et dans un tube |.
+    const fn = (f) => (args, io) => { io.html(f()); this.persist(); return 0; };
+    this.shell.functions.MISSION = fn(() => this.missionScreen());
+    this.shell.functions.STATUT = fn(() => this.statutScreen());
+    for (let n = 1; n <= NB_Q; n++) this.shell.functions['Q' + n] = fn(() => this.check(n).html);
+    // restaurer l'état du shell (FS, dossier, historique, variables, processus)
+    if (st.shell) { try { this.shell.restore(st.shell); } catch (e) {} }
   }
 
   snapshot() {
     return {
       prog: this.prog, hints: this.hints, pseudo: this.pseudo,
-      espionPid: this.shell.espionPid,
-      shell: {
-        fs: this.shell.fs.dump(), cwd: this.shell.cwd,
-        history: this.shell.history, processes: this.shell.processes,
-        espionPid: this.shell.espionPid,
-      },
+      espionPid: this.shell.espionPid, shell: this.shell.serialize(),
     };
   }
   persist() { try { this.save(this.snapshot()); } catch (e) {} }
@@ -203,7 +197,8 @@ class Mirage {
 
     switch (n) {
       case 1: {
-        const hit = sh.history.some(x => /^pwd\s*$/.test(x.trim()));
+        // comme le script : « history | tail -60 | grep -qE '^[0-9 ]*pwd[[:space:]]*$' »
+        const hit = sh.history.slice(-60).some(x => /^pwd[ \t]*$/.test(x));
         return R(hit ? this.ok(1) : this.fail(1, "pwd non detecte dans l'historique."));
       }
       case 3:
@@ -246,15 +241,15 @@ class Mirage {
       }
       // Missions à question
       case 2: return this.ask(2, 'Q2 — ls', ['Lister le contenu de serveur/ (peu importe comment).', 'Quel fichier .txt se trouve dans ce dossier ?'],
-        rep => /^acces(\.txt)?$/i.test(rep.trim()), 'Reponse incorrecte. Relis bien ce que ls affiche.');
+        rep => /^acces(\.txt)?$/.test(rep.trim()), 'Reponse incorrecte. Relis bien ce que ls affiche.');
       case 4: return this.ask(4, 'Q4 — cat', ['Lire ~/infiltration_mirage/message_secret.txt', 'Quel est le mot de passe mentionne dans ce fichier ?'],
-        rep => /^M1r4g3_2024$/i.test(rep.trim()), 'Reponse incorrecte. As-tu bien lu le fichier ?');
+        rep => /^(M1r4g3_2024|m1r4g3_2024)$/.test(rep.trim()), 'Reponse incorrecte. As-tu bien lu le fichier ?');
       case 12: return this.ask(12, 'Q12 — ls --help', ['Executer : ls --help', 'Quelle option affiche les fichiers caches ?'],
         rep => /^(-a|a|--all)$/.test(rep.trim()), "Reponse incorrecte. Cherche 'all' dans ls --help.");
       case 13: return this.ask(13, 'Q13 — ls -la', ['Executer : ls -la ~/infiltration_mirage/serveur/', 'Quel fichier cache (commencant par .) apparait ?'],
         rep => /^\.?fichier_cache$/.test(rep.trim()), 'Reponse incorrecte. Les fichiers caches commencent par un point.');
       case 14: return this.ask(14, 'Q14 — cat | grep', ['Le pipe | envoie la sortie d\'une commande vers l\'entree d\'une autre.', 'Executer : cat ~/infiltration_mirage/serveur/logs/access.log | grep Transfert', "Combien de lignes contenant 'Transfert' s'affichent ?"],
-        rep => /^(2|deux)$/i.test(rep.trim()), 'Reponse incorrecte. Compte les lignes affichees par grep.');
+        rep => /^(2|deux)$/.test(rep.trim()), 'Reponse incorrecte. Compte les lignes affichees par grep.');
       case 15: return this.ask(15, 'Q15 — history | grep', ['Meme principe qu\'en Q14. Executer : history | grep Q', 'Quelle commande apparait en premier dans les resultats ?'],
         rep => /^q[0-9]/i.test(rep.trim().replace(/\s/g, '')), 'Reponse incorrecte. Execute bien : history | grep Q');
     }
@@ -301,15 +296,7 @@ class Mirage {
       this.awaiting = null;
       const html = a.validate(line);
       this.persist();
-      return { html, code: 0, noHistory: true };
-    }
-    const t = line.trim();
-    if (t === 'MISSION' || t === 'mission') return { html: this.missionScreen(), code: 0 };
-    if (t === 'STATUT' || t === 'statut') return { html: this.statutScreen(), code: 0 };
-    const mq = t.match(/^Q([0-9]{1,2})$/i);
-    if (mq) {
-      const n = parseInt(mq[1], 10);
-      if (n >= 1 && n <= NB_Q) { const res = this.check(n); this.persist(); return res; }
+      return { html, code: 0 };
     }
     return null; // commande ordinaire : le shell s'en charge
   }

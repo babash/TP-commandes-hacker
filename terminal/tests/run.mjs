@@ -12,7 +12,7 @@ function ok(cond, msg) { if (cond) pass++; else { fail++; fails.push(msg); } }
 const strip = h => (h || '').replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 
 // ---------- Shell : commandes de base ----------
-function sh() { return new Shell(); }
+function sh() { return new Shell({ tty: false }); }
 {
   const s = sh();
   eq(s.run('pwd').out, '/root\n', 'pwd');
@@ -24,7 +24,7 @@ function sh() { return new Shell(); }
 { // cd erreur
   const s = sh();
   const r = s.run('cd nexistepas');
-  eq(r.err, 'cd: nexistepas: No such file or directory\n', 'cd inexistant');
+  eq(r.err, 'bash: cd: nexistepas: No such file or directory\n', 'cd inexistant');
   eq(r.code, 1, 'cd code 1');
 }
 { // ls simple / -a / -la
@@ -56,7 +56,7 @@ function sh() { return new Shell(); }
   eq(s.run('touch agent.log').code, 0, 'touch');
   ok(s.fs.node('/root/infiltration_mirage/serveur/agent.log'), 'agent.log créé');
   eq(s.run('mkdir exfiltration').code, 0, 'mkdir');
-  eq(s.run('mkdir exfiltration').err, "mkdir: cannot create directory 'exfiltration': File exists\n", 'mkdir existant');
+  eq(s.run('mkdir exfiltration').err, 'mkdir: cannot create directory ' + String.fromCharCode(0x2018) + 'exfiltration' + String.fromCharCode(0x2019) + ': File exists\n', 'mkdir existant');
   eq(s.run('cp confidentiel/rapport.txt exfiltration/').code, 0, 'cp vers dossier');
   ok(s.fs.node('/root/infiltration_mirage/serveur/exfiltration/rapport.txt'), 'rapport.txt copié');
   eq(s.run('mv exfiltration/rapport.txt exfiltration/rapport_cache.txt').code, 0, 'mv renomme');
@@ -99,7 +99,7 @@ function sh() { return new Shell(); }
 { // commande inconnue
   const s = sh();
   const r = s.run('foobar');
-  eq(r.err, 'foobar: command not found\n', 'commande inconnue');
+  eq(r.err, 'bash: foobar: command not found\n', 'commande inconnue');
   eq(r.code, 127, 'code 127');
 }
 { // ps / kill
@@ -108,7 +108,7 @@ function sh() { return new Shell(); }
   const pid = s.espionPid;
   eq(s.run('kill ' + pid).code, 0, 'kill espion ok');
   ok(!s.run('ps').out.includes('espion_mirage'), 'espion disparu de ps');
-  eq(s.run('kill 99999').err, 'kill: (99999): No such process\n', 'kill PID inconnu');
+  eq(s.run('kill 99999').err, 'bash: kill: (99999) - No such process\n', 'kill PID inconnu');
 }
 
 // ---------- MIRAGE : parcours solution complet ----------
