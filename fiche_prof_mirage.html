@@ -109,7 +109,7 @@ ul.cl li > span{min-width:0;}
       <tr><th>Critère</th><th>Détail</th></tr>
       <tr><td>Niveau</td><td>Terminale NSI</td></tr>
       <tr><td>Durée</td><td>1h30 – 2h</td></tr>
-      <tr><td>Environnement</td><td>JSLinux Alpine x86 — <code>bellard.org/jslinux</code></td></tr>
+      <tr><td>Environnement</td><td>Terminal intégré au site (<code>terminal/</code>, déjà prêt) ou JSLinux Alpine x86 (<code>bellard.org/jslinux</code>)</td></tr>
       <tr><td>Commandes élève</td><td><code>MISSION</code> · <code>Q1..Q15</code> · <code>STATUT</code></td></tr>
       <tr><td>Validation</td><td>Quand l'élève tape <code>Qn</code>, une fois la tâche faite : rien ne valide en arrière-plan</td></tr>
       <tr><td>Vérification</td><td>Historique : Q1 · état du système : Q3, Q5–Q10 · question : Q2, Q4, Q11–Q15</td></tr>
@@ -122,7 +122,18 @@ ul.cl li > span{min-width:0;}
 <!-- 01 INSTALLATION -->
 <section>
   <div class="st">01 — Installation</div>
+  <div class="card cp">
+    <strong style="color:var(--pur);">Le plus simple : le terminal intégré au site</strong>
+    <p style="margin-top:7px;font-size:.83rem;">Ouvrir <code>babash.github.io/TP-commandes-hacker/terminal/</code> : un terminal est <strong>déjà prêt</strong>, l'arborescence du TP en place. Aucune installation, aucun copier-coller, aucun compte, aucune donnée envoyée. Les élèves tapent <code>MISSION</code> et commencent. Marche sur téléphone, en clair et en obscur, hors ligne une fois la page chargée.</p>
+    <ul class="cl" style="margin-top:6px;">
+      <li><span>Mêmes 15 missions, mêmes badges, mêmes indices gradués et mêmes vérifications que le script v11.1.</span></li>
+      <li><span>Progression gardée dans le navigateur (reprise après rechargement) ; bouton <strong>Recommencer</strong> pour repartir de zéro.</span></li>
+      <li><span>Erreur affichée en anglais comme un vrai shell, puis traduite en français en tapant <code>?</code> (règle 20).</span></li>
+      <li><span>C'est un petit shell écrit pour le TP, pas un vrai Linux : écarts connus dans <code>terminal/ECARTS.md</code>. Pour un vrai Linux, garder JSLinux ci-dessous.</span></li>
+    </ul>
+  </div>
   <div class="card ca">
+    <p style="margin-bottom:8px;"><strong>Ou dans un vrai Linux (JSLinux) :</strong></p>
     <p><strong>1.</strong> Ouvrir <code>bellard.org/jslinux/vm.html?url=alpine-x86.cfg&amp;mem=192</code></p>
     <p><strong>2.</strong> Télécharger <code>tp_infiltration.sh</code> depuis GitHub sur la machine locale</p>
     <p><strong>3.</strong> Cliquer sur <strong>↑</strong> sous le terminal JSLinux pour importer</p>

@@ -7,9 +7,25 @@
 | Fichier | Rôle |
 |---|---|
 | `tp_infiltration.sh` | Le script du TP, version 11.1, en POSIX sh |
+| `terminal/` | Le terminal intégré au site (voir ci-dessous) |
 | `fiche_eleve_mirage.html` | La fiche élève, une page A4 (version 11.1) |
 | `fiche_prof_mirage.html` | La fiche professeur (version 11.1) |
 | `docs/` | Ces guides |
+
+## 1 bis. Le terminal intégré (`terminal/`)
+
+Une page entièrement statique où le TP se joue sans JSLinux ni copier-coller. Un petit shell et un système de fichiers virtuels, écrits en JavaScript, reproduisent l'arborescence et les commandes dont les missions ont besoin, et rejouent la vérification des missions et les indices gradués du script v11.1. Aucune ressource n'est chargée d'un autre site ; la progression est gardée dans `localStorage`.
+
+| Fichier | Rôle |
+|---|---|
+| `terminal/index.html` | La page et son interface |
+| `terminal/shell.js` | Système de fichiers virtuel et commandes (`ls`, `cd`, `cat`, `chmod`, `grep`, pipe, redirections…) |
+| `terminal/mirage.js` | La logique du TP : missions, badges, indices, persistance, espion |
+| `terminal/erreurs.js` | Les erreurs du shell expliquées en français (règle 20) |
+| `terminal/app.js` | Le contrôleur : affichage, clavier, complétion, thème |
+| `terminal/terminal.css` | Le style (clair et obscur, responsive) |
+| `terminal/ECARTS.md` | Les écarts connus avec un vrai Linux |
+| `terminal/tests/run.mjs` | Les tests automatiques (shell et missions) |
 
 ## 2. Ce que fait le script
 

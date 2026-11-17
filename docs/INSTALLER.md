@@ -2,6 +2,10 @@
 
 *Opération MIRAGE : lancer le TP, le relancer, le faire tourner ailleurs que dans JSLinux, et le dépanner. Le déroulé de la séance et le corrigé sont dans la [fiche professeur](https://babash.github.io/TP-commandes-hacker/fiche_prof_mirage.html). Retour au [README](../README.md).*
 
+## 0. Le plus simple : le terminal intégré
+
+Le site héberge un **terminal déjà prêt** : <https://babash.github.io/TP-commandes-hacker/terminal/>. L'arborescence du TP y est en place, les élèves tapent `MISSION` et commencent. Rien à installer, rien à importer, rien à copier-coller ; aucun compte, aucune donnée envoyée ; la progression est gardée dans le navigateur et un bouton **Recommencer** repart de zéro. C'est un petit shell écrit pour le TP (pas un vrai Linux) : ses écarts sont listés dans [`terminal/ECARTS.md`](../terminal/ECARTS.md). Les sections ci-dessous concernent le **vrai Linux** (JSLinux), à garder pour qui veut aller plus loin.
+
 ## 1. Avant la séance
 
 - Teste le lancement complet sur un poste élève, avec le navigateur de la salle.

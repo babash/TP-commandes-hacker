@@ -4,7 +4,9 @@
 
 > Les élèves s'introduisent dans le serveur fictif du projet MIRAGE. Ils et elles s'y repèrent, lisent un message secret, copient puis cachent un rapport confidentiel, changent des droits, et finissent par **repérer un processus espion avec `ps` et l'arrêter avec `kill`**. Chaque mission se vérifie d'une commande, de `Q1` à `Q15` : après un échec, un indice s'affiche, puis un deuxième, puis la solution.
 
-## 👉 [Essayer maintenant : babash.github.io/TP-commandes-hacker/fiche_eleve_mirage.html](https://babash.github.io/TP-commandes-hacker/fiche_eleve_mirage.html)
+## 👉 [Essayer maintenant : babash.github.io/TP-commandes-hacker/terminal/](https://babash.github.io/TP-commandes-hacker/terminal/)
+
+Le **terminal est déjà prêt** dans la page : l'arborescence du TP est en place, les élèves tapent `MISSION` et commencent. Rien à installer, rien à copier-coller. Tu préfères un vrai Linux ? Ouvre [JSLinux](https://bellard.org/jslinux/vm.html?url=alpine-x86.cfg&mem=192) et suis la [fiche élève](https://babash.github.io/TP-commandes-hacker/fiche_eleve_mirage.html).
 
 **Gratuit · sans compte · rien à installer · ce qui est saisi reste dans le navigateur**
 
@@ -15,7 +17,7 @@ Opération MIRAGE fait partie des [Ressources NSI et SNT](https://babash.github.
 ## Une séance en quatre étapes
 
 1. **Tu** imprimes la [fiche élève](https://babash.github.io/TP-commandes-hacker/fiche_eleve_mirage.html) (une page A4) et testes le lancement complet sur un poste élève. La [fiche professeur](https://babash.github.io/TP-commandes-hacker/fiche_prof_mirage.html) donne l'installation, le corrigé et les conseils. En classe, 5 minutes suffisent pour présenter l'histoire, rappeler la loi (voir « Avertissement ») et distribuer la fiche.
-2. **Les élèves** ouvrent [JSLinux](https://bellard.org/jslinux/vm.html?url=alpine-x86.cfg&mem=192), un Linux qui tourne dans le navigateur (15 à 20 secondes de chargement). Ils et elles téléchargent le script [`tp_infiltration.sh`](https://github.com/babash/TP-commandes-hacker/raw/main/tp_infiltration.sh), l'importent avec la **flèche ↑** sous le terminal, puis tapent `. ~/tp_infiltration.sh` (avec un point, pas `source`). Compter 10 minutes. Dans JSLinux, `Ctrl+V` ne marche pas : on colle avec **clic droit → Paste**.
+2. **Les élèves** ouvrent le [terminal intégré](https://babash.github.io/TP-commandes-hacker/terminal/) : il est **déjà prêt**, l'arborescence en place, rien à installer ni à copier. Ils et elles tapent `MISSION` et commencent (compter 2 minutes). &nbsp; *Pour un vrai Linux :* ouvrir [JSLinux](https://bellard.org/jslinux/vm.html?url=alpine-x86.cfg&mem=192) (15 à 20 s de chargement), télécharger le script [`tp_infiltration.sh`](https://github.com/babash/TP-commandes-hacker/raw/main/tp_infiltration.sh), l'importer avec la **flèche ↑** sous le terminal, puis taper `. ~/tp_infiltration.sh` (avec un point, pas `source`) ; dans JSLinux, `Ctrl+V` ne marche pas, on colle avec **clic droit → Paste**.
 3. **Les élèves** travaillent en autonomie (65 à 75 minutes) : `MISSION` affiche les missions et leur état, `Q1` à `Q15` vérifie une mission, `STATUT` donne le score.
 4. **Tu fais le bilan** (15 minutes) : la correction collective des droits (`chmod`, Q9), du pipe (Q14) et de `kill` (Q11).
 
@@ -53,7 +55,7 @@ Le pipe (le tube) `|` envoie ce qu'affiche une commande vers une autre. Il arriv
 
 ## Pourquoi ça marche
 
-- **Un vrai terminal, sans rien installer** : JSLinux fait tourner Linux dans le navigateur, et les élèves tapent de vraies commandes sur de vrais fichiers.
+- **Un terminal sans rien installer** : le terminal intégré au site est déjà prêt dans la page (un petit shell écrit pour le TP, hors ligne et sur téléphone) ; pour un vrai Linux, JSLinux fait tourner Linux dans le navigateur. Dans les deux cas, les élèves tapent de vraies commandes sur de vrais fichiers.
 - **Une correction immédiate** : `Q1` à `Q15` vérifient la mission tout de suite, avec un badge et le score.
 - **Des coups de pouce gradués** : l'objectif, puis la structure, puis la solution ; chaque mission se retente autant de fois qu'il le faut.
 - **Lire le résultat, pas seulement taper la commande** : pour `ls`, `cat`, `ps` ou `grep`, la mission pose une question sur ce qui s'est affiché.
@@ -68,6 +70,8 @@ Opération MIRAGE est une simulation **fictive et entièrement locale** : le ser
 
 | Document | Contenu |
 |---|---|
+| [Terminal intégré](https://babash.github.io/TP-commandes-hacker/terminal/) | La page où le TP se joue directement : terminal déjà prêt, progression gardée dans le navigateur |
+| [Écarts du terminal intégré](terminal/ECARTS.md) | Ce qui diffère entre ce petit shell et un vrai Linux |
 | [Fiche élève](https://babash.github.io/TP-commandes-hacker/fiche_eleve_mirage.html) | La page A4 à distribuer : le lancement, les trois commandes, les indices, les 15 missions |
 | [Fiche professeur](https://babash.github.io/TP-commandes-hacker/fiche_prof_mirage.html) | L'installation, la vérification des missions, le corrigé, le déroulé conseillé et les points d'attention |
 | [Installer et lancer le TP](docs/INSTALLER.md) | JSLinux pas à pas, relancer ou repartir de zéro, les autres systèmes, le dépannage |
