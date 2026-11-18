@@ -7,9 +7,27 @@
 | Fichier | Rôle |
 |---|---|
 | `tp_infiltration.sh` | Le script du TP, version 11.1, en POSIX sh |
+| `terminal/` | Le terminal intégré au site (voir ci-dessous) |
 | `fiche_eleve_mirage.html` | La fiche élève, une page A4 (version 11.1) |
 | `fiche_prof_mirage.html` | La fiche professeur (version 11.1) |
 | `docs/` | Ces guides |
+
+## 1 bis. Le terminal intégré (`terminal/`)
+
+Une page entièrement statique où le TP se joue sans JSLinux ni copier-coller. Un petit shell et un système de fichiers virtuels, écrits en JavaScript, imitent bash 5.2 et GNU coreutils (jokers, `;` `&&` `||`, tube, redirections, variables, historique, `grep` avec ses vraies expressions régulières, `tree`, `ps`…) et rejouent la vérification des missions et les indices gradués du script v11.1. Les commandes du TP (`MISSION`, `Q1` à `Q15`, `STATUT`) y sont des fonctions du shell, comme dans le script. Aucune ressource n'est chargée d'un autre site ; la progression est gardée dans `localStorage`.
+
+| Fichier | Rôle |
+|---|---|
+| `terminal/index.html` | La page et son interface |
+| `terminal/shell.js` | Système de fichiers virtuel et commandes (`ls`, `cd`, `cat`, `chmod`, `grep`, pipe, redirections…) |
+| `terminal/mirage.js` | La logique du TP : missions, badges, indices, persistance, espion |
+| `terminal/erreurs.js` | Les erreurs du shell expliquées en français (règle 20) |
+| `terminal/app.js` | Le contrôleur : affichage, clavier, complétion, thème |
+| `terminal/terminal.css` | Le style (clair et obscur, responsive) |
+| `terminal/ECARTS.md` | Les écarts connus avec un vrai Linux |
+| `terminal/tests/run.mjs` | Les tests automatiques : chaque commande, les cas d'élèves, les 15 missions et leurs contournements (`node terminal/tests/run.mjs`) |
+| `terminal/tests/page.mjs` | Le test de la page dans Chromium (Playwright) : rendu aux 3 largeurs en clair et en obscur, les 15 missions jouées, aucun texte de balise visible, aucune injection de HTML, la sortie du terminal au clavier (`node terminal/tests/page.mjs`) |
+| `terminal/tests/diff.mjs` | Le banc différentiel : chaque cas est exécuté dans un vrai bash et dans ce terminal, puis comparé (Linux, `node terminal/tests/diff.mjs`) |
 
 ## 2. Ce que fait le script
 

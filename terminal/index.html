@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opération MIRAGE — terminal du TP</title>
+<meta name="description" content="Le TP de commandes Linux Opération MIRAGE, joué directement dans un terminal intégré, déjà prêt, sans rien installer ni copier-coller.">
+<link rel="stylesheet" href="terminal.css">
+</head>
+<body>
+
+<header>
+  <div style="flex-basis:100%;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;">
+    <h1>Opération <span>MIRAGE</span> — le terminal</h1>
+    <span class="ref">NSI 1re &amp; Terminale · TP commandes Linux</span>
+  </div>
+  <p class="intro">Le terminal est <strong>déjà prêt</strong> : l'arborescence du serveur MIRAGE est en place. Tape <strong>MISSION</strong> pour voir les 15 missions, puis <strong>Q1</strong> à <strong>Q15</strong> pour les valider. Rien à installer, rien à copier. Tu préfères un vrai Linux&nbsp;? <a href="https://bellard.org/jslinux/vm.html?url=alpine-x86.cfg&amp;mem=192" rel="noopener">Ouvrir JSLinux</a> et suivre la <a href="../fiche_eleve_mirage.html">fiche élève</a>. Ce terminal est simulé&nbsp;: <a href="https://github.com/babash/TP-commandes-hacker/blob/main/terminal/ECARTS.md" rel="noopener">ce qu'il ne fait pas comme un vrai Linux</a>.</p>
+</header>
+
+<nav class="barre" aria-label="Outils du terminal">
+  <button type="button" id="btn-recommencer">↻ Recommencer</button>
+  <button type="button" id="btn-expliquer">? Expliquer la dernière erreur</button>
+  <span class="espace"></span>
+  <button type="button" id="btn-theme" aria-label="Changer le thème clair ou obscur">◐ Thème</button>
+</nav>
+
+<main>
+  <section class="terminal" aria-label="Terminal Opération MIRAGE">
+    <div class="chrome" aria-hidden="true">
+      <span class="dot a"></span><span class="dot b"></span><span class="dot c"></span>
+      <span class="titre mono">mirage — terminal</span>
+    </div>
+    <div id="sortie" role="log" aria-live="polite" aria-label="Sortie du terminal" tabindex="0"></div>
+    <div id="pager" class="pager" role="dialog" aria-label="Lecture page par page" hidden>
+      <div class="pager-barre">
+        <span id="pager-titre" class="mono"></span>
+        <span class="pager-aide">Espace : page suivante · b : précédente · q : quitter</span>
+      </div>
+      <pre id="pager-texte" class="mono" tabindex="0"></pre>
+      <div class="pager-boutons">
+        <button type="button" id="pager-precedent">▲ Page précédente</button>
+        <button type="button" id="pager-suivant">▼ Page suivante</button>
+        <button type="button" id="pager-quitter">q Quitter</button>
+      </div>
+    </div>
+    <div class="saisie-ligne">
+      <span id="invite" class="mono" aria-hidden="true">~ #</span>
+      <input id="saisie" type="text" class="mono" autocomplete="off" autocapitalize="off"
+             autocorrect="off" spellcheck="false" aria-label="Ligne de commande du terminal" aria-describedby="aide-clavier"
+             enterkeyhint="go">
+    </div>
+    <p id="aide-clavier" class="aide-clavier">Tab complète une commande ou un nom. <strong>Échap puis Tab</strong> pour sortir du terminal (Échap puis Maj+Tab pour revenir en arrière).</p>
+    <div class="clavier" role="group" aria-label="Touches spéciales pour le clavier tactile">
+      <span class="lbl">Touches&nbsp;:</span>
+      <button type="button" data-key="Tab" aria-label="Touche Tab (complétion)">Tab</button>
+      <button type="button" data-key="ArrowUp" aria-label="Commande précédente">▲</button>
+      <button type="button" data-key="ArrowDown" aria-label="Commande suivante">▼</button>
+      <button type="button" data-insert="|" aria-label="Insérer le tube barre verticale">|</button>
+      <button type="button" data-insert="&gt;" aria-label="Insérer la redirection supérieur">&gt;</button>
+      <button type="button" data-insert="~" aria-label="Insérer le tilde">~</button>
+      <button type="button" data-insert="/" aria-label="Insérer la barre oblique">/</button>
+      <button type="button" data-insert="-" aria-label="Insérer le tiret">-</button>
+    </div>
+  </section>
+</main>
+
+<p id="sr-note" class="sr-only" aria-live="polite"></p>
+
+<footer>
+  <span>Opération MIRAGE — TP Terminal Linux</span>
+  <span class="sep">·</span>
+  <span>Conçu par Babash - NSI Tani Malandi</span>
+  <span class="sep">·</span>
+  <span>Code <a href="https://opensource.org/licenses/MIT" rel="noopener">MIT</a>, documents <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" rel="noopener">CC BY-SA 4.0</a></span>
+  <span class="sep">·</span>
+  <a href="https://github.com/babash/TP-commandes-hacker" rel="noopener">Code source sur GitHub</a>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

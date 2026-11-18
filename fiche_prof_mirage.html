@@ -63,10 +63,14 @@ ul.cl li{padding:4px 0;font-size:.83rem;display:flex;gap:8px;align-items:flex-st
 ul.cl li::before{content:'▸';color:var(--acc);flex-shrink:0;margin-top:2px;}
 ul.cl li > span{min-width:0;}
 .phase-h{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--acc);letter-spacing:3px;text-transform:uppercase;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--brd);}
+/* Pied de page : auteur, licences, dépôt */
+footer.pied{max-width:1020px;margin:40px auto 0;padding:14px 32px 0;border-top:1px solid var(--brd);display:flex;flex-wrap:wrap;gap:6px 18px;font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--dim);}
+footer.pied a{color:var(--acc);}
 /* Téléphone */
 @media (max-width:600px){
   header{padding:24px 16px 18px;}
   main{padding:24px 16px 0;}
+  footer.pied{padding:14px 16px 0;}
   .card{padding:14px;}
   .qc{grid-template-columns:1fr;padding:14px;}
   th,td{padding:8px 6px;}
@@ -86,12 +90,14 @@ ul.cl li > span{min-width:0;}
   .card,.qc,pre{break-inside:avoid;}
   .qn,.qn.au,.qn.qq{background:none;}
   .htag a{opacity:1;}
+  footer.pied{padding:10px 0 0;margin-top:20px;break-inside:avoid;}
+  footer.pied a{color:#000;}
 }
 </style>
 </head>
 <body>
 <header>
-  <div class="htag">// NSI — Terminale — TP Linux &nbsp;·&nbsp; <a href="https://github.com/babash/TP-commandes-hacker">github.com/babash/TP-commandes-hacker</a></div>
+  <div class="htag">// NSI — Première et terminale — TP Linux &nbsp;·&nbsp; <a href="https://github.com/babash/TP-commandes-hacker">github.com/babash/TP-commandes-hacker</a></div>
   <h1>Opération <span>MIRAGE</span> <span class="badge bp">PROF</span> <span class="badge bv">v11.1</span></h1>
   <div class="sub">15 missions · 5 phases · Vérification par Qn · Indices progressifs · JSLinux Alpine</div>
 </header>
@@ -102,14 +108,14 @@ ul.cl li > span{min-width:0;}
 <section>
   <div class="st">00 — Présentation</div>
   <div class="card ca">
-    <p>TP de terminal Linux pour Terminale NSI sur <strong>JSLinux Alpine</strong>. 15 missions indépendantes en 5 phases progressives. Les notions avancées (options, pipe) sont placées en fin de parcours — l'élève est d'abord à l'aise avec la navigation et la manipulation de fichiers avant de les aborder.</p>
+    <p>TP de terminal Linux pour la première et la terminale NSI, dans le <strong>terminal intégré</strong> au site ou sur <strong>JSLinux Alpine</strong>. 15 missions indépendantes en 5 phases progressives. Les notions avancées (options, pipe) sont placées en fin de parcours — l'élève est d'abord à l'aise avec la navigation et la manipulation de fichiers avant de les aborder.</p>
   </div>
   <div class="card">
     <table>
       <tr><th>Critère</th><th>Détail</th></tr>
-      <tr><td>Niveau</td><td>Terminale NSI</td></tr>
+      <tr><td>Niveau</td><td>Première et terminale NSI (les processus, Q11, sont au programme de terminale)</td></tr>
       <tr><td>Durée</td><td>1h30 – 2h</td></tr>
-      <tr><td>Environnement</td><td>JSLinux Alpine x86 — <code>bellard.org/jslinux</code></td></tr>
+      <tr><td>Environnement</td><td>Terminal intégré au site (<code>terminal/</code>, déjà prêt) ou JSLinux Alpine x86 (<code>bellard.org/jslinux</code>)</td></tr>
       <tr><td>Commandes élève</td><td><code>MISSION</code> · <code>Q1..Q15</code> · <code>STATUT</code></td></tr>
       <tr><td>Validation</td><td>Quand l'élève tape <code>Qn</code>, une fois la tâche faite : rien ne valide en arrière-plan</td></tr>
       <tr><td>Vérification</td><td>Historique : Q1 · état du système : Q3, Q5–Q10 · question : Q2, Q4, Q11–Q15</td></tr>
@@ -122,7 +128,18 @@ ul.cl li > span{min-width:0;}
 <!-- 01 INSTALLATION -->
 <section>
   <div class="st">01 — Installation</div>
+  <div class="card cp">
+    <strong style="color:var(--pur);">Le plus simple : le terminal intégré au site</strong>
+    <p style="margin-top:7px;font-size:.83rem;">Ouvrir <code>babash.github.io/TP-commandes-hacker/terminal/</code> : un terminal est <strong>déjà prêt</strong>, l'arborescence du TP en place. Aucune installation, aucun copier-coller, aucun compte, aucune donnée envoyée. Les élèves tapent <code>MISSION</code> et commencent. Marche sur téléphone, en clair et en obscur, hors ligne une fois la page chargée.</p>
+    <ul class="cl" style="margin-top:6px;">
+      <li><span>Mêmes 15 missions, mêmes badges, mêmes indices gradués et mêmes vérifications que le script v11.1.</span></li>
+      <li><span>Progression gardée dans le navigateur (reprise après rechargement) ; bouton <strong>Recommencer</strong> pour repartir de zéro.</span></li>
+      <li><span>Erreur affichée en anglais comme un vrai shell, puis traduite en français en tapant <code>?</code> (règle 20).</span></li>
+      <li><span>C'est un petit shell écrit pour le TP, pas un vrai Linux : écarts connus dans <code>terminal/ECARTS.md</code>. Pour un vrai Linux, garder JSLinux ci-dessous.</span></li>
+    </ul>
+  </div>
   <div class="card ca">
+    <p style="margin-bottom:8px;"><strong>Ou dans un vrai Linux (JSLinux) :</strong></p>
     <p><strong>1.</strong> Ouvrir <code>bellard.org/jslinux/vm.html?url=alpine-x86.cfg&amp;mem=192</code></p>
     <p><strong>2.</strong> Télécharger <code>tp_infiltration.sh</code> depuis GitHub sur la machine locale</p>
     <p><strong>3.</strong> Cliquer sur <strong>↑</strong> sous le terminal JSLinux pour importer</p>
@@ -365,5 +382,10 @@ Q11                        <span class="cd"># retaper pour valider</span></pre>
 </section>
 
 </main>
+<footer class="pied">
+  <span>Opération MIRAGE v11.1 · Conçu par Babash - NSI Tani Malandi</span>
+  <span>Documents <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a> · code <a href="https://github.com/babash/TP-commandes-hacker/blob/main/LICENSE">MIT</a></span>
+  <a href="https://github.com/babash/TP-commandes-hacker">Code source sur GitHub</a>
+</footer>
 </body>
 </html>
