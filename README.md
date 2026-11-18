@@ -84,8 +84,8 @@ Une question, une idée, un bug ? Les [issues GitHub](https://github.com/babash/
 
 ## Licence
 
-- **Le code** (le script `tp_infiltration.sh`, sauf ses textes) est sous licence [MIT](LICENSE).
-- **Les documents** (les textes des missions et des indices du script, la fiche élève, la fiche professeur et les guides de `docs/`) sont sous licence [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.fr).
+- **Le code** (le script `tp_infiltration.sh` et le terminal intégré `terminal/`, sauf leurs textes) est sous licence [MIT](LICENSE).
+- **Les documents** (les textes des missions et des indices, dans le script comme dans `terminal/`, la fiche élève, la fiche professeur et les guides de `docs/`) sont sous licence [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.fr).
 - **[JSLinux](https://bellard.org/jslinux/)**, de Fabrice Bellard : le Linux du navigateur, un service en ligne utilisé tel quel, qui ne fait pas partie du dépôt.
 - **Les polices** Share Tech Mono, Barlow Condensed et Exo 2 : licence SIL OFL, par Google Fonts.
 

@@ -108,7 +108,8 @@ Pour un vrai Linux, la page garde le lien vers **JSLinux** (Alpine) et la fiche
   `cat: x: No such file or directory`, et un `ps` plus simple. Les deux sont de
   vrais systèmes ; ce terminal suit Debian.
 - `tree` n'a pas pu être comparé à un vrai `tree` (absent de la machine de test) :
-  il suit le format documenté de tree 2.x.
+  il suit le format documenté de tree 2.x. **Non vérifié** : son code de retour
+  pour un dossier absent (0 ici ; la page de manuel de tree 2.x n'en parle pas).
 
 ## La progression
 
