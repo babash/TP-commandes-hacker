@@ -150,7 +150,7 @@ function solveAll(m) {
   // Q1 sans avoir tapé pwd
   const m = newTP();
   const r = strip(m.shell.run('Q1').html);
-  ok(/pwd non detecte/.test(r) && /Indice 1\/3/.test(r), 'Q1 sans pwd : message + indice 1');
+  ok(/pwd non détecté/.test(r) && /Indice 1\/3/.test(r), 'Q1 sans pwd : message + indice 1');
   ok(!m.done(1), 'Q1 non validée');
   // 2e échec -> indice 2
   const r2 = strip(m.shell.run('Q1').html);
@@ -165,9 +165,9 @@ function solveAll(m) {
   const r = strip(m.shell.run('log.txt').html);
   ok(/Indice 1\/3/.test(r) && !/acces\.txt/.test(r), 'Q2 1er échec : indice sans la réponse');
   m.shell.run('Q2'); const r2 = strip(m.shell.run('log.txt').html);
-  ok(/Indice 2\/3/.test(r2) && !/Reponse : acces/.test(r2), 'Q2 2e échec : toujours pas la réponse');
+  ok(/Indice 2\/3/.test(r2) && !/Réponse : acces/.test(r2), 'Q2 2e échec : toujours pas la réponse');
   m.shell.run('Q2'); const r3 = strip(m.shell.run('log.txt').html);
-  ok(/Reponse : acces\.txt/.test(r3), 'Q2 3e échec : la réponse apparaît');
+  ok(/Réponse : acces\.txt/.test(r3), 'Q2 3e échec : la réponse apparaît');
 }
 {
   // Q14 : mauvais compte -> indice, bonne réponse "deux" acceptée
@@ -403,6 +403,41 @@ for (const c of Object.keys(COMMANDS)) {
   const r = sh.run('cd ~/infiltration_mirage/serveur && Q3');
   ok(m.done(3), 'Q3 : « cd … && Q3 » valide, comme avec la fonction du script');
   ok(sh.run('MISSION | grep -c Q').out.trim() !== '0', 'MISSION | grep : la sortie du TP passe dans un tube');
+}
+
+
+// ============================================================
+//  Rendu des écrans du TP : pas de balise échappée, et ce qui
+//  vient de l'élève reste échappé (aucune injection de HTML)
+// ============================================================
+{
+  const clean = (html, what) => {
+    ok(!/&lt;\/?(span|div|br|b|i|strong|em)\b/i.test(html), `${what} : aucune balise échappée (&lt;span…)`);
+    ok(!/<(?!\/?(span|div|br)\b)/i.test(html), `${what} : seulement span, div et br comme balises`);
+  };
+  const m = newTP(); const sh = m.shell;
+  clean(sh.run('MISSION').html, 'MISSION');
+  clean(sh.run('STATUT').html, 'STATUT');
+  for (let n = 1; n <= 15; n++) {
+    clean(sh.run('Q' + n).html, 'écran de Q' + n);
+    if (m.awaiting) clean(sh.run('x').html, 'échec de Q' + n);
+    clean(sh.run('Q' + n).html, 'indice 2 de Q' + n);
+    if (m.awaiting) clean(sh.run('x').html, 'échec 2 de Q' + n);
+  }
+  const m2 = newTP(); solveAll(m2);
+  const fin = m2.shell.run('STATUT').html;
+  clean(fin, 'STATUT final');
+  ok(fin.includes('<span class="g b">OPÉRATION TERMINÉE. Félicitations, agent·e.</span>'), 'STATUT final : vert et gras, sans balise visible');
+  ok(m2.shell.run('MISSION').html.includes('<span class="c b">Q1</span>'), 'MISSION : Q1 en cyan et gras');
+  // injection : un dossier au nom piégé affiché par Q3, une réponse piégée
+  const m3 = newTP();
+  m3.shell.run('mkdir "<img src=x onerror=alert(1)>"');
+  m3.shell.run('cd "<img src=x onerror=alert(1)>"');
+  const q3 = m3.shell.run('Q3').html;
+  ok(q3.includes('&lt;img src=x onerror=alert(1)&gt;') && !q3.includes('<img'), 'injection : le dossier courant est échappé dans Q3');
+  m3.shell.run('Q2');
+  const q2 = m3.shell.run('<b>acces.txt</b>').html;
+  ok(!q2.includes('<b>'), 'injection : une réponse n\'est jamais rendue en HTML');
 }
 
 console.log(`\n  Tests : ${pass} réussis, ${fail} échoués\n`);

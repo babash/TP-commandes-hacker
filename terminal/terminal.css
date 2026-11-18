@@ -205,3 +205,11 @@ footer .sep { opacity: .5; }
   font: inherit; font-size: .82rem; color: var(--ink); background: var(--chipbg);
   border: 1px solid var(--line); border-radius: 6px; padding: 6px 11px; cursor: pointer; min-height: 38px;
 }
+
+/* Ligne d'aide du clavier (sortir du terminal) */
+.aide-clavier {
+  margin: 0; padding: 6px 14px; font-size: .8rem; color: var(--dim);
+  border-top: 1px solid var(--line); background: var(--screen);
+}
+.aide-clavier strong { color: var(--ink); }
+.aide-clavier.armee { color: var(--ink); box-shadow: inset 3px 0 0 var(--focus); }

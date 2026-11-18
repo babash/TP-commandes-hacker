@@ -63,10 +63,14 @@ ul.cl li{padding:4px 0;font-size:.83rem;display:flex;gap:8px;align-items:flex-st
 ul.cl li::before{content:'▸';color:var(--acc);flex-shrink:0;margin-top:2px;}
 ul.cl li > span{min-width:0;}
 .phase-h{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--acc);letter-spacing:3px;text-transform:uppercase;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--brd);}
+/* Pied de page : auteur, licences, dépôt */
+footer.pied{max-width:1020px;margin:40px auto 0;padding:14px 32px 0;border-top:1px solid var(--brd);display:flex;flex-wrap:wrap;gap:6px 18px;font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--dim);}
+footer.pied a{color:var(--acc);}
 /* Téléphone */
 @media (max-width:600px){
   header{padding:24px 16px 18px;}
   main{padding:24px 16px 0;}
+  footer.pied{padding:14px 16px 0;}
   .card{padding:14px;}
   .qc{grid-template-columns:1fr;padding:14px;}
   th,td{padding:8px 6px;}
@@ -86,6 +90,8 @@ ul.cl li > span{min-width:0;}
   .card,.qc,pre{break-inside:avoid;}
   .qn,.qn.au,.qn.qq{background:none;}
   .htag a{opacity:1;}
+  footer.pied{padding:10px 0 0;margin-top:20px;break-inside:avoid;}
+  footer.pied a{color:#000;}
 }
 </style>
 </head>
@@ -376,5 +382,10 @@ Q11                        <span class="cd"># retaper pour valider</span></pre>
 </section>
 
 </main>
+<footer class="pied">
+  <span>Opération MIRAGE v11.1 · Conçu par Babash - NSI Tani Malandi</span>
+  <span>Documents <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a> · code <a href="https://github.com/babash/TP-commandes-hacker/blob/main/LICENSE">MIT</a></span>
+  <a href="https://github.com/babash/TP-commandes-hacker">Code source sur GitHub</a>
+</footer>
 </body>
 </html>

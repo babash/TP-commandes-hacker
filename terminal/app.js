@@ -135,19 +135,19 @@ function execute(line) {
 function intro() {
   clearScreen();
   append(BANNER, 'banner');
-  append('<span class="c b">[ TRANSMISSION CHIFFREE RECUE ]</span>', 'tp');
-  append('Agent·e, tu as penetre le serveur <span class="r b">MIRAGE</span>. ' +
+  append('<span class="c b">[ TRANSMISSION CHIFFRÉE REÇUE ]</span>', 'tp');
+  append('Agent·e, tu as pénétré le serveur <span class="r b">MIRAGE</span>. ' +
          '15 missions t\'attendent, dans l\'ordre que tu veux.', 'tp');
-  append('<span class="y">Rappel legal :</span> simulation fictive et 100% locale. ' +
-         'Art. 323-1 Code Penal : acces non autorise = delit.', 'tp');
+  append('<span class="y">Rappel légal :</span> simulation fictive et 100 % locale. ' +
+         'Art. 323-1 du Code pénal : accès non autorisé = délit.', 'tp');
   append('<span class="dim">──────────────────────────────────────────────</span>', 'tp');
   append('<span class="b">Trois commandes :</span>', 'tp');
-  append('<span class="g">MISSION</span>   affiche les 15 missions et leur etat.', 'tp');
-  append('<span class="g">Q1 … Q15</span>  verifie une mission (badge + score, ou un indice).', 'tp');
+  append('<span class="g">MISSION</span>   affiche les 15 missions et leur état.', 'tp');
+  append('<span class="g">Q1 … Q15</span>  vérifie une mission (badge + score, ou un indice).', 'tp');
   append('<span class="g">STATUT</span>    donne le score.', 'tp');
   append('<span class="dim">Besoin d\'aide ? Tape <span class="y">aide</span>. ' +
          'Une erreur en anglais ? Tape <span class="y">?</span> pour la traduire.</span>', 'tp');
-  append('<span class="g b">TP pret !</span>  Tape <span class="c">MISSION</span> pour commencer.', 'tp');
+  append('<span class="g b">TP prêt !</span>  Tape <span class="c">MISSION</span> pour commencer.', 'tp');
 }
 
 // ---------- Recommencer ----------
@@ -198,7 +198,20 @@ function complete() {
 }
 
 // ---------- Clavier ----------
+// Sortir du terminal au clavier (WCAG 2.1.2, sur le modèle de Lagon Arena) :
+// Tab complète ; Échap puis Tab passe à l'élément suivant, Échap puis Maj+Tab
+// au précédent ; toute autre touche rend à Tab son rôle de complétion.
+let sortieArmee = false;
+const aideClavier = document.getElementById('aide-clavier');
+function armerSortie(on) {
+  sortieArmee = on;
+  if (aideClavier) aideClavier.classList.toggle('armee', on);
+}
+input.addEventListener('blur', () => armerSortie(false));
 input.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { armerSortie(true); return; }
+  if (e.key === 'Tab' && sortieArmee) { armerSortie(false); return; }  // le navigateur déplace le focus
+  if (!['Shift', 'Control', 'Alt', 'Meta', 'AltGraph', 'CapsLock'].includes(e.key)) armerSortie(false);
   if (e.ctrlKey && (e.key === 'c' || e.key === 'C') && input.selectionStart === input.selectionEnd) {
     e.preventDefault();
     append('<span class="invite-echo">' + esc(promptEl.textContent) + '</span> ' + esc(input.value) + '^C', 'echo');
@@ -215,7 +228,7 @@ input.addEventListener('keydown', (e) => {
     execute(line);
   } else if (e.key === 'Tab') {
     e.preventDefault();
-    complete();
+    if (!e.shiftKey) complete();
   } else if (e.key === 'ArrowUp') {
     e.preventDefault();
     if (histPos === hist.length) draft = input.value;
@@ -274,7 +287,7 @@ const BANNER =
   ' / _ \\(  _ \\( ___)(  _ \\ / _\\(_  _)(  )(  _ \\(  ( \\\n' +
   '( (_) )) __/ ) _)  )   //    \\ )(   )(  )   //    /\n' +
   ' \\___/(__)  (____)(_)\\_)\\_/\\_/(__) (__)(____)(\\___)' +
-  '</span>\n<span class="y">~~~ Operation MIRAGE ~~~</span>';
+  '</span>\n<span class="y">~~~ Opération MIRAGE ~~~</span>';
 
 const AIDE =
   '<span class="b c">Aide — Opération MIRAGE</span>\n' +
@@ -292,6 +305,9 @@ const AIDE =
   '<span class="b">Lire une erreur</span>\n' +
   '  L\'erreur s\'affiche en anglais (comme un vrai terminal).\n' +
   '  Tape <span class="y">?</span> pour la faire traduire et expliquer en français.\n\n' +
+  '<span class="b">Clavier</span>\n' +
+  '  Tab complète ; ▲ ▼ parcourent l\'historique ; Ctrl+C abandonne la ligne ; Ctrl+L efface.\n' +
+  '  Pour sortir du terminal : Échap puis Tab (ou Échap puis Maj+Tab pour revenir en arrière).\n\n' +
   '<span class="b">Aide d\'une commande</span>\n' +
   '  <span class="y">grep --help</span>  ou  <span class="y">man grep</span>  (en français)';
 
@@ -304,7 +320,7 @@ const AIDE =
   if (state) {
     // Reprise : on réaffiche l'intro puis le score, sans refaire l'arborescence.
     intro();
-    append('<span class="c">[INFO] Progression restauree — ' + tp.total() + '/15 missions.</span>', 'tp');
+    append('<span class="c">[INFO] Progression restaurée — ' + tp.total() + '/15 missions.</span>', 'tp');
   } else {
     intro();
   }

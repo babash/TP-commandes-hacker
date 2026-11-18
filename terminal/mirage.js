@@ -20,21 +20,21 @@ const g = s => col('g', s), r = s => col('r', s), y = s => col('y', s),
 
 // Contexte et tâche de chaque mission (pour MISSION), repris du script.
 const MISSIONS = [
-  { n: 1, cmd: 'pwd', ctx: 'Ou es-tu exactement ?', tache: 'Taper pwd puis Q1.' },
+  { n: 1, cmd: 'pwd', ctx: 'Où es-tu exactement ?', tache: 'Taper pwd puis Q1.' },
   { n: 2, cmd: 'ls', ctx: 'Le serveur contient des fichiers et dossiers.', tache: 'Lister le contenu de serveur/ puis taper Q2.' },
   { n: 3, cmd: 'cd', ctx: "Lister c'est bien, entrer dans la zone c'est mieux.", tache: 'Aller dans ~/infiltration_mirage/serveur/ puis taper Q3.' },
-  { n: 4, cmd: 'cat', ctx: "Un message chiffre t'attend.", tache: 'Lire message_secret.txt puis taper Q4.' },
-  { n: 5, cmd: 'touch', ctx: 'Laisse une empreinte numerique sur ce serveur.', tache: 'Creer serveur/agent.log puis taper Q5.' },
-  { n: 6, cmd: 'cp', ctx: 'Le rapport confidentiel doit etre exfiltre.', tache: 'Copier confidentiel/rapport.txt dans serveur/exfiltration/ puis Q6.' },
+  { n: 4, cmd: 'cat', ctx: "Un message chiffré t'attend.", tache: 'Lire message_secret.txt puis taper Q4.' },
+  { n: 5, cmd: 'touch', ctx: 'Laisse une empreinte numérique sur ce serveur.', tache: 'Créer serveur/agent.log puis taper Q5.' },
+  { n: 6, cmd: 'cp', ctx: 'Le rapport confidentiel doit être exfiltré.', tache: 'Copier confidentiel/rapport.txt dans serveur/exfiltration/ puis Q6.' },
   { n: 7, cmd: 'mv', ctx: 'Le nom rapport.txt est trop visible. Camouflons-le.', tache: 'Renommer exfiltration/rapport.txt en rapport_cache.txt puis Q7.' },
-  { n: 8, cmd: 'mkdir', ctx: 'Il faut une zone de stockage supplementaire.', tache: 'Creer serveur/archive/ puis taper Q8.' },
-  { n: 9, cmd: 'chmod 600', ctx: 'Le rapport cache doit etre inaccessible aux autres.', tache: 'Droits 600 sur exfiltration/rapport_cache.txt puis Q9.' },
-  { n: 10, cmd: 'chmod u+x', ctx: "Le script d'effacement est bloque. Il faut l'armer.", tache: 'Rendre effacer_traces.sh executable puis Q10.' },
-  { n: 11, cmd: 'ps + kill', ctx: 'Un processus espion surveille le serveur.', tache: "Trouver son PID avec ps, l'eliminer avec kill, puis Q11." },
-  { n: 12, cmd: 'ls --help', ctx: 'Certains fichiers sont caches. Il faut la bonne option.', tache: 'Consulter ls --help puis taper Q12.' },
-  { n: 13, cmd: 'ls -la', ctx: "Mets en pratique l'option trouvee en Q12.", tache: 'Lister serveur/ avec les fichiers caches puis taper Q13.' },
+  { n: 8, cmd: 'mkdir', ctx: 'Il faut une zone de stockage supplémentaire.', tache: 'Créer serveur/archive/ puis taper Q8.' },
+  { n: 9, cmd: 'chmod 600', ctx: 'Le rapport caché doit être inaccessible aux autres.', tache: 'Droits 600 sur exfiltration/rapport_cache.txt puis Q9.' },
+  { n: 10, cmd: 'chmod u+x', ctx: "Le script d'effacement est bloqué. Il faut l'armer.", tache: 'Rendre effacer_traces.sh exécutable puis Q10.' },
+  { n: 11, cmd: 'ps + kill', ctx: 'Un processus espion surveille le serveur.', tache: "Trouver son PID avec ps, l'éliminer avec kill, puis Q11." },
+  { n: 12, cmd: 'ls --help', ctx: 'Certains fichiers sont cachés. Il faut la bonne option.', tache: 'Consulter ls --help puis taper Q12.' },
+  { n: 13, cmd: 'ls -la', ctx: "Mets en pratique l'option trouvée en Q12.", tache: 'Lister serveur/ avec les fichiers cachés puis taper Q13.' },
   { n: 14, cmd: 'cat|grep', ctx: 'Le journal access.log contient des lignes suspectes.', tache: 'Filtrer access.log avec cat | grep Transfert puis Q14.' },
-  { n: 15, cmd: 'history|grep', ctx: 'Meme principe, sur ton historique de commandes.', tache: 'Executer history | grep Q puis taper Q15.' },
+  { n: 15, cmd: 'history|grep', ctx: 'Même principe, sur ton historique de commandes.', tache: 'Exécuter history | grep Q puis taper Q15.' },
 ];
 const PHASES = {
   1: 'Phase 1 : Reconnaissance', 5: 'Phase 2 : Manipulation de fichiers',
@@ -42,39 +42,39 @@ const PHASES = {
 };
 const BADGES = {
   1: ['Q1  ACCOMPLIE  Bonne orientation, agent·e.'],
-  2: ['Q2  ACCOMPLIE  Premiere reconnaissance reussie.'],
+  2: ['Q2  ACCOMPLIE  Première reconnaissance réussie.'],
   3: ['Q3  ACCOMPLIE  Tu es dans la place.'],
-  4: ['Q4  ACCOMPLIE  Message dechiffre.'],
-  5: ['Q5  ACCOMPLIE  Empreinte enregistree.'],
-  6: ['Q6  ACCOMPLIE  Rapport exfiltre.'],
-  7: ['Q7  ACCOMPLIE  Fichier dissimule.'],
-  8: ['Q8  ACCOMPLIE  Zone de transit prete.'],
-  9: ['Q9  ACCOMPLIE  Fichier protege (rw-------)'],
-  10: ['Q10 ACCOMPLIE  Script arme et pret.'],
-  11: ['Q11 ACCOMPLIE  Espion neutralise.'],
-  12: ['Q12 ACCOMPLIE  La documentation, ton alliee.'],
-  13: ['Q13 ACCOMPLIE  Les fichiers caches sont vus.'],
-  14: ['Q14 ACCOMPLIE  LE PIPE EST DEBLOQUE !', 'Outil fondamental du terminal. Retiens-le.'],
-  15: ['Q15 ACCOMPLIE  *** OPERATION TERMINEE ***', 'Toutes les missions accomplies. Bien joue.'],
+  4: ['Q4  ACCOMPLIE  Message déchiffré.'],
+  5: ['Q5  ACCOMPLIE  Empreinte enregistrée.'],
+  6: ['Q6  ACCOMPLIE  Rapport exfiltré.'],
+  7: ['Q7  ACCOMPLIE  Fichier dissimulé.'],
+  8: ['Q8  ACCOMPLIE  Zone de transit prête.'],
+  9: ['Q9  ACCOMPLIE  Fichier protégé (rw-------)'],
+  10: ['Q10 ACCOMPLIE  Script armé et prêt.'],
+  11: ['Q11 ACCOMPLIE  Espion neutralisé.'],
+  12: ['Q12 ACCOMPLIE  La documentation, ton alliée.'],
+  13: ['Q13 ACCOMPLIE  Les fichiers cachés sont vus.'],
+  14: ['Q14 ACCOMPLIE  LE PIPE EST DÉBLOQUÉ !', 'Outil fondamental du terminal. Retiens-le.'],
+  15: ['Q15 ACCOMPLIE  *** OPÉRATION TERMINÉE ***', 'Toutes les missions accomplies. Bien joué.'],
 };
 
 // Indices gradués (niveaux 1, 2, 3), repris mot pour mot du script.
 const HINT1 = {
-  1: ['Commande : pwd — affiche le chemin du repertoire courant.'],
-  2: ['Commande : ls — liste le contenu d\'un dossier.', 'Le fichier cherche a un nom qui finit par .txt.'],
-  3: ['Commande : cd — change de repertoire. Taper cd puis le chemin, puis Q3.'],
+  1: ['Commande : pwd — affiche le chemin du répertoire courant.'],
+  2: ['Commande : ls — liste le contenu d\'un dossier.', 'Le fichier cherché a un nom qui finit par .txt.'],
+  3: ['Commande : cd — change de répertoire. Taper cd puis le chemin, puis Q3.'],
   4: ['Commande : cat — affiche le contenu d\'un fichier texte.'],
-  5: ['Commande : touch /chemin/fichier — cree un fichier vide.'],
-  6: ['Commande : cp source destination — copie un fichier.', 'Creer d\'abord exfiltration/ : mkdir ~/infiltration_mirage/serveur/exfiltration'],
+  5: ['Commande : touch /chemin/fichier — crée un fichier vide.'],
+  6: ['Commande : cp source destination — copie un fichier.', 'Créer d\'abord exfiltration/ : mkdir ~/infiltration_mirage/serveur/exfiltration'],
   7: ['Commande : mv ancien nouveau — renomme un fichier.'],
-  8: ['Commande : mkdir /chemin/dossier — cree un dossier.'],
+  8: ['Commande : mkdir /chemin/dossier — crée un dossier.'],
   9: ['Commande : chmod — modifie les droits. r=4 w=2 x=1.', '600 = User(r+w=6) Group(0) Others(0).'],
-  10: ['Commande : chmod u+x fichier — rend executable.', 'u=user  +=ajouter  x=execution'],
+  10: ['Commande : chmod u+x fichier — rend exécutable.', 'u=user  +=ajouter  x=exécution'],
   11: ['Commande : ps — liste les processus. La colonne 1 est le PID.', 'Chercher la ligne espion_mirage.'],
-  12: ['Sur ce terminal, man n\'est pas toujours la. Utiliser : ls --help', 'Chercher l\'option marquee \'all\' ou \'caches\'.'],
-  13: ['Commande : ls -la — l=details, a=all (fichiers caches).', 'Les fichiers caches ont un nom commencant par un point.'],
-  14: ['Le pipe | : commande1 | commande2', 'La sortie de gauche devient l\'entree de droite.', 'grep mot filtre les lignes contenant \'mot\'.'],
-  15: ['history affiche les commandes deja tapees.', 'Le combiner avec grep par le pipe : history | grep Q'],
+  12: ['Utiliser : ls --help (ou man ls)', 'Chercher l\'option marquée « all » ou « cachés ».'],
+  13: ['Commande : ls -la — l=détails, a=all (fichiers cachés).', 'Les fichiers cachés ont un nom commençant par un point.'],
+  14: ['Le pipe | : commande1 | commande2', 'La sortie de gauche devient l\'entrée de droite.', 'grep mot filtre les lignes contenant \'mot\'.'],
+  15: ['history affiche les commandes déjà tapées.', 'Le combiner avec grep par le pipe : history | grep Q'],
 };
 const HINT2 = {
   1: ['???'],
@@ -96,7 +96,7 @@ const HINT2 = {
 function hint3(n, shell) {
   switch (n) {
     case 1: return ['pwd'];
-    case 2: return ['ls ~/infiltration_mirage/serveur/', 'Reponse : acces.txt'];
+    case 2: return ['ls ~/infiltration_mirage/serveur/', 'Réponse : acces.txt'];
     case 3: return ['cd ~/infiltration_mirage/serveur/  puis  Q3'];
     case 4: return ['cat ~/infiltration_mirage/message_secret.txt'];
     case 5: return ['touch ~/infiltration_mirage/serveur/agent.log'];
@@ -108,7 +108,7 @@ function hint3(n, shell) {
     case 11: return ['ps', 'kill ' + (shell.espionAlive() ? shell.espionPid : '<PID>')];
     case 12: return ['ls --help   (l\'option est -a)'];
     case 13: return ['ls -la ~/infiltration_mirage/serveur/'];
-    case 14: return ['cat ~/infiltration_mirage/serveur/logs/access.log | grep Transfert', 'Reponse : 2 (deux lignes contiennent Transfert)'];
+    case 14: return ['cat ~/infiltration_mirage/serveur/logs/access.log | grep Transfert', 'Réponse : 2 (deux lignes contiennent Transfert)'];
     case 15: return ['history | grep Q'];
   }
   return [];
@@ -182,7 +182,7 @@ class Mirage {
     h += '  ' + y(`[Indice ${lvl}/3]`) + '\n';
     let lines = [];
     if (lvl === 1) lines = HINT1[n] || [];
-    else if (lvl === 2) { h += '  ' + dim('Completer les ??? :') + '\n'; lines = HINT2[n] || []; }
+    else if (lvl === 2) { h += '  ' + dim('Compléter les ??? :') + '\n'; lines = HINT2[n] || []; }
     else { h += '  ' + dim('Solution :') + '\n'; lines = hint3(n, this.shell); }
     for (const l of lines) h += '  ' + y(l) + '\n';
     if (lvl < 3) h += '  ' + dim(`Retape Q${n} pour l'indice suivant.`) + '\n';
@@ -193,13 +193,13 @@ class Mirage {
   check(n) {
     const sh = this.shell;
     const R = (html) => ({ html, code: 0 });
-    if (this.done(n)) return R('  ' + g('[OK]') + ` Q${n} deja validee.\n`);
+    if (this.done(n)) return R('  ' + g('[OK]') + ` Q${n} déjà validée.\n`);
 
     switch (n) {
       case 1: {
         // comme le script : « history | tail -60 | grep -qE '^[0-9 ]*pwd[[:space:]]*$' »
         const hit = sh.history.slice(-60).some(x => /^pwd[ \t]*$/.test(x));
-        return R(hit ? this.ok(1) : this.fail(1, "pwd non detecte dans l'historique."));
+        return R(hit ? this.ok(1) : this.fail(1, "pwd non détecté dans l'historique."));
       }
       case 3:
         return R(sh.cwd === TP + '/serveur' ? this.ok(3)
@@ -209,7 +209,7 @@ class Mirage {
       case 6:
         return R(sh.fs.node(TP + '/serveur/exfiltration/rapport.txt') ? this.ok(6) : this.fail(6, "rapport.txt absent d'exfiltration/."));
       case 7:
-        return R(sh.fs.node(TP + '/serveur/exfiltration/rapport_cache.txt') ? this.ok(7) : this.fail(7, 'rapport_cache.txt absent. As-tu utilise mv ?'));
+        return R(sh.fs.node(TP + '/serveur/exfiltration/rapport_cache.txt') ? this.ok(7) : this.fail(7, 'rapport_cache.txt absent. As-tu utilisé mv ?'));
       case 8: {
         const nd = sh.fs.node(TP + '/serveur/archive');
         return R(nd && nd.type === 'dir' ? this.ok(8) : this.fail(8, 'Dossier archive/ absent de serveur/.'));
@@ -225,7 +225,7 @@ class Mirage {
         const nd = sh.fs.node(TP + '/serveur/effacer_traces.sh');
         if (nd && (nd.mode & 0o111)) return R(this.ok(10));
         const pp = nd ? (nd.mode & 0o777).toString(8) : '?';
-        return R('  ' + dim('Droits actuels : ' + pp) + '\n' + this.fail(10, 'effacer_traces.sh non executable.'));
+        return R('  ' + dim('Droits actuels : ' + pp) + '\n' + this.fail(10, 'effacer_traces.sh non exécutable.'));
       }
       case 11: {
         if (!sh.espionAlive()) return R(this.ok(11));
@@ -233,25 +233,25 @@ class Mirage {
         this.awaiting = { n: 11, validate: (rep) => {
           if (rep.trim() === String(sh.espionPid)) {
             return '  ' + g('Correct !') + ' Maintenant : ' + y('kill ' + sh.espionPid) + '\n'
-              + '  ' + dim('Retape Q11 apres l\'avoir arrete.') + '\n';
+              + '  ' + dim('Retape Q11 après l\'avoir arrêté.') + '\n';
           }
           return this.fail(11, 'PID incorrect. Cherche la ligne espion_mirage dans ps.');
         }};
-        return R('  ' + c('Q11 — ps + kill') + '\n  Executer : ps\n  Quel est le PID du processus espion_mirage ?\n');
+        return R('  ' + c('Q11 — ps + kill') + '\n  Exécuter : ps\n  Quel est le PID du processus espion_mirage ?\n');
       }
       // Missions à question
       case 2: return this.ask(2, 'Q2 — ls', ['Lister le contenu de serveur/ (peu importe comment).', 'Quel fichier .txt se trouve dans ce dossier ?'],
-        rep => /^acces(\.txt)?$/.test(rep.trim()), 'Reponse incorrecte. Relis bien ce que ls affiche.');
-      case 4: return this.ask(4, 'Q4 — cat', ['Lire ~/infiltration_mirage/message_secret.txt', 'Quel est le mot de passe mentionne dans ce fichier ?'],
-        rep => /^(M1r4g3_2024|m1r4g3_2024)$/.test(rep.trim()), 'Reponse incorrecte. As-tu bien lu le fichier ?');
-      case 12: return this.ask(12, 'Q12 — ls --help', ['Executer : ls --help', 'Quelle option affiche les fichiers caches ?'],
-        rep => /^(-a|a|--all)$/.test(rep.trim()), "Reponse incorrecte. Cherche 'all' dans ls --help.");
-      case 13: return this.ask(13, 'Q13 — ls -la', ['Executer : ls -la ~/infiltration_mirage/serveur/', 'Quel fichier cache (commencant par .) apparait ?'],
-        rep => /^\.?fichier_cache$/.test(rep.trim()), 'Reponse incorrecte. Les fichiers caches commencent par un point.');
-      case 14: return this.ask(14, 'Q14 — cat | grep', ['Le pipe | envoie la sortie d\'une commande vers l\'entree d\'une autre.', 'Executer : cat ~/infiltration_mirage/serveur/logs/access.log | grep Transfert', "Combien de lignes contenant 'Transfert' s'affichent ?"],
-        rep => /^(2|deux)$/.test(rep.trim()), 'Reponse incorrecte. Compte les lignes affichees par grep.');
-      case 15: return this.ask(15, 'Q15 — history | grep', ['Meme principe qu\'en Q14. Executer : history | grep Q', 'Quelle commande apparait en premier dans les resultats ?'],
-        rep => /^q[0-9]/i.test(rep.trim().replace(/\s/g, '')), 'Reponse incorrecte. Execute bien : history | grep Q');
+        rep => /^acces(\.txt)?$/.test(rep.trim()), 'Réponse incorrecte. Relis bien ce que ls affiche.');
+      case 4: return this.ask(4, 'Q4 — cat', ['Lire ~/infiltration_mirage/message_secret.txt', 'Quel est le mot de passe mentionné dans ce fichier ?'],
+        rep => /^(M1r4g3_2024|m1r4g3_2024)$/.test(rep.trim()), 'Réponse incorrecte. As-tu bien lu le fichier ?');
+      case 12: return this.ask(12, 'Q12 — ls --help', ['Exécuter : ls --help', 'Quelle option affiche les fichiers cachés ?'],
+        rep => /^(-a|a|--all)$/.test(rep.trim()), "Réponse incorrecte. Cherche « all » dans ls --help.");
+      case 13: return this.ask(13, 'Q13 — ls -la', ['Exécuter : ls -la ~/infiltration_mirage/serveur/', 'Quel fichier caché (commençant par .) apparaît ?'],
+        rep => /^\.?fichier_cache$/.test(rep.trim()), 'Réponse incorrecte. Les fichiers cachés commencent par un point.');
+      case 14: return this.ask(14, 'Q14 — cat | grep', ['Le pipe | envoie la sortie d\'une commande vers l\'entrée d\'une autre.', 'Exécuter : cat ~/infiltration_mirage/serveur/logs/access.log | grep Transfert', "Combien de lignes contenant 'Transfert' s'affichent ?"],
+        rep => /^(2|deux)$/.test(rep.trim()), 'Réponse incorrecte. Compte les lignes affichées par grep.');
+      case 15: return this.ask(15, 'Q15 — history | grep', ['Même principe qu\'en Q14. Exécuter : history | grep Q', 'Quelle commande apparaît en premier dans les résultats ?'],
+        rep => /^q[0-9]/i.test(rep.trim().replace(/\s/g, '')), 'Réponse incorrecte. Exécute bien : history | grep Q');
     }
     return R('');
   }
@@ -266,25 +266,25 @@ class Mirage {
   // Écran MISSION ------------------------------------------------
   missionScreen() {
     let h = '';
-    h += '  ' + y(`OPERATION MIRAGE — ${this.total()}/${NB_Q} missions accomplies`) + '\n';
+    h += '  ' + y(`OPÉRATION MIRAGE — ${this.total()}/${NB_Q} missions accomplies`) + '\n';
     h += '  ' + dim('──────────────────────────────────────────────────────') + '\n\n';
     for (const m of MISSIONS) {
       if (PHASES[m.n]) h += '  ' + dim('── ' + PHASES[m.n] + ' ──') + '\n\n';
       const mark = this.done(m.n) ? g('[OK]') : dim('[ ]');
-      h += '  ' + mark + ' ' + c(b('Q' + m.n)) + '  ' + y(m.cmd) + '\n';
+      h += '  ' + mark + ' ' + col('c b', 'Q' + m.n) + '  ' + y(m.cmd) + '\n';
       h += '     ' + dim(m.ctx) + '\n';
       h += '     ' + b('>> ' + m.tache) + '\n\n';
     }
     return h;
   }
   statutScreen() {
-    let h = '\n  ' + b('Score — Operation MIRAGE') + '\n\n';
+    let h = '\n  ' + b('Score — Opération MIRAGE') + '\n\n';
     for (let i = 1; i <= NB_Q; i++) {
       h += this.done(i) ? '  ' + g('OK') + ' Q' + i + '\n' : '  ' + dim('--') + ' Q' + i + '\n';
     }
     h += '\n  ' + b(this.total() + '/' + NB_Q) + '\n';
-    if (this.total() === NB_Q) h += '  ' + g(b('OPERATION TERMINEE. Felicitations, agent·e.')) + '\n';
-    else h += '  ' + dim('Tape MISSION pour les details.') + '\n';
+    if (this.total() === NB_Q) h += '  ' + col('g b', 'OPÉRATION TERMINÉE. Félicitations, agent·e.') + '\n';
+    else h += '  ' + dim('Tape MISSION pour les détails.') + '\n';
     return h + '\n';
   }
 

@@ -26,6 +26,7 @@ Une page entièrement statique où le TP se joue sans JSLinux ni copier-coller. 
 | `terminal/terminal.css` | Le style (clair et obscur, responsive) |
 | `terminal/ECARTS.md` | Les écarts connus avec un vrai Linux |
 | `terminal/tests/run.mjs` | Les tests automatiques : chaque commande, les cas d'élèves, les 15 missions et leurs contournements (`node terminal/tests/run.mjs`) |
+| `terminal/tests/page.mjs` | Le test de la page dans Chromium (Playwright) : rendu aux 3 largeurs en clair et en obscur, les 15 missions jouées, aucun texte de balise visible, aucune injection de HTML, la sortie du terminal au clavier (`node terminal/tests/page.mjs`) |
 | `terminal/tests/diff.mjs` | Le banc différentiel : chaque cas est exécuté dans un vrai bash et dans ce terminal, puis comparé (Linux, `node terminal/tests/diff.mjs`) |
 
 ## 2. Ce que fait le script

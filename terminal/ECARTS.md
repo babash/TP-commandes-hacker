@@ -4,9 +4,10 @@ Le terminal de cette page (`terminal/index.html`) est un **petit shell écrit en
 JavaScript** pour le TP, pas un vrai Linux. Il imite **bash 5.2 et GNU coreutils 9**
 (Debian, Ubuntu, WSL) en locale `C.UTF-8`, avec l'utilisateur `root`.
 
-Sa fidélité est vérifiée par deux bancs de tests :
-- `terminal/tests/run.mjs` : 222 tests (un par commande et par option, les cas
+Sa fidélité est vérifiée par trois bancs de tests :
+- `terminal/tests/run.mjs` : 320 tests (un par commande et par option, les cas
   d'élèves, les 15 missions et leurs contournements possibles) ;
+- `terminal/tests/page.mjs` : la page dans Chromium (rendu, 15 missions, balises, injection, clavier) ;
 - `terminal/tests/diff.mjs` : 181 commandes exécutées **à la fois dans un vrai bash et
   dans ce terminal**, sortie, erreurs et code de retour comparés ; 179 identiques,
   2 écarts voulus (plus bas). L'arborescence y est recréée à partir du code de ce
@@ -73,6 +74,8 @@ Pour un vrai Linux, la page garde le lien vers **JSLinux** (Alpine) et la fiche
   au lieu de « command not found », qui serait faux.
 - **`?`, `explique`, `aide`, `recommencer`** sont des commandes de la page (expliquer la
   dernière erreur en français, aide, remise à zéro). Dans bash, `?` serait un joker.
+- **Le clavier** : Tab complète, comme dans bash ; pour sortir du terminal, **Échap puis Tab** (ou Échap puis Maj+Tab), comme dans Lagon Arena.
+- **Les textes du TP** sont accentués dans la page ; le script `tp_infiltration.sh`, lui, reste sans accents pour les terminaux qui les affichent mal.
 - **`exit`** ne ferme pas le terminal ; **`kill -9`** du shell non plus.
 - **Les réponses aux questions des missions** (Q2, Q4, Q11 à Q15) ne sont pas
   développées (un `*.txt` reste `*.txt`) et n'entrent pas dans l'historique, comme
