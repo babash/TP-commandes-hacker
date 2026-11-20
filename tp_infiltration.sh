@@ -2,7 +2,7 @@
 # ============================================================
 #   TP NSI — Operation Mirage  v11.1 (10/11/2026)
 #   Terminale NSI — Terminal Linux / JSLinux Alpine
-#   https://github.com/babash/TP-commandes-hacker
+#   https://github.com/babash/mirage
 #
 #   v11.1 (10/11/2026) : Q2 et Q14 suivent les indices gradues
 #     (la reponse n'apparait qu'au niveau 3), tutoiement des

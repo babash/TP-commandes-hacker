@@ -1,6 +1,6 @@
 # Architecture
 
-*Opération MIRAGE, pour les curieux·ses et les contributeur·rice·s : le script, la vérification des missions et les fichiers créés. Cette page ne donne aucune réponse des missions : le corrigé est dans la [fiche professeur](https://babash.github.io/TP-commandes-hacker/fiche_prof_mirage.html). Retour au [README](../README.md).*
+*Opération MIRAGE, pour les curieux·ses et les contributeur·rice·s : le script, la vérification des missions et les fichiers créés. Cette page ne donne aucune réponse des missions : le corrigé est dans la [fiche professeur](https://babash.github.io/mirage/fiche_prof_mirage.html). Retour au [README](../README.md).*
 
 ## 1. Les fichiers du dépôt
 

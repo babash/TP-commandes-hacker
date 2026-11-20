@@ -1,24 +1,24 @@
 # Installer et lancer le TP
 
-*Opération MIRAGE : lancer le TP, le relancer, le faire tourner ailleurs que dans JSLinux, et le dépanner. Le déroulé de la séance et le corrigé sont dans la [fiche professeur](https://babash.github.io/TP-commandes-hacker/fiche_prof_mirage.html). Retour au [README](../README.md).*
+*Opération MIRAGE : lancer le TP, le relancer, le faire tourner ailleurs que dans JSLinux, et le dépanner. Le déroulé de la séance et le corrigé sont dans la [fiche professeur](https://babash.github.io/mirage/fiche_prof_mirage.html). Retour au [README](../README.md).*
 
 ## 0. Le plus simple : le terminal intégré
 
-Le site héberge un **terminal déjà prêt** : <https://babash.github.io/TP-commandes-hacker/terminal/>. L'arborescence du TP y est en place, les élèves tapent `MISSION` et commencent. Rien à installer, rien à importer, rien à copier-coller ; aucun compte, aucune donnée envoyée ; la progression est gardée dans le navigateur et un bouton **Recommencer** repart de zéro. C'est un petit shell écrit pour le TP (pas un vrai Linux) : ses écarts sont listés dans [`terminal/ECARTS.md`](../terminal/ECARTS.md). Les sections ci-dessous concernent le **vrai Linux** (JSLinux), à garder pour qui veut aller plus loin.
+Le site héberge un **terminal déjà prêt** : <https://babash.github.io/mirage/terminal/>. L'arborescence du TP y est en place, les élèves tapent `MISSION` et commencent. Rien à installer, rien à importer, rien à copier-coller ; aucun compte, aucune donnée envoyée ; la progression est gardée dans le navigateur et un bouton **Recommencer** repart de zéro. C'est un petit shell écrit pour le TP (pas un vrai Linux) : ses écarts sont listés dans [`terminal/ECARTS.md`](../terminal/ECARTS.md). Les sections ci-dessous concernent le **vrai Linux** (JSLinux), à garder pour qui veut aller plus loin.
 
 ## 1. Avant la séance
 
 - Teste le lancement complet sur un poste élève, avec le navigateur de la salle.
 - Le lancement se termine par ce message : « TP pret ! Tape MISSION pour commencer. »
 - Tape `ps` : la ligne de `espion_mirage` doit apparaître (c'est la cible de Q11).
-- Imprime la [fiche élève](https://babash.github.io/TP-commandes-hacker/fiche_eleve_mirage.html) : une page A4.
+- Imprime la [fiche élève](https://babash.github.io/mirage/fiche_eleve_mirage.html) : une page A4.
 
 ## 2. Lancer le TP dans JSLinux
 
 1. Ouvre JSLinux, un Linux Alpine qui tourne dans le navigateur. Le chargement prend 15 à 20 secondes.
    <https://bellard.org/jslinux/vm.html?url=alpine-x86.cfg&mem=192>
 2. Télécharge le script sur l'ordinateur :
-   <https://github.com/babash/TP-commandes-hacker/raw/main/tp_infiltration.sh>
+   <https://github.com/babash/mirage/raw/main/tp_infiltration.sh>
 3. Importe-le dans JSLinux : clique sur la **flèche ↑** sous le terminal, puis choisis `tp_infiltration.sh`.
 4. Lance-le, avec un point au début, comme le demande la fiche élève (pas avec `source`) :
    ```sh
